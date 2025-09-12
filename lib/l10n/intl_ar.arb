@@ -1,0 +1,13 @@
+{
+  "appTitle": "تطبيقي",
+  "welcome": "أهلاً وسهلاً",
+  "settings": "الإعدادات",
+  "language": "اللغة",
+  "theme": "المظهر",
+  "darkMode": "الوضع الليلي",
+  "lightMode": "الوضع النهاري",
+  "english": "الإنجليزية",
+  "arabic": "العربية",
+  "changeLanguage": "تغيير اللغة",
+  "changeTheme": "تغيير المظهر"
+}

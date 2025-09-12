@@ -1,0 +1,13 @@
+{
+  "appTitle": "My App",
+  "welcome": "Welcome",
+  "settings": "Settings",
+  "language": "Language",
+  "theme": "Theme",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "english": "English",
+  "arabic": "Arabic",
+  "changeLanguage": "Change Language",
+  "changeTheme": "Change Theme"
+}
