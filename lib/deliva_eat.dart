@@ -36,23 +36,9 @@ class DelivaEat extends StatelessWidget {
             ],
             supportedLocales: S.delegate.supportedLocales,
             locale: localeProvider.locale,
-
-            home:HomeWrapper()
           );
         },
       ),
-    );
-  }
-}
-class HomeWrapper extends StatelessWidget {
-  const HomeWrapper({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = S.of(context);      
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.appTitle)),
-      body: const SettingsScreen(),
     );
   }
 }
