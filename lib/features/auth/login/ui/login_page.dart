@@ -12,29 +12,34 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     return  Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: const Color(0xFFF9F9F9),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            LoginHeader(),
-            
-            Padding(
-              padding: EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  SizedBox(height: 40.h),
-                  LoginForm(),
-                  SizedBox(height: 30.h),
-                  OrDivider(),
-                  SizedBox(height: 30.h),
-                  SocialLoginButtons(),
-                  SizedBox(height: 40.h),
-                  BottomLinks(),
-                ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: bottomInset + 24),
+          child: Column(
+            children: [
+              LoginHeader(),
+              
+              Padding(
+                padding: EdgeInsets.all(24.0),
+                child: Column(
+                  children: [
+                    SizedBox(height: 40.h),
+                    LoginForm(),
+                    SizedBox(height: 30.h),
+                    OrDivider(),
+                    SizedBox(height: 30.h),
+                    SocialLoginButtons(),
+                    SizedBox(height: 40.h),
+                    BottomLinks(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

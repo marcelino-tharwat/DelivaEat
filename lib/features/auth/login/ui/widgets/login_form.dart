@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:deliva_eat/core/widgets/app_button.dart';
 import 'package:deliva_eat/core/widgets/app_text_field.dart';
 import 'package:deliva_eat/generated/l10n.dart';
+import 'package:deliva_eat/core/network/api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,6 +20,7 @@ class _LoginFormState extends State<LoginForm> {
   final _passwordController = TextEditingController();
 
   bool _isPasswordVisible = false;
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -31,6 +33,8 @@ class _LoginFormState extends State<LoginForm> {
     if (_formKey.currentState!.validate()) {
       log('Email: ${_emailController.text}');
       log('Password: ${_passwordController.text}');
+
+
     }
   }
 
@@ -87,10 +91,39 @@ class _LoginFormState extends State<LoginForm> {
           SizedBox(
             width: double.infinity,
             height: 50.h,
-            child: AppButton(text: l10n.login, onPressed: _login),
+            child: AbsorbPointer(
+              absorbing: _loading,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Opacity(
+                    opacity: _loading ? 0.6 : 1,
+                    child: AppButton(text: l10n.login, onPressed: _login),
+                  ),
+                  if (_loading)
+                    const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  void _showSuccess(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 }
