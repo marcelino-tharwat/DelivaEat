@@ -9,5 +9,76 @@
   "english": "English",
   "arabic": "Arabic",
   "changeLanguage": "Change Language",
-  "changeTheme": "Change Theme"
+  "changeTheme": "Change Theme",
+  "app_title": "DelivaEat Login",
+  "app_name": "DelivaEat",
+  "app_tagline": "Delicious Food Delivered",
+  "welcome_back": "Welcome Back!",
+  "login_to_continue": "Login to continue",
+  "email": "Email",
+  "password": "Password",
+  "login": "Login",
+  "forgot_password": "Forgot Password?",
+  "no_account": "Don't have an account? ",
+  "create_account": "Create New Account",
+  "email_hint": "Enter your email",
+  "password_hint": "Enter your password",
+  "signup_header_title": "Create New Account",
+  "signup_already_have_account": "Already have an account? ",
+  "signup_login": "Login",
+  "signup_create_account": "Create Account",
+  "signup_success": "Account created successfully!",
+  "role_selector_title": "Account Type",
+  "role_user": "User",
+  "role_rider": "Rider",
+  "role_merchant": "Merchant",
+  "rider_info_title": "Rider Information",
+  "vehicle_type_label": "Vehicle Type",
+  "vehicle_motorcycle": "Motorcycle",
+  "vehicle_bicycle": "Bicycle",
+  "vehicle_scooter": "Scooter",
+  "profile_photo": "Profile Photo",
+  "id_card_photo": "ID Card Photo",
+  "license_photo": "License Photo",
+  "vehicle_photo_front": "Vehicle Photo (Front)",
+  "vehicle_photo_side": "Vehicle Photo (Side)",
+  "license_plate_photo": "License Plate Photo",
+  "select_photo": "Select Photo",
+  "change_photo": "Change Photo",
+  "merchant_info_title": "Merchant Information",
+  "business_type_label": "Business Type",
+  "business_type_restaurant": "Restaurant",
+  "business_type_grocery": "Grocery Store",
+  "business_type_pharmacy": "Pharmacy",
+  "business_type_bakery": "Bakery",
+  "business_name": "Business Name",
+  "owner_name": "Owner Name",
+  "owner_phone": "Owner Phone",
+  "business_description": "Business Description",
+  "delivery_radius": "Delivery Radius (KM)",
+  "basic_info_title": "Basic Information",
+  "full_name": "Full Name",
+  "phone_number": "Phone Number",
+  "error_required": "Required",
+  "error_name_required": "Name is required",
+  "error_email_required": "Email is required",
+  "error_password_required": "Password is required",
+  "error_phone_required": "Phone is required"
+  ,"getting_location": "Getting Location..."
+  ,"pick_on_map": "Pick on Map"
+  ,"enter_address_manually": "Enter Address Manually"
+  ,"cancel": "Cancel"
+  ,"confirm": "Confirm"
+  ,"enter_address": "Enter Address"
+  ,"save": "Save"
+  ,"current_location_label": "Current Location"
+  ,"selected_address": "Selected Address:"
+  ,"no_location_selected": "No location selected"
+  ,"location_permission_denied": "Location permission denied"
+  ,"location_permissions_permanently_denied": "Location permissions permanently denied"
+  ,"failed_to_get_location": "Failed to get location"
+  ,"interactive_map": "Interactive Map"
+  ,"google_maps_integration": "Google Maps integration would go here"
+  ,"tap_on_map_to_select_location": "Tap on map to select location"
+  ,"enter_your_complete_address": "Enter your complete address..."
 }

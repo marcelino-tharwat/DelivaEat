@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+
 	<dict>
+		  <!-- Location permissions -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>DelivaEat needs location access to show nearby restaurants and for delivery services</string>
+    
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>DelivaEat needs location access to track delivery progress and find nearby restaurants</string>
+    
+    <!-- Camera permissions -->
+    <key>NSCameraUsageDescription</key>
+    <string>DelivaEat needs camera access to take photos for profile, ID card, and vehicle registration</string>
+    
+    <!-- Photo library permissions -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>DelivaEat needs photo library access to select images for profile, ID card, and vehicle registration</string>
+    
+    <!-- Microphone (sometimes needed with camera) -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>DelivaEat may need microphone access for video recording</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>

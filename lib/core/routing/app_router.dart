@@ -1,3 +1,6 @@
+import 'package:deliva_eat/core/routing/routes.dart';
+import 'package:deliva_eat/features/auth/login/presentation/pages/login_page.dart';
+import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -5,16 +8,16 @@ final GoRouter router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
-      // builder: (BuildContext context, GoRouterState state) {
-      //   return const HomeScreen();
-      // },
+      builder: (BuildContext context, GoRouterState state) {
+        return  LoginPage();
+      },
       routes: <RouteBase>[
-        // GoRoute(
-        //   path: 'details',
-        //   builder: (BuildContext context, GoRouterState state) {
-        //     return const DetailsScreen();
-        //   },
-        // ),
+        GoRoute(
+          path: AppRoutes.signupPage,
+          builder: (BuildContext context, GoRouterState state) {
+            return const SignUpPage();
+          },
+        ),
       ],
     ),
   ],

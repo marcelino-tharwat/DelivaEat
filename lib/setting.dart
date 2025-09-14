@@ -1,5 +1,5 @@
 import 'package:deliva_eat/generated/l10n.dart';
-import 'package:deliva_eat/theme/provider.dart';
+import 'package:deliva_eat/core/theme/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
