@@ -1,6 +1,7 @@
 import 'package:deliva_eat/core/widgets/app_button.dart';
 import 'package:deliva_eat/core/widgets/app_text_field.dart';
 import 'package:deliva_eat/generated/l10n.dart';
+import 'package:deliva_eat/core/network/api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -17,6 +18,7 @@ class _LoginFormState extends State<LoginForm> {
   final _passwordController = TextEditingController();
 
   bool _isPasswordVisible = false;
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -25,10 +27,28 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _loading = true);
+    try {
+      final api = ApiClient.create();
+      final res = await api.postAuthLogin(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (res['success'] == true) {
+        _showSuccess(S.of(context).login);
+        // You can store token: res['data']['token'] and navigate
+      } else {
+        final err = (res['error'] ?? {}) as Map<String, dynamic>;
+        final msg = (err['message'] ?? 'Login failed').toString();
+        _showError(msg);
+      }
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -85,10 +105,39 @@ class _LoginFormState extends State<LoginForm> {
           SizedBox(
             width: double.infinity,
             height: 50.h,
-            child: AppButton(text: l10n.login, onPressed: _login),
+            child: AbsorbPointer(
+              absorbing: _loading,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Opacity(
+                    opacity: _loading ? 0.6 : 1,
+                    child: AppButton(text: l10n.login, onPressed: _login),
+                  ),
+                  if (_loading)
+                    const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  void _showSuccess(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 }
