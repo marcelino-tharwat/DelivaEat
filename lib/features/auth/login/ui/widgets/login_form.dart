@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:deliva_eat/core/widgets/app_button.dart';
 import 'package:deliva_eat/core/widgets/app_text_field.dart';
 import 'package:deliva_eat/generated/l10n.dart';
@@ -27,8 +29,8 @@ class _LoginFormState extends State<LoginForm> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+      log('Email: ${_emailController.text}');
+      log('Password: ${_passwordController.text}');
     }
   }
 
@@ -54,17 +56,16 @@ class _LoginFormState extends State<LoginForm> {
           ),
           SizedBox(height: 40.h),
 
-          
           AppTextField(
             controller: _emailController,
             labelText: l10n.email,
             hintText: 'example@gmail.com',
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
+            validator: (v) => v!.isEmpty ? l10n.error_email_required : null,
           ),
           SizedBox(height: 20.h),
 
-          
           AppTextField(
             controller: _passwordController,
             labelText: l10n.password,
@@ -79,6 +80,7 @@ class _LoginFormState extends State<LoginForm> {
                 color: Colors.grey[600],
               ),
             ),
+            validator: (v) => v!.isEmpty ? l10n.error_password_required : null,
           ),
           SizedBox(height: 30.h),
 
