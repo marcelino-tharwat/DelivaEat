@@ -12,7 +12,7 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final _formKey = GlobalKey<FormState>(); // مفتاح للتحكم في الـ Form
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -20,19 +20,15 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   void dispose() {
-    // تذكر دائماً التخلص من الـ Controllers لتجنب تسريب الذاكرة
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   void _login() {
-    // التحقق من أن كل الحقول صحيحة قبل تنفيذ منطق تسجيل الدخول
     if (_formKey.currentState!.validate()) {
-      // Form is valid, proceed with login logic
       print('Email: ${_emailController.text}');
       print('Password: ${_passwordController.text}');
-      // ... هنا تضع منطق تسجيل الدخول الفعلي
     }
   }
 
@@ -40,8 +36,7 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     final l10n = S.of(context);
     return Form(
-      // 1. إضافة Form Widget
-      key: _formKey, // 2. ربطه بالـ key
+      key: _formKey,
       child: Column(
         children: [
           Text(
@@ -59,7 +54,7 @@ class _LoginFormState extends State<LoginForm> {
           ),
           SizedBox(height: 40.h),
 
-          // --- استدعاء الـ Widget الجديد لحقل البريد الإلكتروني ---
+          
           AppTextField(
             controller: _emailController,
             labelText: l10n.email,
@@ -69,13 +64,13 @@ class _LoginFormState extends State<LoginForm> {
           ),
           SizedBox(height: 20.h),
 
-          // --- استدعاء الـ Widget الجديد لحقل كلمة المرور ---
+          
           AppTextField(
             controller: _passwordController,
             labelText: l10n.password,
             hintText: '••••••••',
             prefixIcon: Icons.lock_outline,
-            isPassword: !_isPasswordVisible, // التحكم في إخفاء النص
+            isPassword: !_isPasswordVisible,
             suffixIcon: IconButton(
               onPressed: () =>
                   setState(() => _isPasswordVisible = !_isPasswordVisible),

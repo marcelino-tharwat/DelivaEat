@@ -1,5 +1,5 @@
 import 'package:deliva_eat/core/routing/routes.dart';
-import 'package:deliva_eat/features/auth/login/presentation/pages/login_page.dart';
+import 'package:deliva_eat/features/auth/login/ui/login_page.dart';
 import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

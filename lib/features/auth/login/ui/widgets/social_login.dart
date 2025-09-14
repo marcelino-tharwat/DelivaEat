@@ -10,12 +10,12 @@ class SocialLoginButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildSocialButton(
-          onTap: () { /* منطق Google */ },
+          onTap: () {},
           assetPath: 'assets/images/google_logo.png',
         ),
         const SizedBox(width: 20),
         _buildSocialButton(
-          onTap: () { /* منطق Facebook */ },
+          onTap: () {},
           assetPath: 'assets/images/facebook_logo.png',
         ),
       ],
