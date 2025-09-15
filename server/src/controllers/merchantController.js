@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const MerchantProfile = require('../models/MerchantProfile');
+const { sendMail } = require('../utils/mailer');
 
 async function createMerchantDraft(req, res, next) {
   try {
@@ -37,6 +38,37 @@ async function createMerchantDraft(req, res, next) {
       location: payload.location ?? null,
       avatarUrl: payload.avatarUrl ?? null,
     });
+
+    // Send pending approval emails (best-effort)
+    (async () => {
+      try {
+        if (user?.email) {
+          await sendMail({
+            to: user.email,
+            subject: 'طلب التسجيل كتاجر قيد المراجعة - DelivaEat',
+            html: `<p>مرحباً ${user.name || ''}،</p><p>تم استلام طلبك كتاجر وهو قيد مراجعة الإدارة. سنقوم بإشعارك عبر البريد عند التفعيل.</p>`,
+          });
+        }
+        const adminEmail = process.env.ADMIN_EMAIL;
+        if (adminEmail) {
+          await sendMail({
+            to: adminEmail,
+            subject: 'طلب جديد لتاجر - موافقة مطلوبة',
+            html: `<p>طلب جديد لتاجر:</p>
+                   <ul>
+                     <li>الاسم: ${user.name || ''}</li>
+                     <li>البريد: ${user.email}</li>
+                     <li>الهاتف: ${user.phone || ''}</li>
+                     <li>اسم المطعم/النشاط: ${merchant.restaurantName}</li>
+                     <li>النوع: ${merchant.businessType}</li>
+                     <li>رابط البروفايل (ID): ${merchant._id}</li>
+                   </ul>`
+          });
+        }
+      } catch (e) {
+        // ignore email failures
+      }
+    })();
 
     return res.status(201).json({
       success: true,

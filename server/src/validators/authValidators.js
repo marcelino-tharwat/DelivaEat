@@ -16,4 +16,8 @@ const loginValidator = [
   body('password').isString().withMessage('Password is required'),
 ];
 
-module.exports = { registerValidator, loginValidator };
+const googleLoginValidator = [
+  body('idToken').isString().withMessage('idToken is required'),
+];
+
+module.exports = { registerValidator, loginValidator, googleLoginValidator };

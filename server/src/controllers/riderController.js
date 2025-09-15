@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const RiderProfile = require('../models/RiderProfile');
+const { sendMail } = require('../utils/mailer');
 
 async function createRiderDraft(req, res, next) {
   try {
@@ -35,6 +36,36 @@ async function createRiderDraft(req, res, next) {
       vehicleUrlSide: payload.vehicleUrlSide ?? null,
       licensePlateUrl: payload.licensePlateUrl ?? null,
     });
+
+    // Send pending approval emails (best-effort)
+    (async () => {
+      try {
+        if (user?.email) {
+          await sendMail({
+            to: user.email,
+            subject: 'طلب التسجيل كمندوب قيد المراجعة - DelivaEat',
+            html: `<p>مرحباً ${user.name || ''}،</p><p>تم استلام طلبك كمندوب وهو قيد مراجعة الإدارة. سنقوم بإشعارك عبر البريد عند التفعيل.</p>`,
+          });
+        }
+        const adminEmail = process.env.ADMIN_EMAIL;
+        if (adminEmail) {
+          await sendMail({
+            to: adminEmail,
+            subject: 'طلب جديد لمندوب - موافقة مطلوبة',
+            html: `<p>طلب جديد لمندوب:</p>
+                   <ul>
+                     <li>الاسم: ${user.name || ''}</li>
+                     <li>البريد: ${user.email}</li>
+                     <li>الهاتف: ${user.phone || ''}</li>
+                     <li>نوع المركبة: ${rider.vehicleType}</li>
+                     <li>رابط البروفايل (ID): ${rider._id}</li>
+                   </ul>`
+          });
+        }
+      } catch (e) {
+        // ignore email failures
+      }
+    })();
 
     return res.status(201).json({
       success: true,

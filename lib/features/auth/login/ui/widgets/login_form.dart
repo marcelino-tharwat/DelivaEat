@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:deliva_eat/core/widgets/app_button.dart';
 import 'package:deliva_eat/core/widgets/app_text_field.dart';
 import 'package:deliva_eat/generated/l10n.dart';
@@ -27,28 +29,12 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
-  Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _loading = true);
-    try {
-      final api = ApiClient.create();
-      final res = await api.postAuthLogin(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
+  void _login() {
+    if (_formKey.currentState!.validate()) {
+      log('Email: ${_emailController.text}');
+      log('Password: ${_passwordController.text}');
 
-      if (res['success'] == true) {
-        _showSuccess(S.of(context).login);
-        // You can store token: res['data']['token'] and navigate
-      } else {
-        final err = (res['error'] ?? {}) as Map<String, dynamic>;
-        final msg = (err['message'] ?? 'Login failed').toString();
-        _showError(msg);
-      }
-    } catch (e) {
-      _showError(e.toString());
-    } finally {
-      if (mounted) setState(() => _loading = false);
+
     }
   }
 
@@ -74,17 +60,16 @@ class _LoginFormState extends State<LoginForm> {
           ),
           SizedBox(height: 40.h),
 
-          
           AppTextField(
             controller: _emailController,
             labelText: l10n.email,
             hintText: 'example@gmail.com',
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
+            validator: (v) => v!.isEmpty ? l10n.error_email_required : null,
           ),
           SizedBox(height: 20.h),
 
-          
           AppTextField(
             controller: _passwordController,
             labelText: l10n.password,
@@ -99,6 +84,7 @@ class _LoginFormState extends State<LoginForm> {
                 color: Colors.grey[600],
               ),
             ),
+            validator: (v) => v!.isEmpty ? l10n.error_password_required : null,
           ),
           SizedBox(height: 30.h),
 

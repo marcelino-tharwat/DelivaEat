@@ -15,6 +15,7 @@ const authRoutes = require('./routes/authRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const merchantApi = require('./api/merchant');
 const riderApi = require('./api/rider');
+const adminApi = require('./api/admin');
 
 const app = express();
 
@@ -68,6 +69,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/merchant', merchantApi);
 app.use('/api/rider', riderApi);
+app.use('/api/admin', adminApi);
 
 // 404 and error handlers
 app.use(notFound);

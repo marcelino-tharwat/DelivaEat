@@ -95,6 +95,21 @@ class ApiClient {
     throw Exception('Unexpected response');
   }
 
+  Future<Map<String, dynamic>> postAuthGoogle({
+    required String idToken,
+  }) async {
+    final res = await _dio.post(
+      '/api/auth/google',
+      data: {
+        'idToken': idToken,
+      },
+    );
+    if (res.data is Map<String, dynamic>) {
+      return res.data as Map<String, dynamic>;
+    }
+    throw Exception('Unexpected response');
+  }
+
   Future<String> uploadImage({required String filePath}) async {
     final formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(filePath, filename: filePath.split('/').last),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:deliva_eat/core/auth/google_auth.dart';
 
 class SocialLoginButtons extends StatelessWidget {
   const SocialLoginButtons({super.key});
@@ -10,7 +11,7 @@ class SocialLoginButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildSocialButton(
-          onTap: () {},
+          onTap: () => _onGooglePressed(context),
           assetPath: 'assets/images/google_logo.png',
         ),
         const SizedBox(width: 20),
@@ -43,5 +44,26 @@ class SocialLoginButtons extends StatelessWidget {
         child: Center(child: Image.asset(assetPath, height: 30.h, width: 30.w)),
       ),
     );
+  }
+
+  Future<void> _onGooglePressed(BuildContext context) async {
+    try {
+      final res = await GoogleAuthService.signInAndExchangeToken();
+      if (res['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم تسجيل الدخول بجوجل بنجاح'), backgroundColor: Colors.green),
+        );
+        // TODO: احفظ التوكن res['data']['token'] وانتقل للصفحة الرئيسية
+      } else {
+        final msg = (res['error']?['message'] ?? 'فشل تسجيل الدخول بجوجل').toString();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(msg), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+      );
+    }
   }
 }
