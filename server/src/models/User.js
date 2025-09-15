@@ -37,6 +37,17 @@ const UserSchema = new mongoose.Schema(
       enum: ['user', 'rider', 'merchant', 'admin'],
       default: 'user',
     },
+    // Password reset support
+    resetCode: {
+      type: String,
+      default: null,
+      select: false,
+    },
+    resetCodeExpires: {
+      type: Date,
+      default: null,
+      select: false,
+    },
   },
   { timestamps: true }
 );

@@ -20,4 +20,19 @@ const googleLoginValidator = [
   body('idToken').isString().withMessage('idToken is required'),
 ];
 
-module.exports = { registerValidator, loginValidator, googleLoginValidator };
+const requestResetValidator = [
+  body('email').isEmail().withMessage('Valid email is required'),
+];
+
+const verifyResetValidator = [
+  body('email').isEmail().withMessage('Valid email is required'),
+  body('code').isString().isLength({ min: 4, max: 8 }).withMessage('Code is required'),
+];
+
+const resetPasswordValidator = [
+  body('email').isEmail().withMessage('Valid email is required'),
+  body('code').isString().isLength({ min: 4, max: 8 }).withMessage('Code is required'),
+  body('newPassword').isString().isLength({ min: 6 }).withMessage('New password must be at least 6 characters'),
+];
+
+module.exports = { registerValidator, loginValidator, googleLoginValidator, requestResetValidator, verifyResetValidator, resetPasswordValidator };
