@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,6 +7,7 @@ class LocaleProvider extends ChangeNotifier {
 
   LocaleProvider() {
     _loadLocale();
+    updateLocaleFromDevice();
   }
 
   void setLocale(Locale locale) async {
@@ -26,6 +26,13 @@ class LocaleProvider extends ChangeNotifier {
       _locale = Locale(languageCode);
       notifyListeners();
     }
+  }
+
+  void updateLocaleFromDevice() {
+    // هنا يمكنك إضافة منطق لتحديث اللغة بناءً على إعدادات الجهاز
+    // على سبيل المثال، يمكنك استخدام Locale.current
+    _locale = Locale('en'); // استبدل هذا بالمنطق المناسب
+    notifyListeners();
   }
 }
 class ThemeProvider extends ChangeNotifier {

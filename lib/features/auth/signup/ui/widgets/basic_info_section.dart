@@ -53,7 +53,7 @@ class _BasicInfoSectionState extends State<BasicInfoSection> {
           labelText: l10n.email,
           prefixIcon: Icons.email,
           keyboardType: TextInputType.emailAddress,
-          validator: (v) => v!.isEmpty ? l10n.error_required : null,
+          validator: (v) => v!.isEmpty ? l10n.error_email_required : null,
         ),
         SizedBox(height: 16.h),
 
@@ -71,7 +71,7 @@ class _BasicInfoSectionState extends State<BasicInfoSection> {
             onPressed: () =>
                 setState(() => _passwordVisible = !_passwordVisible),
           ),
-          validator: (v) => v!.isEmpty ? l10n.error_required : null,
+          validator: (v) => v!.isEmpty ? l10n.error_password_required : null,
         ),
         SizedBox(height: 16.h),
 
@@ -81,7 +81,7 @@ class _BasicInfoSectionState extends State<BasicInfoSection> {
           labelText: l10n.phone_number,
           prefixIcon: Icons.phone,
           keyboardType: TextInputType.phone,
-          validator: (v) => v!.isEmpty ? l10n.error_required : null,
+          validator: (v) => v!.isEmpty ? l10n.error_phone_required : null,
         ),
       ],
     );
