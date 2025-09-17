@@ -13,7 +13,7 @@ class OrDivider extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
             'Or continue with',
-            style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w500),
+            style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w500 ,fontSize: 14.sp),
           ),
         ),
         Expanded(child: Divider(thickness: 1, color: Colors.grey[300])),

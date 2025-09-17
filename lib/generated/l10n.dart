@@ -738,6 +738,106 @@ class S {
       args: [],
     );
   }
+
+  /// `Connection timeout`
+  String get error_connection_timeout {
+    return Intl.message(
+      'Connection timeout',
+      name: 'error_connection_timeout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send timeout`
+  String get error_send_timeout {
+    return Intl.message(
+      'Send timeout',
+      name: 'error_send_timeout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Receive timeout`
+  String get error_receive_timeout {
+    return Intl.message(
+      'Receive timeout',
+      name: 'error_receive_timeout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bad certificate`
+  String get error_bad_certificate {
+    return Intl.message(
+      'Bad certificate',
+      name: 'error_bad_certificate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request cancelled`
+  String get error_request_cancelled {
+    return Intl.message(
+      'Request cancelled',
+      name: 'error_request_cancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connection error`
+  String get error_connection_error {
+    return Intl.message(
+      'Connection error',
+      name: 'error_connection_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Oops there was an error, please try later`
+  String get error_unknown {
+    return Intl.message(
+      'Oops there was an error, please try later',
+      name: 'error_unknown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your request not found, please try later`
+  String get error_not_found {
+    return Intl.message(
+      'Your request not found, please try later',
+      name: 'error_not_found',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Internal server error, please try later`
+  String get error_internal_server {
+    return Intl.message(
+      'Internal server error, please try later',
+      name: 'error_internal_server',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error processing server response`
+  String get error_processing_response {
+    return Intl.message(
+      'Error processing server response',
+      name: 'error_processing_response',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,6 +1,8 @@
 {
+   "@@locale": "ar",
+
   "appTitle": "تطبيقي",
-  "welcome": "أهلاً وسهلاً",
+  "welcome": "مرحبًا",
   "settings": "الإعدادات",
   "language": "اللغة",
   "theme": "المظهر",
@@ -84,5 +86,16 @@
   "interactive_map": "خريطة تفاعلية",
   "google_maps_integration": "سيتم هنا تكامل خرائط Google",
   "tap_on_map_to_select_location": "انقر على الخريطة لاختيار الموقع",
-  "enter_your_complete_address": "أدخل عنوانك الكامل..."
+  "enter_your_complete_address": "أدخل عنوانك الكامل...",
+    "error_connection_timeout": "انتهت مهلة الاتصال",
+  "error_send_timeout": "انتهت مهلة الإرسال",
+  "error_receive_timeout": "انتهت مهلة الاستقبال",
+  "error_bad_certificate": "شهادة غير صالحة",
+  "error_request_cancelled": "تم إلغاء الطلب",
+  "error_connection_error": "خطأ في الاتصال",
+  "error_unknown": "حدث خطأ ما، حاول لاحقاً",
+  "error_not_found": "الطلب غير موجود، حاول لاحقاً",
+  "error_internal_server": "خطأ في الخادم الداخلي، حاول لاحقاً",
+  "error_processing_response": "خطأ أثناء معالجة استجابة الخادم"
 }
+  

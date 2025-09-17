@@ -81,4 +81,16 @@
   ,"google_maps_integration": "Google Maps integration would go here"
   ,"tap_on_map_to_select_location": "Tap on map to select location"
   ,"enter_your_complete_address": "Enter your complete address..."
+  ,
+  "error_connection_timeout": "Connection timeout",
+  "error_send_timeout": "Send timeout",
+  "error_receive_timeout": "Receive timeout",
+  "error_bad_certificate": "Bad certificate",
+  "error_request_cancelled": "Request cancelled",
+  "error_connection_error": "Connection error",
+  "error_unknown": "Oops there was an error, please try later",
+  "error_not_found": "Your request not found, please try later",
+  "error_internal_server": "Internal server error, please try later",
+  "error_processing_response": "Error processing server response"
+
 }
