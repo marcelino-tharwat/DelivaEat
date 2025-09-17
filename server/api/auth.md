@@ -133,7 +133,7 @@ Register Merchant
 ```json
 {
   "success": false,
-  "error": { "code": "VALIDATION_ERROR", "message": "Invalid input" },
+  "error": { "code": "VALIDATION_ERROR", "message": "Validation failed. Please check the provided fields." },
   "details": [ { "path": "email", "msg": "Invalid email" } ]
 }
 ```
@@ -152,7 +152,7 @@ Body
 - `email` string, required
 - `password` string, required
 
-Response
+Responses
 - 200 OK
 ```json
 {
@@ -164,9 +164,23 @@ Response
 }
 ```
 
-- 401 Invalid credentials
+- 404 User not found
 ```json
-{ "success": false, "error": { "code": "INVALID_CREDENTIALS", "message": "Invalid credentials" } }
+{ "success": false, "error": { "code": "USER_NOT_FOUND", "message": "User not found (المستخدم غير موجود)." } }
+```
+
+- 401 Invalid password
+```json
+{ "success": false, "error": { "code": "INVALID_PASSWORD", "message": "Incorrect password (كلمة المرور غير صحيحة)." } }
+```
+
+- 403 Not approved (rider/merchant)
+```json
+{ "success": false, "error": { "code": "NOT_APPROVED", "message": "Rider account pending approval by admin (حساب السائق في انتظار موافقة الإدارة)." } }
+```
+or
+```json
+{ "success": false, "error": { "code": "NOT_APPROVED", "message": "Merchant account pending approval by admin (حساب التاجر في انتظار موافقة الإدارة)." } }
 ```
 
 ---
@@ -182,5 +196,5 @@ Response
 ```
 - 401 Unauthorized
 ```json
-{ "success": false, "error": { "code": "UNAUTHORIZED", "message": "Unauthorized" } }
+{ "success": false, "error": { "code": "UNAUTHORIZED", "message": "Unauthorized (غير مصرح)." } }
 ```

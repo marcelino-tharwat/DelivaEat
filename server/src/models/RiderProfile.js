@@ -5,12 +5,15 @@ const RiderProfileSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: [true, 'User reference is required (معرّف المستخدم مطلوب).'],
     },
     vehicleType: {
       type: String,
-      enum: ['motorcycle', 'bicycle', 'scooter'],
-      required: true,
+      enum: {
+        values: ['motorcycle', 'bicycle', 'scooter'],
+        message: 'Invalid vehicle type (نوع المركبة غير صالح).',
+      },
+      required: [true, 'Vehicle type is required (نوع المركبة مطلوب).'],
       index: true,
     },
     avatarUrl: { type: String, default: null },

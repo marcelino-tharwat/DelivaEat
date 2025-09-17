@@ -12,7 +12,7 @@ async function register(req, res, next) {
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'Invalid input' },
+        error: { code: 'VALIDATION_ERROR', message: 'Validation failed. Please check the provided fields.' },
         details: errors.array(),
       });
     }
@@ -64,7 +64,7 @@ async function login(req, res, next) {
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'Invalid input' },
+        error: { code: 'VALIDATION_ERROR', message: 'Validation failed. Please check email and password.' },
         details: errors.array(),
       });
     }
@@ -73,9 +73,9 @@ async function login(req, res, next) {
 
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         success: false,
-        error: { code: 'INVALID_CREDENTIALS', message: 'Invalid credentials' },
+        error: { code: 'USER_NOT_FOUND', message: 'User not found (المستخدم غير موجود).' },
       });
     }
 
@@ -83,7 +83,7 @@ async function login(req, res, next) {
     if (!valid) {
       return res.status(401).json({
         success: false,
-        error: { code: 'INVALID_CREDENTIALS', message: 'Invalid credentials' },
+        error: { code: 'INVALID_PASSWORD', message: 'Incorrect password (كلمة المرور غير صحيحة).' },
       });
     }
 
@@ -101,9 +101,21 @@ async function login(req, res, next) {
     if (user.role === 'rider') {
       const rp = await RiderProfile.findOne({ userId: user._id }).select('active');
       isActive = rp ? !!rp.active : false;
+      if (!isActive) {
+        return res.status(403).json({
+          success: false,
+          error: { code: 'NOT_APPROVED', message: 'Rider account pending approval by admin (حساب السائق في انتظار موافقة الإدارة).' },
+        });
+      }
     } else if (user.role === 'merchant') {
       const mp = await MerchantProfile.findOne({ userId: user._id }).select('active');
       isActive = mp ? !!mp.active : false;
+      if (!isActive) {
+        return res.status(403).json({
+          success: false,
+          error: { code: 'NOT_APPROVED', message: 'Merchant account pending approval by admin (حساب التاجر في انتظار موافقة الإدارة).' },
+        });
+      }
     }
 
     return res.json({ success: true, data: { user: safeUser, token, isActive } });

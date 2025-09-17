@@ -1,38 +1,76 @@
 const { body } = require('express-validator');
 
 const registerValidator = [
-  body('name').isString().isLength({ min: 2 }).withMessage('Name is required'),
-  body('email').isEmail().withMessage('Valid email is required'),
+  body('name')
+    .trim()
+    .isString()
+    .isLength({ min: 2 })
+    .withMessage('Name is required (الاسم مطلوب).')
+    .escape(),
+  body('email')
+    .normalizeEmail()
+    .isEmail()
+    .withMessage('Valid email is required (يرجى إدخال بريد إلكتروني صحيح).'),
   body('password')
     .isString()
     .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters'),
-  body('phone').optional().isString().withMessage('Phone must be a string'),
-  body('role').optional().isIn(['user', 'rider', 'merchant', 'admin']).withMessage('Invalid role'),
+    .withMessage('Password must be at least 6 characters (كلمة المرور يجب ألا تقل عن 6 أحرف).'),
+  body('phone')
+    .optional()
+    .isString()
+    .withMessage('Phone must be a string (رقم الهاتف يجب أن يكون نصاً).'),
+  body('role')
+    .optional()
+    .isIn(['user', 'rider', 'merchant', 'admin'])
+    .withMessage('Invalid role (دور المستخدم غير صالح).'),
 ];
 
 const loginValidator = [
-  body('email').isEmail().withMessage('Valid email is required'),
-  body('password').isString().withMessage('Password is required'),
+  body('email')
+    .normalizeEmail()
+    .isEmail()
+    .withMessage('Valid email is required (يرجى إدخال بريد إلكتروني صحيح).'),
+  body('password')
+    .isString()
+    .notEmpty()
+    .withMessage('Password is required (كلمة المرور مطلوبة).'),
 ];
 
 const googleLoginValidator = [
-  body('idToken').isString().withMessage('idToken is required'),
+  body('idToken').isString().notEmpty().withMessage('idToken is required (مطلوب معرف توكن جوجل).'),
 ];
 
 const requestResetValidator = [
-  body('email').isEmail().withMessage('Valid email is required'),
+  body('email')
+    .normalizeEmail()
+    .isEmail()
+    .withMessage('Valid email is required (يرجى إدخال بريد إلكتروني صحيح).'),
 ];
 
 const verifyResetValidator = [
-  body('email').isEmail().withMessage('Valid email is required'),
-  body('code').isString().isLength({ min: 4, max: 8 }).withMessage('Code is required'),
+  body('email')
+    .normalizeEmail()
+    .isEmail()
+    .withMessage('Valid email is required (يرجى إدخال بريد إلكتروني صحيح).'),
+  body('code')
+    .isString()
+    .isLength({ min: 4, max: 8 })
+    .withMessage('Code is required (الكود مطلوب).'),
 ];
 
 const resetPasswordValidator = [
-  body('email').isEmail().withMessage('Valid email is required'),
-  body('code').isString().isLength({ min: 4, max: 8 }).withMessage('Code is required'),
-  body('newPassword').isString().isLength({ min: 6 }).withMessage('New password must be at least 6 characters'),
+  body('email')
+    .normalizeEmail()
+    .isEmail()
+    .withMessage('Valid email is required (يرجى إدخال بريد إلكتروني صحيح).'),
+  body('code')
+    .isString()
+    .isLength({ min: 4, max: 8 })
+    .withMessage('Code is required (الكود مطلوب).'),
+  body('newPassword')
+    .isString()
+    .isLength({ min: 6 })
+    .withMessage('New password must be at least 6 characters (كلمة المرور الجديدة يجب ألا تقل عن 6 أحرف).'),
 ];
 
 module.exports = { registerValidator, loginValidator, googleLoginValidator, requestResetValidator, verifyResetValidator, resetPasswordValidator };

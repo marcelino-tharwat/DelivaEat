@@ -6,21 +6,21 @@ const UserSchema = new mongoose.Schema(
     name: {
       type: String,
       trim: true,
-      required: true,
-      minlength: 2,
-      maxlength: 80,
+      required: [true, 'Name is required (الاسم مطلوب).'],
+      minlength: [2, 'Name must be at least 2 characters (الاسم يجب ألا يقل عن حرفين).'],
+      maxlength: [80, 'Name must be at most 80 characters (الاسم يجب ألا يزيد عن 80 حرفاً).'],
     },
     email: {
       type: String,
-      required: true,
+      required: [true, 'Email is required (البريد الإلكتروني مطلوب).'],
       unique: true,
       lowercase: true,
-      match: /[^@\s]+@[^@\s]+\.[^@\s]+/,
+      match: [/[^@\s]+@[^@\s]+\.[^@\s]+/, 'Invalid email format (صيغة البريد الإلكتروني غير صحيحة).'],
     },
     password: {
       type: String,
-      required: true,
-      minlength: 6,
+      required: [true, 'Password is required (كلمة المرور مطلوبة).'],
+      minlength: [6, 'Password must be at least 6 characters (كلمة المرور يجب ألا تقل عن 6 أحرف).'],
       select: false,
     },
     phone: {
@@ -34,7 +34,10 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['user', 'rider', 'merchant', 'admin'],
+      enum: {
+        values: ['user', 'rider', 'merchant', 'admin'],
+        message: 'Invalid role (دور المستخدم غير صالح).',
+      },
       default: 'user',
     },
     // Password reset support
