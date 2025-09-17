@@ -9,6 +9,7 @@ import 'package:deliva_eat/features/auth/signup/ui/widgets/signup_button_link.da
 import 'package:deliva_eat/features/auth/signup/ui/widgets/signup_header.dart';
 import 'package:deliva_eat/generated/l10n.dart';
 import 'package:deliva_eat/core/network/api_client.dart';
+import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -54,7 +55,7 @@ class _SignUpPageState extends State<SignUpPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
-      final l10n = S.of(context);
+      final l10n = AppLocalizations.of(context)!;
       _selectedVehicleType ??= l10n.vehicle_motorcycle; // default
       _selectedBusinessType ??= l10n.business_type_restaurant; // default
       _initialized = true;
@@ -112,7 +113,7 @@ class _SignUpPageState extends State<SignUpPage> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
           phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
-          vehicleType: _selectedVehicleType ?? S.of(context).vehicle_motorcycle,
+          vehicleType: _selectedVehicleType ??  AppLocalizations.of(context)!.vehicle_motorcycle,
           avatarUrl: avatarUrl,
           idCardUrl: idCardUrl,
           licenseUrl: licenseUrl,
@@ -133,7 +134,7 @@ class _SignUpPageState extends State<SignUpPage> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
           phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
-          businessType: _selectedBusinessType ?? S.of(context).business_type_restaurant,
+          businessType: _selectedBusinessType ?? AppLocalizations.of(context)!.business_type_restaurant,
           restaurantName: _restaurantNameController.text.trim(),
           ownerName: _ownerNameController.text.trim(),
           ownerPhone: _ownerPhoneController.text.trim(),
@@ -160,7 +161,7 @@ class _SignUpPageState extends State<SignUpPage> {
             ? 'تم إنشاء حساب المندوب بنجاح'
             : _selectedRoleKey == 'merchant'
                 ? 'تم إنشاء حساب التاجر بنجاح'
-                : S.of(context).signup_success;
+                :  AppLocalizations.of(context)!.signup_success;
         _showSuccess(roleMsg);
       } else {
         final err = (res['error'] ?? {}) as Map<String, dynamic>;
@@ -252,7 +253,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             children: [
                               Opacity(
                                 opacity: _loading ? 0.6 : 1,
-                                child: AppButton(onPressed: _signUp, text: S.of(context).signup_create_account),
+                                child: AppButton(onPressed: _signUp, text:  AppLocalizations.of(context)!.signup_create_account),
                               ),
                               if (_loading)
                                 const SizedBox(
@@ -281,7 +282,7 @@ class _SignUpPageState extends State<SignUpPage> {
     if (_selectedRoleKey == 'rider') {
       return RiderFieldsSection(
         key: const ValueKey('rider'),
-        selectedVehicleType: _selectedVehicleType ?? S.of(context).vehicle_motorcycle,
+        selectedVehicleType: _selectedVehicleType ?? AppLocalizations.of(context)!.vehicle_motorcycle,
         onVehicleTypeChanged: (value) => setState(() => _selectedVehicleType = value!),
         profileImage: _profileImage,
         idCardImage: _idCardImage,
@@ -305,7 +306,7 @@ class _SignUpPageState extends State<SignUpPage> {
         ownerPhoneController: _ownerPhoneController,
         descriptionController: _descriptionController,
         deliveryRadiusController: _deliveryRadiusController,
-        selectedBusinessType: _selectedBusinessType ?? S.of(context).business_type_restaurant,
+        selectedBusinessType: _selectedBusinessType ??  AppLocalizations.of(context)!.business_type_restaurant,
         onBusinessTypeChanged: (value) => setState(() => _selectedBusinessType = value!),
       );
     }
@@ -314,14 +315,14 @@ class _SignUpPageState extends State<SignUpPage> {
   
   // Map role label <-> key to be locale-agnostic
   String _roleKeyFromLabel(BuildContext context, String label) {
-    final l10n = S.of(context);
+    final l10n =  AppLocalizations.of(context)!;
     if (label == l10n.role_rider) return 'rider';
     if (label == l10n.role_merchant) return 'merchant';
     return 'user';
   }
 
   String _roleLabelForKey(BuildContext context, String key) {
-    final l10n = S.of(context);
+    final l10n =  AppLocalizations.of(context)!;
     switch (key) {
       case 'rider':
         return l10n.role_rider;

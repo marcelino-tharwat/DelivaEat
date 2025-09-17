@@ -1,0 +1,686 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_ar.dart';
+import 'app_localizations_en.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'l10n/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppLocalizations? of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  }
+
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('en'),
+  ];
+
+  /// No description provided for @appTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My App'**
+  String get appTitle;
+
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get welcome;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @lightMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get lightMode;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get arabic;
+
+  /// No description provided for @changeLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Language'**
+  String get changeLanguage;
+
+  /// No description provided for @changeTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Theme'**
+  String get changeTheme;
+
+  /// No description provided for @app_title.
+  ///
+  /// In en, this message translates to:
+  /// **'DelivaEat Login'**
+  String get app_title;
+
+  /// No description provided for @app_name.
+  ///
+  /// In en, this message translates to:
+  /// **'DelivaEat'**
+  String get app_name;
+
+  /// No description provided for @app_tagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Delicious Food Delivered'**
+  String get app_tagline;
+
+  /// No description provided for @welcome_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back!'**
+  String get welcome_back;
+
+  /// No description provided for @login_to_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Login to continue'**
+  String get login_to_continue;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// No description provided for @forgot_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgot_password;
+
+  /// No description provided for @no_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? '**
+  String get no_account;
+
+  /// No description provided for @create_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Account'**
+  String get create_account;
+
+  /// No description provided for @email_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get email_hint;
+
+  /// No description provided for @password_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get password_hint;
+
+  /// No description provided for @signup_header_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Account'**
+  String get signup_header_title;
+
+  /// No description provided for @signup_already_have_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? '**
+  String get signup_already_have_account;
+
+  /// No description provided for @signup_login.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get signup_login;
+
+  /// No description provided for @signup_create_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get signup_create_account;
+
+  /// No description provided for @signup_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully!'**
+  String get signup_success;
+
+  /// No description provided for @role_selector_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Type'**
+  String get role_selector_title;
+
+  /// No description provided for @role_user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get role_user;
+
+  /// No description provided for @role_rider.
+  ///
+  /// In en, this message translates to:
+  /// **'Rider'**
+  String get role_rider;
+
+  /// No description provided for @role_merchant.
+  ///
+  /// In en, this message translates to:
+  /// **'Merchant'**
+  String get role_merchant;
+
+  /// No description provided for @rider_info_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Rider Information'**
+  String get rider_info_title;
+
+  /// No description provided for @vehicle_type_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Type'**
+  String get vehicle_type_label;
+
+  /// No description provided for @vehicle_motorcycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Motorcycle'**
+  String get vehicle_motorcycle;
+
+  /// No description provided for @vehicle_bicycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bicycle'**
+  String get vehicle_bicycle;
+
+  /// No description provided for @vehicle_scooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Scooter'**
+  String get vehicle_scooter;
+
+  /// No description provided for @profile_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Photo'**
+  String get profile_photo;
+
+  /// No description provided for @id_card_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'ID Card Photo'**
+  String get id_card_photo;
+
+  /// No description provided for @license_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'License Photo'**
+  String get license_photo;
+
+  /// No description provided for @vehicle_photo_front.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Photo (Front)'**
+  String get vehicle_photo_front;
+
+  /// No description provided for @vehicle_photo_side.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Photo (Side)'**
+  String get vehicle_photo_side;
+
+  /// No description provided for @license_plate_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'License Plate Photo'**
+  String get license_plate_photo;
+
+  /// No description provided for @select_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Photo'**
+  String get select_photo;
+
+  /// No description provided for @change_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Photo'**
+  String get change_photo;
+
+  /// No description provided for @merchant_info_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Merchant Information'**
+  String get merchant_info_title;
+
+  /// No description provided for @business_type_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Type'**
+  String get business_type_label;
+
+  /// No description provided for @business_type_restaurant.
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurant'**
+  String get business_type_restaurant;
+
+  /// No description provided for @business_type_grocery.
+  ///
+  /// In en, this message translates to:
+  /// **'Grocery Store'**
+  String get business_type_grocery;
+
+  /// No description provided for @business_type_pharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get business_type_pharmacy;
+
+  /// No description provided for @business_type_bakery.
+  ///
+  /// In en, this message translates to:
+  /// **'Bakery'**
+  String get business_type_bakery;
+
+  /// No description provided for @business_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Name'**
+  String get business_name;
+
+  /// No description provided for @owner_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner Name'**
+  String get owner_name;
+
+  /// No description provided for @owner_phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner Phone'**
+  String get owner_phone;
+
+  /// No description provided for @business_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Description'**
+  String get business_description;
+
+  /// No description provided for @delivery_radius.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Radius (KM)'**
+  String get delivery_radius;
+
+  /// No description provided for @basic_info_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get basic_info_title;
+
+  /// No description provided for @full_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get full_name;
+
+  /// No description provided for @phone_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phone_number;
+
+  /// No description provided for @error_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get error_required;
+
+  /// No description provided for @error_name_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get error_name_required;
+
+  /// No description provided for @error_email_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get error_email_required;
+
+  /// No description provided for @error_password_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get error_password_required;
+
+  /// No description provided for @error_phone_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone is required'**
+  String get error_phone_required;
+
+  /// No description provided for @getting_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting Location...'**
+  String get getting_location;
+
+  /// No description provided for @pick_on_map.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick on Map'**
+  String get pick_on_map;
+
+  /// No description provided for @enter_address_manually.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Address Manually'**
+  String get enter_address_manually;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @enter_address.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Address'**
+  String get enter_address;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @current_location_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Location'**
+  String get current_location_label;
+
+  /// No description provided for @selected_address.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Address:'**
+  String get selected_address;
+
+  /// No description provided for @no_location_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'No location selected'**
+  String get no_location_selected;
+
+  /// No description provided for @location_permission_denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission denied'**
+  String get location_permission_denied;
+
+  /// No description provided for @location_permissions_permanently_denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permissions permanently denied'**
+  String get location_permissions_permanently_denied;
+
+  /// No description provided for @failed_to_get_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get location'**
+  String get failed_to_get_location;
+
+  /// No description provided for @interactive_map.
+  ///
+  /// In en, this message translates to:
+  /// **'Interactive Map'**
+  String get interactive_map;
+
+  /// No description provided for @google_maps_integration.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Maps integration would go here'**
+  String get google_maps_integration;
+
+  /// No description provided for @tap_on_map_to_select_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap on map to select location'**
+  String get tap_on_map_to_select_location;
+
+  /// No description provided for @enter_your_complete_address.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your complete address...'**
+  String get enter_your_complete_address;
+
+  /// No description provided for @error_connection_timeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timeout'**
+  String get error_connection_timeout;
+
+  /// No description provided for @error_send_timeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Send timeout'**
+  String get error_send_timeout;
+
+  /// No description provided for @error_receive_timeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive timeout'**
+  String get error_receive_timeout;
+
+  /// No description provided for @error_bad_certificate.
+  ///
+  /// In en, this message translates to:
+  /// **'Bad certificate'**
+  String get error_bad_certificate;
+
+  /// No description provided for @error_request_cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Request cancelled'**
+  String get error_request_cancelled;
+
+  /// No description provided for @error_connection_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection error'**
+  String get error_connection_error;
+
+  /// No description provided for @error_unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Oops there was an error, please try later'**
+  String get error_unknown;
+
+  /// No description provided for @error_not_found.
+  ///
+  /// In en, this message translates to:
+  /// **'Your request not found, please try later'**
+  String get error_not_found;
+
+  /// No description provided for @error_internal_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal server error, please try later'**
+  String get error_internal_server;
+
+  /// No description provided for @error_processing_response.
+  ///
+  /// In en, this message translates to:
+  /// **'Error processing server response'**
+  String get error_processing_response;
+}
+
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['ar', 'en'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
+AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'en':
+      return AppLocalizationsEn();
+  }
+
+  throw FlutterError(
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}

@@ -60,17 +60,47 @@ class MessageLookup extends MessageLookupByLibrary {
     "enter_your_complete_address": MessageLookupByLibrary.simpleMessage(
       "أدخل عنوانك الكامل...",
     ),
+    "error_bad_certificate": MessageLookupByLibrary.simpleMessage(
+      "شهادة غير صالحة",
+    ),
+    "error_connection_error": MessageLookupByLibrary.simpleMessage(
+      "خطأ في الاتصال",
+    ),
+    "error_connection_timeout": MessageLookupByLibrary.simpleMessage(
+      "انتهت مهلة الاتصال",
+    ),
     "error_email_required": MessageLookupByLibrary.simpleMessage(
       "البريد الإلكتروني مطلوب",
     ),
+    "error_internal_server": MessageLookupByLibrary.simpleMessage(
+      "خطأ في الخادم الداخلي، حاول لاحقاً",
+    ),
     "error_name_required": MessageLookupByLibrary.simpleMessage("الاسم مطلوب"),
+    "error_not_found": MessageLookupByLibrary.simpleMessage(
+      "الطلب غير موجود، حاول لاحقاً",
+    ),
     "error_password_required": MessageLookupByLibrary.simpleMessage(
       "كلمة المرور مطلوبة",
     ),
     "error_phone_required": MessageLookupByLibrary.simpleMessage(
       "رقم الهاتف مطلوب",
     ),
+    "error_processing_response": MessageLookupByLibrary.simpleMessage(
+      "خطأ أثناء معالجة استجابة الخادم",
+    ),
+    "error_receive_timeout": MessageLookupByLibrary.simpleMessage(
+      "انتهت مهلة الاستقبال",
+    ),
+    "error_request_cancelled": MessageLookupByLibrary.simpleMessage(
+      "تم إلغاء الطلب",
+    ),
     "error_required": MessageLookupByLibrary.simpleMessage("مطلوب"),
+    "error_send_timeout": MessageLookupByLibrary.simpleMessage(
+      "انتهت مهلة الإرسال",
+    ),
+    "error_unknown": MessageLookupByLibrary.simpleMessage(
+      "حدث خطأ ما، حاول لاحقاً",
+    ),
     "failed_to_get_location": MessageLookupByLibrary.simpleMessage(
       "فشل في الحصول على الموقع",
     ),
@@ -153,7 +183,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vehicle_scooter": MessageLookupByLibrary.simpleMessage("سكوتر"),
     "vehicle_type_label": MessageLookupByLibrary.simpleMessage("نوع المركبة"),
-    "welcome": MessageLookupByLibrary.simpleMessage("أهلاً وسهلاً"),
+    "welcome": MessageLookupByLibrary.simpleMessage("مرحبًا"),
     "welcome_back": MessageLookupByLibrary.simpleMessage("مرحباً بعودتك!"),
   };
 }

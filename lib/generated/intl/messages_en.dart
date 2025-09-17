@@ -72,11 +72,26 @@ class MessageLookup extends MessageLookupByLibrary {
     "enter_your_complete_address": MessageLookupByLibrary.simpleMessage(
       "Enter your complete address...",
     ),
+    "error_bad_certificate": MessageLookupByLibrary.simpleMessage(
+      "Bad certificate",
+    ),
+    "error_connection_error": MessageLookupByLibrary.simpleMessage(
+      "Connection error",
+    ),
+    "error_connection_timeout": MessageLookupByLibrary.simpleMessage(
+      "Connection timeout",
+    ),
     "error_email_required": MessageLookupByLibrary.simpleMessage(
       "Email is required",
     ),
+    "error_internal_server": MessageLookupByLibrary.simpleMessage(
+      "Internal server error, please try later",
+    ),
     "error_name_required": MessageLookupByLibrary.simpleMessage(
       "Name is required",
+    ),
+    "error_not_found": MessageLookupByLibrary.simpleMessage(
+      "Your request not found, please try later",
     ),
     "error_password_required": MessageLookupByLibrary.simpleMessage(
       "Password is required",
@@ -84,7 +99,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "error_phone_required": MessageLookupByLibrary.simpleMessage(
       "Phone is required",
     ),
+    "error_processing_response": MessageLookupByLibrary.simpleMessage(
+      "Error processing server response",
+    ),
+    "error_receive_timeout": MessageLookupByLibrary.simpleMessage(
+      "Receive timeout",
+    ),
+    "error_request_cancelled": MessageLookupByLibrary.simpleMessage(
+      "Request cancelled",
+    ),
     "error_required": MessageLookupByLibrary.simpleMessage("Required"),
+    "error_send_timeout": MessageLookupByLibrary.simpleMessage("Send timeout"),
+    "error_unknown": MessageLookupByLibrary.simpleMessage(
+      "Oops there was an error, please try later",
+    ),
     "failed_to_get_location": MessageLookupByLibrary.simpleMessage(
       "Failed to get location",
     ),

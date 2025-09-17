@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:deliva_eat/core/widgets/app_drop_down.dart';
 import 'package:deliva_eat/generated/l10n.dart';
+import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -42,7 +43,7 @@ class RiderFieldsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = S.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -2,7 +2,7 @@ name: deliva_eat
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -28,8 +28,10 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  build_runner: ^2.8.0
   cupertino_icons: ^1.0.8
   dio: ^5.9.0
+  either_dart: ^1.0.0
   flutter:
     sdk: flutter
   flutter_bloc: ^9.0.0
@@ -42,11 +44,18 @@ dependencies:
   geocoding: ^4.0.0
   geolocator: ^14.0.2
   go_router: ^16.2.1
+  google_sign_in: ^6.2.1
   http: ^1.5.0
   image_picker: ^1.2.0
+  intl: ^0.20.2
+  json_annotation: ^4.9.0
+  json_serializable: ^6.11.1
+  logger: ^2.6.1
+  pretty_dio_logger: ^1.4.0
   provider: ^6.1.5
+  retrofit: ^4.7.2
+  retrofit_generator: ^10.0.5
   shared_preferences: ^2.5.3
-  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_lints: ^6.0.0
@@ -57,11 +66,12 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate: true
+
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
@@ -89,9 +99,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-flutter_intl:
-  enabled: true
-
-l10n:
-  arb-dir: lib/l10n
-  template-arb-file: intl_en.arb

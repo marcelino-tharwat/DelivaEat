@@ -1,5 +1,6 @@
 
 import 'package:deliva_eat/generated/l10n.dart';
+import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class SignupBottomLinks extends StatelessWidget {
@@ -7,7 +8,7 @@ class SignupBottomLinks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = S.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
