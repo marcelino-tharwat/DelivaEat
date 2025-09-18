@@ -40,6 +40,10 @@ const googleLoginValidator = [
   body('idToken').isString().notEmpty().withMessage('idToken is required (مطلوب معرف توكن جوجل).'),
 ];
 
+const facebookLoginValidator = [
+  body('accessToken').isString().notEmpty().withMessage('accessToken is required (مطلوب توكن فيسبوك).'),
+];
+
 const requestResetValidator = [
   body('email')
     .normalizeEmail()
@@ -73,4 +77,4 @@ const resetPasswordValidator = [
     .withMessage('New password must be at least 6 characters (كلمة المرور الجديدة يجب ألا تقل عن 6 أحرف).'),
 ];
 
-module.exports = { registerValidator, loginValidator, googleLoginValidator, requestResetValidator, verifyResetValidator, resetPasswordValidator };
+module.exports = { registerValidator, loginValidator, googleLoginValidator, facebookLoginValidator, requestResetValidator, verifyResetValidator, resetPasswordValidator };

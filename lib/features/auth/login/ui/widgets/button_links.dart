@@ -20,8 +20,10 @@ class BottomLinks extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 30),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 6,
           children: [
             Text(
               l10n.no_account,

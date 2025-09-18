@@ -3,6 +3,7 @@ const User = require('../models/User');
 const { signToken } = require('../utils/jwt');
 const { sendMail } = require('../utils/mailer');
 const { verifyGoogleIdToken } = require('../utils/google');
+const { verifyFacebookAccessToken, getFacebookProfile } = require('../utils/facebook');
 const RiderProfile = require('../models/RiderProfile');
 const MerchantProfile = require('../models/MerchantProfile');
 
@@ -196,6 +197,67 @@ async function googleLogin(req, res, next) {
 }
 
 module.exports.googleLogin = googleLogin;
+
+// Facebook Login
+async function facebookLogin(req, res, next) {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'Invalid input' },
+        details: errors.array(),
+      });
+    }
+
+    const { accessToken } = req.body;
+
+    // Verify token
+    const debugData = await verifyFacebookAccessToken(accessToken);
+    if (!debugData || !debugData.is_valid) {
+      return res.status(401).json({ success: false, error: { code: 'INVALID_FACEBOOK_TOKEN', message: 'Invalid Facebook token' } });
+    }
+
+    // Fetch profile
+    const profile = await getFacebookProfile(accessToken);
+    const email = profile.email || null;
+    const name = profile.name || (email ? email.split('@')[0] : 'Facebook User');
+    const picture = profile?.picture?.data?.url || null;
+
+    if (!email) {
+      // Email may be missing if not granted email permission
+      return res.status(400).json({ success: false, error: { code: 'FACEBOOK_NO_EMAIL', message: 'Facebook account has no email or permission not granted' } });
+    }
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      const randomPassword = Math.random().toString(36).slice(-12) + 'Aa1!';
+      user = await User.create({
+        name,
+        email,
+        password: randomPassword,
+        avatarUrl: picture,
+        role: 'user',
+      });
+    }
+
+    const token = signToken(user._id.toString());
+    const safeUser = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      avatarUrl: user.avatarUrl,
+      role: user.role,
+      createdAt: user.createdAt,
+    };
+
+    return res.json({ success: true, data: { user: safeUser, token } });
+  } catch (err) {
+    return next(err);
+  }
+}
+
+module.exports.facebookLogin = facebookLogin;
 
 // -------- Password reset flow --------
 function generateCode() {

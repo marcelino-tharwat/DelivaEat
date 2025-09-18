@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">deliva_eat</string>
+    <string name="facebook_app_id">728008483561281</string>
+    <string name="fb_login_protocol_scheme">fb728008483561281</string>
+</resources>

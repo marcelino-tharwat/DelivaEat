@@ -13,8 +13,70 @@ Role mapping between Flutter UI and backend:
 Notes:
 - Images should be uploaded to Cloudinary via the Upload API to get URLs, then included in the JSON below when applicable.
 - Phone and role-specific fields will be stored in the database in later implementation steps (model updates pending).
+- Social login supported: Google and Facebook.
+
+## Environment variables
+Set these in `server/.env`:
+
+- `GOOGLE_CLIENT_ID`
+- `FACEBOOK_APP_ID`
+- `FACEBOOK_APP_SECRET`
 
 ---
+
+## POST /api/auth/google
+Content-Type: `application/json`
+
+Body
+- `idToken` string, required (Google ID token from Google Sign-In)
+
+Responses
+- 200 OK
+```json
+{
+  "success": true,
+  "data": {
+    "user": { "id": "66e5...", "name": "Ahmed", "email": "ahmed@example.com", "avatarUrl": null, "role": "user", "createdAt": "..." },
+    "token": "<jwt>"
+  }
+}
+```
+- 401 Invalid token
+```json
+{ "success": false, "error": { "code": "INVALID_GOOGLE_TOKEN", "message": "Invalid Google token" } }
+```
+
+---
+
+## POST /api/auth/facebook
+Content-Type: `application/json`
+
+Body
+- `accessToken` string, required (Facebook user access token from Facebook Login)
+
+Notes
+- The app verifies the token with `debug_token` and then fetches profile `id,name,email,picture`.
+- Email may be missing if the user didn't grant the email permission; in that case the API returns an error `FACEBOOK_NO_EMAIL`.
+
+Responses
+- 200 OK
+```json
+{
+  "success": true,
+  "data": {
+    "user": { "id": "66e5...", "name": "Ahmed", "email": "ahmed@example.com", "avatarUrl": "https://...", "role": "user", "createdAt": "..." },
+    "token": "<jwt>"
+  }
+}
+```
+- 401 Invalid token
+```json
+{ "success": false, "error": { "code": "INVALID_FACEBOOK_TOKEN", "message": "Invalid Facebook token" } }
+```
+- 400 No email
+```json
+{ "success": false, "error": { "code": "FACEBOOK_NO_EMAIL", "message": "Facebook account has no email or permission not granted" } }
+```
 
 ## POST /api/auth/register
 Create a new user. Payload varies by selected role.

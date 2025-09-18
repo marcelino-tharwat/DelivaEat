@@ -78,6 +78,21 @@ class ApiClient {
     throw Exception('Unexpected response');
   }
 
+  Future<Map<String, dynamic>> postAuthFacebook({
+    required String accessToken,
+  }) async {
+    final res = await _dio.post(
+      '/api/auth/facebook',
+      data: {
+        'accessToken': accessToken,
+      },
+    );
+    if (res.data is Map<String, dynamic>) {
+      return res.data as Map<String, dynamic>;
+    }
+    throw Exception('Unexpected response');
+  }
+
   Future<Map<String, dynamic>> postAuthLogin({
     required String email,
     required String password,
