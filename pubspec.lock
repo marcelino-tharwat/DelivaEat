@@ -318,7 +318,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.1.1"
-
   flutter_facebook_auth:
     dependency: "direct main"
     description:
@@ -343,7 +342,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
-
   flutter_image_compress:
     dependency: "direct main"
     description:
@@ -392,7 +390,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.5"
->>>>>>> 8a11538c5d448550473ae604acb4a5e73204774b
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -969,11 +966,7 @@ packages:
     source: hosted
     version: "1.1.0"
   path_provider:
-<<<<<<< HEAD
-    dependency: transitive
-=======
     dependency: "direct main"
->>>>>>> 8a11538c5d448550473ae604acb4a5e73204774b
     description:
       name: path_provider
       sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"

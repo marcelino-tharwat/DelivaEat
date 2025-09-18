@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:deliva_eat/core/network/dio_factory.dart';
 import 'package:deliva_eat/core/network/api_service.dart';
+import 'package:deliva_eat/core/network/api_constant.dart';
 import 'package:deliva_eat/features/auth/login/data/repos/login_repo.dart';
 import 'package:deliva_eat/features/auth/login/cubit/login_cubit.dart';
 import 'package:deliva_eat/features/auth/signup/data/repos/signup_repo.dart';
@@ -14,7 +15,7 @@ final getIt = GetIt.instance;
 void setupGetIt() {
   Dio dio = DioFactory.getDio();
   //api service
-  getIt.registerLazySingleton<ApiService>(() => ApiService(dio));
+  getIt.registerLazySingleton<ApiService>(() => ApiService(dio, baseUrl: ApiConstant.baseUrl));
   //LOGIN
   getIt.registerLazySingleton<LoginRepo>(() => LoginRepo(apiService: getIt()));
   getIt.registerFactory<LoginCubit>(() => LoginCubit(loginRepo: getIt()));
