@@ -13,10 +13,16 @@ class BottomLinks extends StatelessWidget {
     return Column(
       children: [
         TextButton(
-          onPressed: () { /* منطق نسيت كلمة المرور */ },
+          onPressed: () {
+            context.go(AppRoutes.forgetPasswordPage);
+          },
           child: Text(
             l10n.forgot_password,
-            style: TextStyle(color: Colors.yellow[700], fontWeight: FontWeight.w600, fontSize: 14),
+            style: TextStyle(
+              color: Colors.yellow[700],
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
           ),
         ),
         const SizedBox(height: 30),
@@ -30,10 +36,16 @@ class BottomLinks extends StatelessWidget {
               style: TextStyle(color: Colors.grey[600], fontSize: 14),
             ),
             GestureDetector(
-              onTap: () {  context.go(AppRoutes.signupPage); },
+              onTap: () {
+                context.go(AppRoutes.signupPage);
+              },
               child: Text(
                 l10n.create_account,
-                style: TextStyle(color: Colors.yellow[700], fontWeight: FontWeight.bold, fontSize: 14),
+                style: TextStyle(
+                  color: Colors.yellow[700],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
               ),
             ),
           ],

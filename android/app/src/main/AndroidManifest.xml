@@ -21,11 +21,16 @@
     <application
         android:label="deliva_eat"
         android:name="${applicationName}"
+
         android:icon="@mipmap/ic_launcher">
         <!-- Facebook SDK config -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"> 
+
 
         <activity
             android:name=".MainActivity"

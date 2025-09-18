@@ -1,6 +1,7 @@
+
 import 'package:deliva_eat/core/widgets/app_drop_down.dart';
 import 'package:deliva_eat/core/widgets/app_text_field.dart';
-import 'package:deliva_eat/generated/l10n.dart';
+import 'package:deliva_eat/features/auth/signup/ui/location.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,6 +14,8 @@ class MerchantFieldsSection extends StatelessWidget {
   final TextEditingController deliveryRadiusController;
   final String selectedBusinessType;
   final ValueChanged<String?> onBusinessTypeChanged;
+  // 1. Add the callback function parameter
+  final Function(String address, double latitude, double longitude) onLocationSelected;
 
   const MerchantFieldsSection({
     super.key,
@@ -23,11 +26,12 @@ class MerchantFieldsSection extends StatelessWidget {
     required this.deliveryRadiusController,
     required this.selectedBusinessType,
     required this.onBusinessTypeChanged,
+    required this.onLocationSelected, // 2. Add it to the constructor
   });
 
   @override
   Widget build(BuildContext context) {
-    final l10n =AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,6 +82,12 @@ class MerchantFieldsSection extends StatelessWidget {
           prefixIcon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
           validator: (v) => v!.isEmpty ? l10n.error_required : null,
+        ),
+        SizedBox(height: 16.h),
+        
+        // 3. Add the LocationPickerWidget here
+        LocationPickerWidget(
+          onLocationSelected: onLocationSelected,
         ),
         SizedBox(height: 16.h),
 

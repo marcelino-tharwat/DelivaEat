@@ -47,9 +47,9 @@ class ServerError extends ApiErrorHandler {
   ) {
     final loc = AppLocalizations.of(context)!;
 
-    if (statusCode == 400 || statusCode == 401 || statusCode == 403) {
+    if (statusCode == 400 || statusCode == 401 || statusCode == 403|| statusCode == 409) {
       String message = _extractMessage(response, context);
-      return ServerError(message);
+      return ServerError(message);  
     } else if (statusCode == 404) {
       return ServerError(loc.error_not_found);
     } else if (statusCode == 500) {
@@ -59,37 +59,44 @@ class ServerError extends ApiErrorHandler {
     }
   }
 
-  static String _extractMessage(dynamic response, BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
+ static String _extractMessage(dynamic response, BuildContext context) {
+  final loc = AppLocalizations.of(context)!;
 
-    try {
-      if (response == null) {
-        return loc.error_unknown;
-      }
-
-      if (response is Map<String, dynamic>) {
-        if (response.containsKey('message') && response['message'] != null) {
-          return response['message'].toString();
-        }
-        if (response.containsKey('Message') && response['Message'] != null) {
-          return response['Message'].toString();
-        }
-        if (response.containsKey('error') && response['error'] != null) {
-          return response['error'].toString();
-        }
-        if (response.containsKey('msg') && response['msg'] != null) {
-          return response['msg'].toString();
-        }
-        return response.toString();
-      }
-
-      if (response is String && response.isNotEmpty) {
-        return response;
-      }
-
-      return response.toString();
-    } catch (e) {
-      return loc.error_processing_response;
+  try {
+    if (response == null) {
+      return loc.error_unknown;
     }
+
+    if (response is Map<String, dynamic>) {
+      if (response.containsKey('message') && response['message'] != null) {
+        return response['message'].toString();
+      }
+      if (response.containsKey('Message') && response['Message'] != null) {
+        return response['Message'].toString();
+      }
+      if (response.containsKey('error') && response['error'] != null) {
+        final error = response['error'];
+        if (error is String) {
+          return error;
+        }
+        if (error is Map<String, dynamic> && error.containsKey('message')) {
+          return error['message'].toString();
+        }
+        return error.toString();
+      }
+      if (response.containsKey('msg') && response['msg'] != null) {
+        return response['msg'].toString();
+      }
+      return response.toString();
+    }
+
+    if (response is String && response.isNotEmpty) {
+      return response;
+    }
+
+    return response.toString();
+  } catch (e) {
+    return loc.error_processing_response;
   }
+}
 }

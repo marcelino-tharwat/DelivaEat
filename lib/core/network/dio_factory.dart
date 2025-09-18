@@ -7,12 +7,14 @@ class DioFactory {
   DioFactory._();
   static Dio? dio;
 static Dio getDio() {
-  Duration timeOut = const Duration(seconds: 30);
+  Duration timeOut = const Duration(minutes: 2);
   if (dio == null) {
     dio = Dio();
     dio!
       ..options.connectTimeout = timeOut
-      ..options.receiveTimeout = timeOut;
+      ..options.receiveTimeout = timeOut
+      ..options.sendTimeout = timeOut; // <--- أضف هذا السطر المهم
+
     addDioInterCeptor();
     return dio!;
   } else {
