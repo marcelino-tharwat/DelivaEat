@@ -2,12 +2,12 @@ import 'dart:developer';
 
 import 'package:deliva_eat/core/widgets/app_button.dart';
 import 'package:deliva_eat/core/widgets/app_text_field.dart';
-import 'package:deliva_eat/generated/l10n.dart';
-import 'package:deliva_eat/core/network/api_client.dart';
+
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:deliva_eat/features/auth/login/cubit/login_cubit.dart';
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
 
@@ -21,7 +21,6 @@ class _LoginFormState extends State<LoginForm> {
   final _passwordController = TextEditingController();
 
   bool _isPasswordVisible = false;
-  bool _loading = false;
 
   @override
   void dispose() {
@@ -32,16 +31,18 @@ class _LoginFormState extends State<LoginForm> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      log('Email: ${_emailController.text}');
-      log('Password: ${_passwordController.text}');
-
-
+      context.read<LoginCubit>().login(
+            email: _emailController.text,
+            password: _passwordController.text,
+            context: context,
+          );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
     return Form(
       key: _formKey,
       child: Column(
@@ -61,16 +62,19 @@ class _LoginFormState extends State<LoginForm> {
           ),
           SizedBox(height: 40.h),
 
+          // Email
           AppTextField(
             controller: _emailController,
             labelText: l10n.email,
             hintText: 'example@gmail.com',
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
-            validator: (v) => v!.isEmpty ? l10n.error_email_required : null,
+            validator: (v) =>
+                v!.isEmpty ? l10n.error_email_required : null,
           ),
           SizedBox(height: 20.h),
 
+          // Password
           AppTextField(
             controller: _passwordController,
             labelText: l10n.password,
@@ -85,46 +89,42 @@ class _LoginFormState extends State<LoginForm> {
                 color: Colors.grey[600],
               ),
             ),
-            validator: (v) => v!.isEmpty ? l10n.error_password_required : null,
+            validator: (v) =>
+                v!.isEmpty ? l10n.error_password_required : null,
           ),
           SizedBox(height: 30.h),
 
+          // Button
           SizedBox(
             width: double.infinity,
             height: 50.h,
-            child: AbsorbPointer(
-              absorbing: _loading,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Opacity(
-                    opacity: _loading ? 0.6 : 1,
-                    child: AppButton(text: l10n.login, onPressed: _login),
+            child: BlocBuilder<LoginCubit, LoginState>(
+              builder: (context, state) {
+                final loading = state is LoginLoading;
+                return AbsorbPointer(
+                  absorbing: loading,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Opacity(
+                        opacity: loading ? 0.6 : 1,
+                        child: AppButton(text: l10n.login, onPressed: _login),
+                      ),
+                      if (loading)
+                        const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                    ],
                   ),
-                  if (_loading)
-                    const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                ],
-              ),
+                );
+              },
             ),
           ),
         ],
       ),
     );
   }
-
-  void _showSuccess(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.green),
-    );
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
-  }
 }
+

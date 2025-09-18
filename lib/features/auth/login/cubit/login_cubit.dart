@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:deliva_eat/features/auth/login/data/models/auth_response.dart';
 import 'package:meta/meta.dart';
 import 'package:deliva_eat/features/auth/login/data/models/login_req_model.dart';
 import 'package:deliva_eat/features/auth/login/data/repos/login_repo.dart';
@@ -21,7 +22,7 @@ class LoginCubit extends Cubit<LoginState> {
     final result = await loginRepo.login(loginReqModel: loginReqModel, context: context);
     result.fold(
       (error) => emit(LoginFailure(error.errorMessage)),
-      (loginResModel) => emit(LoginSuccess()),
+      (authResponse) => emit(LoginSuccess(authResponse)),
     );
   }
 }
