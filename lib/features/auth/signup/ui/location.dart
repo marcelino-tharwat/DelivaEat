@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 
-
 class LocationPickerWidget extends StatefulWidget {
-  final Function(String address, double latitude, double longitude) onLocationSelected;
+  final Function(String address, double latitude, double longitude)
+  onLocationSelected;
   final String? initialAddress;
 
   const LocationPickerWidget({
@@ -53,11 +53,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.location_on,
-                color: Color(0xFFF5C842),
-                size: 24,
-              ),
+              const Icon(Icons.location_on, color: Color(0xFFF5C842), size: 24),
               const SizedBox(width: 8),
               const Text(
                 'Location',
@@ -83,7 +79,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                 AppLocalizations.of(context)!.selected_address,
+                  AppLocalizations.of(context)!.selected_address,
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Colors.grey,
@@ -92,10 +88,13 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  _currentAddress ??  AppLocalizations.of(context)!.no_location_selected,
+                  _currentAddress ??
+                      AppLocalizations.of(context)!.no_location_selected,
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: _currentAddress != null ? Colors.black87 : Colors.grey,
+                    color: _currentAddress != null
+                        ? Colors.black87
+                        : Colors.grey,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -116,11 +115,17 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                           height: 16.h,
                           child: const CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : const Icon(Icons.my_location, size: 18),
-                  label: Text(_isLoading ?  AppLocalizations.of(context)!.getting_location :  AppLocalizations.of(context)!.current_location_label),
+                  label: Text(
+                    _isLoading
+                        ? AppLocalizations.of(context)!.getting_location
+                        : AppLocalizations.of(context)!.current_location_label,
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFF5C842),
                     foregroundColor: Colors.white,
@@ -136,7 +141,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                 child: ElevatedButton.icon(
                   onPressed: () => _openMapPicker(),
                   icon: const Icon(Icons.map, size: 18),
-                  label: Text( AppLocalizations.of(context)!.pick_on_map),
+                  label: Text(AppLocalizations.of(context)!.pick_on_map),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: const Color(0xFFF5C842),
@@ -158,7 +163,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
             child: TextButton.icon(
               onPressed: () => _showAddressInput(),
               icon: const Icon(Icons.edit_location, size: 18),
-              label: Text( AppLocalizations.of(context)!.enter_address_manually),
+              label: Text(AppLocalizations.of(context)!.enter_address_manually),
               style: TextButton.styleFrom(
                 foregroundColor: const Color(0xFFF5C842),
                 shape: RoundedRectangleBorder(
@@ -180,41 +185,53 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          _showError( AppLocalizations.of(context)!.location_permission_denied);
+          if (mounted)
+            _showError(
+              AppLocalizations.of(context)!.location_permission_denied,
+            );
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        _showError( AppLocalizations.of(context)!.location_permissions_permanently_denied);
+        if (mounted)
+          _showError(
+            AppLocalizations.of(
+              context,
+            )!.location_permissions_permanently_denied,
+          );
         return;
       }
-      
+
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      
-      // Here you would normally use geocoding to convert coordinates to address
-      // For now, we'll use a placeholder
-      String address = "Current Location: ${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}";
-      
+
+      String address =
+          "Current Location: ${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}";
+
+      if (!mounted) return; // هنا مهم عشان نتأكد إن الـ widget لسه شغال
+
       setState(() {
         _currentAddress = address;
         _currentLatitude = position.latitude;
         _currentLongitude = position.longitude;
       });
-      
+
       widget.onLocationSelected(address, position.latitude, position.longitude);
-      
     } catch (e) {
-      _showError('${ AppLocalizations.of(context)!.failed_to_get_location}: ${e.toString()}');
+      if (mounted)
+        _showError(
+          '${AppLocalizations.of(context)!.failed_to_get_location}: ${e.toString()}',
+        );
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   void _openMapPicker() {
+    if (!mounted) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -238,16 +255,24 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
           Container(
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey, width: 0.2.w)),
+              border: Border(
+                bottom: BorderSide(color: Colors.grey, width: 0.2.w),
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                   AppLocalizations.of(context)!.pick_on_map,
-                  style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+                  AppLocalizations.of(context)!.pick_on_map,
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close),
+                ),
               ],
             ),
           ),
@@ -261,9 +286,19 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                   children: [
                     Icon(Icons.map, size: 100.w, color: Colors.grey),
                     SizedBox(height: 16.h),
-                    Text( AppLocalizations.of(context)!.interactive_map, style: TextStyle(fontSize: 18.sp, color: Colors.grey, fontWeight: FontWeight.w500)),
+                    Text(
+                      AppLocalizations.of(context)!.interactive_map,
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                     SizedBox(height: 8.h),
-                    Text( AppLocalizations.of(context)!.google_maps_integration, style: TextStyle(fontSize: 14.sp, color: Colors.grey)),
+                    Text(
+                      AppLocalizations.of(context)!.google_maps_integration,
+                      style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
@@ -283,14 +318,27 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                     children: [
                       Icon(Icons.location_on, color: const Color(0xFFF5C842)),
                       SizedBox(width: 8.w),
-                      Expanded(child: Text(_currentAddress ??   AppLocalizations.of(context)!.tap_on_map_to_select_location, style: TextStyle(fontSize: 14.sp))),
+                      Expanded(
+                        child: Text(
+                          _currentAddress ??
+                              AppLocalizations.of(
+                                context,
+                              )!.tap_on_map_to_select_location,
+                          style: TextStyle(fontSize: 14.sp),
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 SizedBox(height: 16.h),
                 Row(
                   children: [
-                    Expanded(child: TextButton(onPressed: () => Navigator.pop(context), child: Text( AppLocalizations.of(context)!.cancel))),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(AppLocalizations.of(context)!.cancel),
+                      ),
+                    ),
                     SizedBox(width: 12.w),
                     Expanded(
                       child: ElevatedButton(
@@ -298,18 +346,25 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                           const mockAddress = 'Selected Location from Map';
                           const mockLat = 31.2001;
                           const mockLng = 29.9187;
-                          
+
                           setState(() {
                             _currentAddress = mockAddress;
                             _currentLatitude = mockLat;
                             _currentLongitude = mockLng;
                           });
-                          
-                          widget.onLocationSelected(mockAddress, mockLat, mockLng);
+
+                          widget.onLocationSelected(
+                            mockAddress,
+                            mockLat,
+                            mockLng,
+                          );
                           Navigator.pop(context);
                         },
-                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF5C842), foregroundColor: Colors.white),
-                        child: Text( AppLocalizations.of(context)!.confirm),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF5C842),
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text(AppLocalizations.of(context)!.confirm),
                       ),
                     ),
                   ],
@@ -324,41 +379,56 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
 
   void _showAddressInput() {
     final addressController = TextEditingController(text: _currentAddress);
+    if (!mounted) return;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text( AppLocalizations.of(context)!.enter_address),
+        title: Text(AppLocalizations.of(context)!.enter_address),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: addressController,
               maxLines: 3,
-              decoration: InputDecoration(hintText:  AppLocalizations.of(context)!.enter_your_complete_address, border: const OutlineInputBorder()),
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(
+                  context,
+                )!.enter_your_complete_address,
+                border: const OutlineInputBorder(),
+              ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text( AppLocalizations.of(context)!.cancel)),
+          TextButton(
+            onPressed: () {
+              if (mounted) Navigator.pop(context);
+            },
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
           ElevatedButton(
             onPressed: () {
               if (addressController.text.isNotEmpty) {
+                if (!mounted) return;
                 setState(() => _currentAddress = addressController.text);
-                
-                // Mock coordinates for manual address
+
                 const mockLat = 31.2001;
                 const mockLng = 29.9187;
-                
+
                 widget.onLocationSelected(
-                  addressController.text, 
-                  mockLat, 
-                  mockLng
+                  addressController.text,
+                  mockLat,
+                  mockLng,
                 );
-                Navigator.pop(context);
+
+                if (mounted) Navigator.pop(context);
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF5C842), foregroundColor: Colors.white),
-            child: Text( AppLocalizations.of(context)!.save),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFF5C842),
+              foregroundColor: Colors.white,
+            ),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),
@@ -366,6 +436,13 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.red, behavior: SnackBarBehavior.floating));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 }

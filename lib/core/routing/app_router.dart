@@ -4,8 +4,13 @@ import 'package:deliva_eat/features/auth/forget_password/cubit/forgot_password_c
 import 'package:deliva_eat/features/auth/forget_password/ui/forget_password_page.dart';
 import 'package:deliva_eat/features/auth/login/cubit/login_cubit.dart';
 import 'package:deliva_eat/features/auth/login/ui/login_page.dart';
+import 'package:deliva_eat/features/auth/new_password/cubit/new_password_cubit.dart';
+import 'package:deliva_eat/features/auth/new_password/ui/new_password_page.dart';
+import 'package:deliva_eat/features/auth/otp/cubit/otp_cubit.dart';
+import 'package:deliva_eat/features/auth/otp/ui/otp_page.dart';
 import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
+import 'package:deliva_eat/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +20,8 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return BlocProvider(
+        return 
+         BlocProvider(
           create: (context) => getIt<LoginCubit>(),
           child: LoginPage(),
         );
@@ -33,11 +39,36 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.forgetPasswordPage,
           builder: (BuildContext context, GoRouterState state) {
-            return
-            BlocProvider(
+            return BlocProvider(
               create: (_) => getIt<ForgotPasswordCubit>(),
-              child:
-            const ForgotPasswordPage()
+              child: const ForgotPasswordPage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.otpPage,
+          builder: (BuildContext context, GoRouterState state) {
+            final String email = state.extra as String;
+
+            return BlocProvider(
+              create: (_) => getIt<OtpCubit>(),
+              child: OtpPage(email: email),
+            );
+          },
+        ),
+
+        GoRoute(
+          path: AppRoutes.newPasswordPage,
+          builder: (BuildContext context, GoRouterState state) {
+            final Map<String, dynamic> data =
+                state.extra as Map<String, dynamic>;
+
+            final String email = data['email'] as String;
+            final String code = data['otp'] as String;
+
+            return BlocProvider(
+              create: (context) => getIt<NewPasswordCubit>(),
+              child: NewPasswordPage(email: email, token: code),
             );
           },
         ),

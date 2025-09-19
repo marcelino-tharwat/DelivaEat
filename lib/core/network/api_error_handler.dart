@@ -10,36 +10,26 @@ abstract class ApiErrorHandler {
 class ServerError extends ApiErrorHandler {
   ServerError(super.errorMessage);
 
-  factory ServerError.fromDioError(
-    DioException dioError,
-    BuildContext context,
-  ) {
-    final loc = AppLocalizations.of(context)!;
-
-    switch (dioError.type) {
-      case DioExceptionType.connectionTimeout:
-        return ServerError(loc.error_connection_timeout);
-      case DioExceptionType.sendTimeout:
-        return ServerError(loc.error_send_timeout);
-      case DioExceptionType.receiveTimeout:
-        return ServerError(loc.error_receive_timeout);
-      case DioExceptionType.badCertificate:
-        return ServerError(loc.error_bad_certificate);
-      case DioExceptionType.badResponse:
-        return ServerError.fromBadResponse(
-          dioError.response!.statusCode!,
-          dioError.response!.data,
-          context,
-        );
-      case DioExceptionType.cancel:
-        return ServerError(loc.error_request_cancelled);
-      case DioExceptionType.connectionError:
-        return ServerError(loc.error_connection_error);
-      default:
-        return ServerError(loc.error_unknown);
-    }
+ factory ServerError.fromDioError(DioException dioError) {
+  switch (dioError.type) {
+    case DioExceptionType.connectionTimeout:
+      return ServerError("Connection timeout");
+    case DioExceptionType.sendTimeout:
+      return ServerError("Send timeout");
+    case DioExceptionType.receiveTimeout:
+      return ServerError("Receive timeout");
+    case DioExceptionType.badCertificate:
+      return ServerError("Bad certificate");
+    case DioExceptionType.badResponse:
+      return ServerError("Bad response: ${dioError.response?.statusCode}");
+    case DioExceptionType.cancel:
+      return ServerError("Request cancelled");
+    case DioExceptionType.connectionError:
+      return ServerError("Connection error");
+    default:
+      return ServerError("Unknown error");
   }
-
+}
   factory ServerError.fromBadResponse(
     int statusCode,
     dynamic response,

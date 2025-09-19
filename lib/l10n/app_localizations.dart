@@ -649,6 +649,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error processing server response'**
   String get error_processing_response;
+
+  /// No description provided for @forgot_password_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgot_password_title;
+
+  /// No description provided for @forgot_password_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset your password easily'**
+  String get forgot_password_subtitle;
+
+  /// No description provided for @reset_password_header.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get reset_password_header;
+
+  /// No description provided for @reset_password_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address and we\'ll send you a reset code'**
+  String get reset_password_description;
+
+  /// No description provided for @reset_password_invalid_email.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get reset_password_invalid_email;
+
+  /// No description provided for @reset_password_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Code'**
+  String get reset_password_button;
+
+  /// No description provided for @reset_password_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email inbox and spam folder for the reset code'**
+  String get reset_password_info;
+
+  /// No description provided for @back_to_login.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get back_to_login;
+
+  /// No description provided for @errorPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get errorPasswordRequired;
+
+  /// No description provided for @errorPasswordLowercase.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one lowercase letter'**
+  String get errorPasswordLowercase;
+
+  /// No description provided for @errorPasswordUppercase.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one uppercase letter'**
+  String get errorPasswordUppercase;
+
+  /// No description provided for @errorPasswordNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one number'**
+  String get errorPasswordNumber;
+
+  /// No description provided for @errorPasswordSpecialChar.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one special character'**
+  String get errorPasswordSpecialChar;
+
+  /// No description provided for @errorPasswordMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters long'**
+  String get errorPasswordMinLength;
+
+  /// No description provided for @password_requirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Requirements:'**
+  String get password_requirements;
+
+  /// No description provided for @new_password_title.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get new_password_title;
+
+  /// No description provided for @new_password_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a strong password for your account'**
+  String get new_password_subtitle;
+
+  /// No description provided for @new_password_header.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Password'**
+  String get new_password_header;
+
+  /// No description provided for @new_password_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your new password. Make sure it meets all the security requirements below.'**
+  String get new_password_description;
+
+  /// No description provided for @new_password.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get new_password;
+
+  /// No description provided for @new_password_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new password'**
+  String get new_password_hint;
+
+  /// No description provided for @confirm_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirm_password;
+
+  /// No description provided for @confirm_password_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter your password'**
+  String get confirm_password_hint;
+
+  /// No description provided for @update_password_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Password'**
+  String get update_password_button;
+
+  /// No description provided for @new_password_security_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password will be encrypted and stored securely. We recommend using a unique password that you don\'t use elsewhere.'**
+  String get new_password_security_info;
+
+  /// No description provided for @password_reset_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated successfully! You can now login with your new password.'**
+  String get password_reset_success;
+
+  /// No description provided for @error_password_invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Password doesn\'t meet requirements'**
+  String get error_password_invalid;
+
+  /// No description provided for @error_confirm_password_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your password'**
+  String get error_confirm_password_required;
+
+  /// No description provided for @error_password_mismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords don\'t match'**
+  String get error_password_mismatch;
+
+  /// No description provided for @back_to_previous.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Previous'**
+  String get back_to_previous;
+
+  /// No description provided for @enter_verification_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Verification Code'**
+  String get enter_verification_code;
+
+  /// No description provided for @sent_code_to.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a 6-digit code to\n'**
+  String get sent_code_to;
+
+  /// No description provided for @verify_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Code'**
+  String get verify_code;
+
+  /// No description provided for @didnt_receive_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive code? '**
+  String get didnt_receive_code;
+
+  /// No description provided for @resend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get resend;
+
+  /// No description provided for @resend_in.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {time}s'**
+  String resend_in(Object time);
+
+  /// No description provided for @verify_otp.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify OTP'**
+  String get verify_otp;
+
+  /// No description provided for @enter_code_sent_to_email.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code sent to your email'**
+  String get enter_code_sent_to_email;
+
+  /// No description provided for @code_verified_successfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Code verified successfully!'**
+  String get code_verified_successfully;
+
+  /// No description provided for @invalid_or_expired_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid or expired code.'**
+  String get invalid_or_expired_code;
+
+  /// No description provided for @unknown_error.
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred.'**
+  String get unknown_error;
+
+  /// No description provided for @invalid_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid code.'**
+  String get invalid_code;
+
+  /// No description provided for @new_code_sent.
+  ///
+  /// In en, this message translates to:
+  /// **'A new code has been sent to'**
+  String new_code_sent(Object email);
+
+  /// No description provided for @or_continue_with.
+  ///
+  /// In en, this message translates to:
+  /// **'Or continue with'**
+  String get or_continue_with;
 }
 
 class _AppLocalizationsDelegate

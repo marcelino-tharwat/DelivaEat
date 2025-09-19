@@ -8,7 +8,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
   ForgotPasswordRepo forgotPasswordRepo;
   ForgotPasswordCubit({required this.forgotPasswordRepo})
     : super(ForgotPasswordInitial());
-
+ TextEditingController emailController = TextEditingController();
   Future<void> resetPassword({
     required String email,
     required BuildContext context,
@@ -20,6 +20,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
       email: email,
       context: context,
     );
+    if (isClosed) return;
 
     result.fold(
       // On Failure

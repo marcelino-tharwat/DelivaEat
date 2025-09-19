@@ -1,3 +1,4 @@
+import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:deliva_eat/core/widgets/app_button.dart';
 import 'package:deliva_eat/core/widgets/app_text_field.dart';
 import 'package:deliva_eat/features/auth/forget_password/cubit/forgot_password_cubit.dart';
@@ -16,20 +17,27 @@ class ForgotPasswordForm extends StatefulWidget {
 
 class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-
+  // final _emailController = TextEditingController();
+  late final ForgotPasswordCubit _cubit; // نخزن cubit هنا
+ @override
+  void initState() {
+    super.initState();
+    // نخزن cubit أول ما widget يتبني
+    _cubit = context.read<ForgotPasswordCubit>();
+  }
   @override
   void dispose() {
-    _emailController.dispose();
+    // صح كده: dispose على الـ controller نفسه
+    _cubit.emailController.dispose();
     super.dispose();
   }
 
   void _requestReset() {
     if (_formKey.currentState!.validate()) {
       context.read<ForgotPasswordCubit>().resetPassword(
-            email: _emailController.text.trim(),
-            context: context,
-          );
+        email:_cubit.emailController.text.trim(),
+        context: context,
+      );
     }
   }
 
@@ -46,7 +54,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       child: Column(
         children: [
           Text(
-            'Reset Password',
+            l10n.reset_password_header,
             style: TextStyle(
               fontSize: 28.sp,
               fontWeight: FontWeight.bold,
@@ -55,7 +63,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Enter your email address and we\'ll send you a reset code',
+            l10n.reset_password_description,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16.sp,
@@ -67,7 +75,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
 
           // Email Field
           AppTextField(
-            controller: _emailController,
+            controller: _cubit.emailController,
             labelText: l10n.email,
             hintText: 'example@gmail.com',
             prefixIcon: Icons.email_outlined,
@@ -77,7 +85,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
                 return l10n.error_email_required;
               }
               if (!_isEmailValid(value)) {
-                return 'Please enter a valid email address';
+                return l10n.reset_password_invalid_email;
               }
               return null;
             },
@@ -99,7 +107,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
                       Opacity(
                         opacity: loading ? 0.6 : 1,
                         child: AppButton(
-                          text: 'Send Reset Code',
+                          text: l10n.reset_password_button,
                           onPressed: _requestReset,
                         ),
                       ),
@@ -109,7 +117,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         ),
                     ],
@@ -130,15 +140,11 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.info_outline,
-                  color: Colors.blue[600],
-                  size: 20.sp,
-                ),
+                Icon(Icons.info_outline, color: Colors.blue[600], size: 20.sp),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Text(
-                    'Check your email inbox and spam folder for the reset code',
+                    l10n.reset_password_info,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: Colors.blue[700],

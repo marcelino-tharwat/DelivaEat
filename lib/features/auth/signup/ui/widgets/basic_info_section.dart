@@ -1,6 +1,5 @@
-// lib/features/signup/presentation/widgets/basic_info_section.dart
+import 'package:deliva_eat/core/regex/app_regex.dart';
 import 'package:deliva_eat/core/widgets/app_text_field.dart';
-import 'package:deliva_eat/generated/l10n.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,7 +53,11 @@ class _BasicInfoSectionState extends State<BasicInfoSection> {
           labelText: l10n.email,
           prefixIcon: Icons.email,
           keyboardType: TextInputType.emailAddress,
-          validator: (v) => v!.isEmpty ? l10n.error_email_required : null,
+          validator: (v) => v!.isEmpty
+              ? l10n.error_email_required
+              : !AppRegex.isValidEmail(v)
+              ? l10n.reset_password_invalid_email
+              : null,
         ),
         SizedBox(height: 16.h),
 
@@ -72,7 +75,17 @@ class _BasicInfoSectionState extends State<BasicInfoSection> {
             onPressed: () =>
                 setState(() => _passwordVisible = !_passwordVisible),
           ),
-          validator: (v) => v!.isEmpty ? l10n.error_password_required : null,
+          validator: (v) {
+            if (v == null || v.isEmpty) return l10n.errorPasswordRequired;
+            if (!AppRegex.hasLowercase(v)) return l10n.errorPasswordLowercase;
+            if (!AppRegex.hasUppercase(v)) return l10n.errorPasswordUppercase;
+            if (!AppRegex.hasNumber(v)) return l10n.errorPasswordNumber;
+            if (!AppRegex.hasSpecialCharacter(v)) {
+              return l10n.errorPasswordSpecialChar;
+            }
+            if (!AppRegex.hasMinLength(v)) return l10n.errorPasswordMinLength;
+            return null; // كلمة المرور صحيحة
+          },
         ),
         SizedBox(height: 16.h),
 

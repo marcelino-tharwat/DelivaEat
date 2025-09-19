@@ -63,25 +63,24 @@
   "error_name_required": "Name is required",
   "error_email_required": "Email is required",
   "error_password_required": "Password is required",
-  "error_phone_required": "Phone is required"
-  ,"getting_location": "Getting Location..."
-  ,"pick_on_map": "Pick on Map"
-  ,"enter_address_manually": "Enter Address Manually"
-  ,"cancel": "Cancel"
-  ,"confirm": "Confirm"
-  ,"enter_address": "Enter Address"
-  ,"save": "Save"
-  ,"current_location_label": "Current Location"
-  ,"selected_address": "Selected Address:"
-  ,"no_location_selected": "No location selected"
-  ,"location_permission_denied": "Location permission denied"
-  ,"location_permissions_permanently_denied": "Location permissions permanently denied"
-  ,"failed_to_get_location": "Failed to get location"
-  ,"interactive_map": "Interactive Map"
-  ,"google_maps_integration": "Google Maps integration would go here"
-  ,"tap_on_map_to_select_location": "Tap on map to select location"
-  ,"enter_your_complete_address": "Enter your complete address..."
-  ,
+  "error_phone_required": "Phone is required",
+  "getting_location": "Getting Location...",
+  "pick_on_map": "Pick on Map",
+  "enter_address_manually": "Enter Address Manually",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "enter_address": "Enter Address",
+  "save": "Save",
+  "current_location_label": "Current Location",
+  "selected_address": "Selected Address:",
+  "no_location_selected": "No location selected",
+  "location_permission_denied": "Location permission denied",
+  "location_permissions_permanently_denied": "Location permissions permanently denied",
+  "failed_to_get_location": "Failed to get location",
+  "interactive_map": "Interactive Map",
+  "google_maps_integration": "Google Maps integration would go here",
+  "tap_on_map_to_select_location": "Tap on map to select location",
+  "enter_your_complete_address": "Enter your complete address...",
   "error_connection_timeout": "Connection timeout",
   "error_send_timeout": "Send timeout",
   "error_receive_timeout": "Receive timeout",
@@ -91,6 +90,49 @@
   "error_unknown": "Oops there was an error, please try later",
   "error_not_found": "Your request not found, please try later",
   "error_internal_server": "Internal server error, please try later",
-  "error_processing_response": "Error processing server response"
-
-}
+  "error_processing_response": "Error processing server response",
+  "forgot_password_title": "Forgot Password?",
+  "forgot_password_subtitle": "Reset your password easily",
+  "reset_password_header": "Reset Password",
+  "reset_password_description": "Enter your email address and we'll send you a reset code",
+  "reset_password_invalid_email": "Please enter a valid email address",
+  "reset_password_button": "Send Reset Code",
+  "reset_password_info": "Check your email inbox and spam folder for the reset code",
+  "back_to_login": "Back to Login",
+  "errorPasswordRequired": "Password is required",
+  "errorPasswordLowercase": "Password must contain at least one lowercase letter",
+  "errorPasswordUppercase": "Password must contain at least one uppercase letter",
+  "errorPasswordNumber": "Password must contain at least one number",
+  "errorPasswordSpecialChar": "Password must contain at least one special character",
+  "errorPasswordMinLength": "Password must be at least 8 characters long",
+  "password_requirements": "Password Requirements:",
+  "new_password_title": "New Password",
+  "new_password_subtitle": "Create a strong password for your account",
+  "new_password_header": "Create New Password",
+  "new_password_description": "Please enter your new password. Make sure it meets all the security requirements below.",
+  "new_password": "New Password",
+  "new_password_hint": "Enter your new password",
+  "confirm_password": "Confirm Password",
+  "confirm_password_hint": "Re-enter your password",
+  "update_password_button": "Update Password",
+  "new_password_security_info": "Your password will be encrypted and stored securely. We recommend using a unique password that you don't use elsewhere.",
+  "password_reset_success": "Password updated successfully! You can now login with your new password.",
+  "error_password_invalid": "Password doesn't meet requirements",
+  "error_confirm_password_required": "Please confirm your password",
+  "error_password_mismatch": "Passwords don't match",
+  "back_to_previous": "Back to Previous",
+  "enter_verification_code": "Enter Verification Code",
+  "sent_code_to": "We sent a 6-digit code to\n",
+  "verify_code": "Verify Code",
+  "didnt_receive_code": "Didn't receive code? ",
+  "resend": "Resend",
+  "resend_in": "Resend in {time}s",
+  "verify_otp": "Verify OTP",
+  "enter_code_sent_to_email": "Enter the code sent to your email",
+  "code_verified_successfully": "Code verified successfully!",
+  "invalid_or_expired_code": "Invalid or expired code.",
+  "unknown_error": "An unknown error occurred.",
+  "invalid_code": "Invalid code.",
+  "new_code_sent": "A new code has been sent to",
+  "or_continue_with": "Or continue with"
+  }
