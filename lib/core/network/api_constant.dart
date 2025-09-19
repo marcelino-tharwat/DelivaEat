@@ -6,4 +6,6 @@ class ApiConstant {
   static const String signupMerchantUrl = 'merchant/register';
   static const String uploadImageUrl = 'upload/image';
   static const String forgetPasswordUrl = 'auth/password/request';
+  static const String resetPasswordUrl = 'auth/password/reset';
+  static const String verifyCodeUrl = 'auth/password/verify';
 }

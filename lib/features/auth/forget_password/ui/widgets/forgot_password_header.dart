@@ -1,4 +1,4 @@
-
+import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -7,6 +7,8 @@ class ForgotPasswordHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return ClipPath(
       clipper: DelivaEatClipper(),
       child: Container(
@@ -23,14 +25,14 @@ class ForgotPasswordHeader extends StatelessWidget {
             end: Alignment.bottomRight,
           ),
         ),
-        child: const Center(
+        child:  Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.lock_reset, size: 60, color: Colors.white),
               SizedBox(height: 16),
               Text(
-                'Forgot Password?',
+                l10n.forgot_password_title,
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -47,7 +49,7 @@ class ForgotPasswordHeader extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                'Reset your password easily',
+                l10n.forgot_password_subtitle,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.white70,

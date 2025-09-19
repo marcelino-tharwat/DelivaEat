@@ -284,4 +284,151 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get error_processing_response => 'Error processing server response';
+
+  @override
+  String get forgot_password_title => 'Forgot Password?';
+
+  @override
+  String get forgot_password_subtitle => 'Reset your password easily';
+
+  @override
+  String get reset_password_header => 'Reset Password';
+
+  @override
+  String get reset_password_description =>
+      'Enter your email address and we\'ll send you a reset code';
+
+  @override
+  String get reset_password_invalid_email =>
+      'Please enter a valid email address';
+
+  @override
+  String get reset_password_button => 'Send Reset Code';
+
+  @override
+  String get reset_password_info =>
+      'Check your email inbox and spam folder for the reset code';
+
+  @override
+  String get back_to_login => 'Back to Login';
+
+  @override
+  String get errorPasswordRequired => 'Password is required';
+
+  @override
+  String get errorPasswordLowercase =>
+      'Password must contain at least one lowercase letter';
+
+  @override
+  String get errorPasswordUppercase =>
+      'Password must contain at least one uppercase letter';
+
+  @override
+  String get errorPasswordNumber => 'Password must contain at least one number';
+
+  @override
+  String get errorPasswordSpecialChar =>
+      'Password must contain at least one special character';
+
+  @override
+  String get errorPasswordMinLength =>
+      'Password must be at least 8 characters long';
+
+  @override
+  String get password_requirements => 'Password Requirements:';
+
+  @override
+  String get new_password_title => 'New Password';
+
+  @override
+  String get new_password_subtitle =>
+      'Create a strong password for your account';
+
+  @override
+  String get new_password_header => 'Create New Password';
+
+  @override
+  String get new_password_description =>
+      'Please enter your new password. Make sure it meets all the security requirements below.';
+
+  @override
+  String get new_password => 'New Password';
+
+  @override
+  String get new_password_hint => 'Enter your new password';
+
+  @override
+  String get confirm_password => 'Confirm Password';
+
+  @override
+  String get confirm_password_hint => 'Re-enter your password';
+
+  @override
+  String get update_password_button => 'Update Password';
+
+  @override
+  String get new_password_security_info =>
+      'Your password will be encrypted and stored securely. We recommend using a unique password that you don\'t use elsewhere.';
+
+  @override
+  String get password_reset_success =>
+      'Password updated successfully! You can now login with your new password.';
+
+  @override
+  String get error_password_invalid => 'Password doesn\'t meet requirements';
+
+  @override
+  String get error_confirm_password_required => 'Please confirm your password';
+
+  @override
+  String get error_password_mismatch => 'Passwords don\'t match';
+
+  @override
+  String get back_to_previous => 'Back to Previous';
+
+  @override
+  String get enter_verification_code => 'Enter Verification Code';
+
+  @override
+  String get sent_code_to => 'We sent a 6-digit code to\n';
+
+  @override
+  String get verify_code => 'Verify Code';
+
+  @override
+  String get didnt_receive_code => 'Didn\'t receive code? ';
+
+  @override
+  String get resend => 'Resend';
+
+  @override
+  String resend_in(Object time) {
+    return 'Resend in ${time}s';
+  }
+
+  @override
+  String get verify_otp => 'Verify OTP';
+
+  @override
+  String get enter_code_sent_to_email => 'Enter the code sent to your email';
+
+  @override
+  String get code_verified_successfully => 'Code verified successfully!';
+
+  @override
+  String get invalid_or_expired_code => 'Invalid or expired code.';
+
+  @override
+  String get unknown_error => 'An unknown error occurred.';
+
+  @override
+  String get invalid_code => 'Invalid code.';
+
+  @override
+  String new_code_sent(Object email) {
+    return 'A new code has been sent to';
+  }
+
+  @override
+  String get or_continue_with => 'Or continue with';
 }

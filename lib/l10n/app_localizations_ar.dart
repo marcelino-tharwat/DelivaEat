@@ -284,4 +284,151 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get error_processing_response => 'خطأ أثناء معالجة استجابة الخادم';
+
+  @override
+  String get forgot_password_title => 'نسيت كلمة المرور؟';
+
+  @override
+  String get forgot_password_subtitle => 'أعد تعيين كلمة المرور بسهولة';
+
+  @override
+  String get reset_password_header => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get reset_password_description =>
+      'أدخل بريدك الإلكتروني وسنرسل لك رمز إعادة التعيين';
+
+  @override
+  String get reset_password_invalid_email => 'من فضلك أدخل بريد إلكتروني صحيح';
+
+  @override
+  String get reset_password_button => 'إرسال رمز إعادة التعيين';
+
+  @override
+  String get reset_password_info =>
+      'تحقق من البريد الوارد والمجلد غير الهام للحصول على رمز إعادة التعيين';
+
+  @override
+  String get back_to_login => 'الرجوع لتسجيل الدخول';
+
+  @override
+  String get errorPasswordRequired => 'كلمة المرور مطلوبة';
+
+  @override
+  String get errorPasswordLowercase =>
+      'يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل';
+
+  @override
+  String get errorPasswordUppercase =>
+      'يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل';
+
+  @override
+  String get errorPasswordNumber =>
+      'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
+
+  @override
+  String get errorPasswordSpecialChar =>
+      'يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل';
+
+  @override
+  String get errorPasswordMinLength =>
+      'يجب أن تكون كلمة المرور 8 أحرف على الأقل';
+
+  @override
+  String get password_requirements => 'متطلبات كلمة المرور:';
+
+  @override
+  String get new_password_title => 'كلمة مرور جديدة';
+
+  @override
+  String get new_password_subtitle => 'أنشئ كلمة مرور قوية لحسابك';
+
+  @override
+  String get new_password_header => 'إنشاء كلمة مرور جديدة';
+
+  @override
+  String get new_password_description =>
+      'يرجى إدخال كلمة المرور الجديدة. تأكد من أنها تلبي جميع متطلبات الأمان أدناه.';
+
+  @override
+  String get new_password => 'كلمة المرور الجديدة';
+
+  @override
+  String get new_password_hint => 'أدخل كلمة المرور الجديدة';
+
+  @override
+  String get confirm_password => 'تأكيد كلمة المرور';
+
+  @override
+  String get confirm_password_hint => 'أعد إدخال كلمة المرور';
+
+  @override
+  String get update_password_button => 'تحديث كلمة المرور';
+
+  @override
+  String get new_password_security_info =>
+      'سيتم تشفير كلمة المرور الخاصة بك وتخزينها بأمان. نوصي باستخدام كلمة مرور فريدة لا تستخدمها في مكان آخر.';
+
+  @override
+  String get password_reset_success =>
+      'تم تحديث كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.';
+
+  @override
+  String get error_password_invalid => 'كلمة المرور لا تلبي المتطلبات';
+
+  @override
+  String get error_confirm_password_required => 'يرجى تأكيد كلمة المرور';
+
+  @override
+  String get error_password_mismatch => 'كلمات المرور غير متطابقة';
+
+  @override
+  String get back_to_previous => 'العودة للخلف';
+
+  @override
+  String get enter_verification_code => 'أدخل رمز التحقق';
+
+  @override
+  String get sent_code_to => 'تم إرسال رمز مكون من 6 أرقام إلى\n';
+
+  @override
+  String get verify_code => 'تحقق من الرمز';
+
+  @override
+  String get didnt_receive_code => 'لم يصلك الرمز؟ ';
+
+  @override
+  String get resend => 'إعادة الإرسال';
+
+  @override
+  String resend_in(Object time) {
+    return 'إعادة الإرسال بعد $time ثانية';
+  }
+
+  @override
+  String get verify_otp => 'تأكيد الرمز';
+
+  @override
+  String get enter_code_sent_to_email =>
+      'أدخل الرمز المرسل إلى بريدك الإلكتروني';
+
+  @override
+  String get code_verified_successfully => 'تم التحقق من الرمز بنجاح!';
+
+  @override
+  String get invalid_or_expired_code => 'الرمز غير صالح أو منتهي الصلاحية.';
+
+  @override
+  String get unknown_error => 'حدث خطأ غير متوقع.';
+
+  @override
+  String get invalid_code => 'رمز غير صالح.';
+
+  @override
+  String new_code_sent(Object email) {
+    return 'تم إرسال رمز جديد إلى $email';
+  }
+
+  @override
+  String get or_continue_with => 'أو تابع باستخدام';
 }

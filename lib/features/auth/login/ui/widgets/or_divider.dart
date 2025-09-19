@@ -1,3 +1,4 @@
+import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -12,7 +13,7 @@ class OrDivider extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
-            'Or continue with',
+            AppLocalizations.of(context)!.or_continue_with,
             style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w500 ,fontSize: 14.sp),
           ),
         ),

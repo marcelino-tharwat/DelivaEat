@@ -32,9 +32,11 @@ dependencies:
   cupertino_icons: ^1.0.8
   dio: ^5.9.0
   either_dart: ^1.0.0
+  # facebook_auth: ^0.0.3
   flutter:
     sdk: flutter
   flutter_bloc: ^9.0.0
+  flutter_facebook_auth: ^7.1.2
   flutter_image_compress: ^2.4.0
   flutter_localization: ^0.3.3
   flutter_localizations:
@@ -42,12 +44,11 @@ dependencies:
   flutter_native_splash: ^2.4.6
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.2.1
-  flutter_facebook_auth: ^7.0.0
   geocoding: ^4.0.0
   geolocator: ^14.0.2
   get_it: ^8.2.0
   go_router: ^16.2.1
-  google_sign_in: ^6.2.1
+  google_sign_in: ^6.3.0
   http: ^1.5.0
   image_picker: ^1.2.0
   intl: ^0.20.2

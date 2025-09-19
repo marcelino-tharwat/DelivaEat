@@ -2,6 +2,9 @@ import 'package:deliva_eat/core/network/api_constant.dart';
 import 'package:deliva_eat/features/auth/forget_password/data/model/forgot_password_req_model.dart';
 import 'package:deliva_eat/features/auth/login/data/models/login_req_model.dart';
 import 'package:deliva_eat/features/auth/login/data/models/auth_response.dart';
+import 'package:deliva_eat/features/auth/new_password/data/model/reset_password_request_body.dart';
+// import 'package:deliva_eat/features/auth/new_password/data/model/reset_password_response.dart';
+import 'package:deliva_eat/features/auth/otp/data/model/verify_code_request.dart';
 import 'package:deliva_eat/features/auth/signup/data/models/merchant_model.dart';
 import 'package:deliva_eat/features/auth/signup/data/models/rider_model.dart';
 import 'package:deliva_eat/features/auth/signup/data/models/signup_req_model.dart';
@@ -30,5 +33,14 @@ abstract class ApiService {
   Future<ForgotPasswordSuccessResponse> requestPasswordReset(
     @Body() ForgotPasswordReqModel request,
   );
- 
+
+  @POST(ApiConstant.verifyCodeUrl)
+  Future<ApiResponse<SuccessData>> verifyResetCode(
+    @Body() VerifyCodeRequest request,
+  );
+  @POST(ApiConstant.resetPasswordUrl)
+  @DioResponseType(ResponseType.json) // <-- أضف هذا السطر
+  Future<Map<String, dynamic>> resetPassword(
+    @Body() ResetPasswordRequestBody resetPasswordRequestBody,
+  );
 }

@@ -1,4 +1,6 @@
 import 'package:deliva_eat/core/routing/app_router.dart';
+
+import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:deliva_eat/core/theme/provider.dart';
 import 'package:deliva_eat/core/widgets/mobile_only_layout.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
@@ -23,23 +25,17 @@ class DelivaEat extends StatelessWidget {
             minTextAdapt: true,
             child: MobileOnlyLayout(
               child: MaterialApp.router(
-                routerConfig: router,
+                routerConfig: router, // تأكد من أن متغير router معرّف لديك
                 debugShowCheckedModeBanner: false,
-                // Theme Configuration
-                theme: themeProvider.lightTheme,
-                darkTheme: themeProvider.darkTheme,
+                theme: AppTheme.lightTheme, // استخدام الثيم المضيء المفصّل
+                darkTheme: AppTheme.darkTheme, // استخدام الثيم المظلم المفصّل
                 themeMode: themeProvider.isDarkMode
                     ? ThemeMode.dark
                     : ThemeMode.light,
 
-                // --- التغييرات هنا ---
-                // 2. استخدام المندوبين من الكلاس الجديد
+                // Localization Configuration
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
-
-                // 3. استخدام اللغات المدعومة من الكلاس الجديد
                 supportedLocales: AppLocalizations.supportedLocales,
-
-                // 4. هذا السطر صحيح ويجعل Provider يتحكم في اللغة
                 locale: localeProvider.locale,
               ),
             ),

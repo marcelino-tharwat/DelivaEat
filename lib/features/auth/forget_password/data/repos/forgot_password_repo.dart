@@ -20,7 +20,7 @@ class ForgotPasswordRepo {
       return Right(response);
     } catch (e) {
       if (e is DioException) {
-        return Left(ServerError.fromDioError(e, context));
+        return Left(ServerError.fromDioError(e, ));
       } else {
         return Left(ServerError(e.toString()));
       }
