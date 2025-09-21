@@ -32,7 +32,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   dio: ^5.9.0
   either_dart: ^1.0.0
-  # facebook_auth: ^0.0.3
   flutter:
     sdk: flutter
   flutter_bloc: ^9.0.0
@@ -61,6 +60,7 @@ dependencies:
   retrofit: ^4.7.2
   retrofit_generator: ^10.0.5
   shared_preferences: ^2.5.3
+  wave_progress_indicator: ^0.0.1
 
 dev_dependencies:
   flutter_lints: ^6.0.0
