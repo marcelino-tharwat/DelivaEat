@@ -135,5 +135,67 @@
   "invalid_or_expired_code": "الرمز غير صالح أو منتهي الصلاحية.",
   "unknown_error": "حدث خطأ غير متوقع.",
   "invalid_code": "رمز غير صالح.",
-  "or_continue_with": "أو تابع باستخدام"
+  "or_continue_with": "أو تابع باستخدام",
+   "deliveryTo": "التوصيل إلى",
+    "homePageTitle": "الرئيسية",
+    "ordersTitle": "الطلبات",
+    "offersTitle": "العروض",
+    "accountTitle": "الحساب",
+    "categories": "الفئات",
+    "offersAndBrands": "العروض والعلامات",
+    "favorites": "المفضلة",
+    "topRatedRestaurants": "أفضل المطاعم تقييماً",
+    "bestSelling": "الأكثر مبيعاً",
+    "seeAll": "عرض الكل",
+    "orderNow": "اطلب الآن",
+    "availableForDelivery": "متاح للتوصيل",
+    "viewMenu": "عرض القائمة",
+    "notifications": "الإشعارات",
+    "readAll": "قراءة الكل",
+
+    "offerTodayTitle": "عروض اليوم",
+    "offerTodaySubtitle": "خصم 29%",
+    "offerFreeDeliveryTitle": "توصيل مجاني",
+    "offerFreeDeliverySubtitle": "لأول طلب",
+    "offerPizzaTitle": "خصم 50%",
+    "offerPizzaSubtitle": "على البيتزا",
+    "offerFreeDiscount": "مجاني",
+
+    "categoryFood": "أكل",
+    "categoryGrocery": "بقالة",
+    "categoryMarkets": "ماركتس",
+    "categoryPharmacies": "صيدليات",
+    "categoryGifts": "هدايا وتبرع",
+    "categoryStores": "متاجر",
+
+    "tagDiscounts": "خصومات",
+    "tagNew": "جديد",
+    "tagFreeDelivery": "توصيل مجاني",
+    "tagFast": "سريع",
+    "tagHealthy": "صحي",
+    "tagDrinks": "مشروبات",
+    "tagSweets": "حلويات",
+
+    "offerTappedSnackbar": "تم النقر على عرض: {offerTitle}",
+    "@offerTappedSnackbar": {
+        "description": "Snackbar message when an offer is tapped",
+        "placeholders": {
+            "offerTitle": {
+                "type": "String",
+                "example": "خصم 50%"
+            }
+        }
+    },
+
+    "categoryTappedSnackbar": "تم اختيار فئة: {categoryName}",
+    "@categoryTappedSnackbar": {
+        "description": "Snackbar message when a category is tapped",
+        "placeholders": {
+            "categoryName": {
+                "type": "String",
+                "example": "أكل"
+            }
+        }
+    }
+  
 }

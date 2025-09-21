@@ -913,6 +913,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Or continue with'**
   String get or_continue_with;
+
+  /// No description provided for @deliveryTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Deliver to'**
+  String get deliveryTo;
+
+  /// No description provided for @homePageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homePageTitle;
+
+  /// No description provided for @ordersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get ordersTitle;
+
+  /// No description provided for @offersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers'**
+  String get offersTitle;
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get accountTitle;
+
+  /// No description provided for @categories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categories;
+
+  /// No description provided for @offersAndBrands.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers & Brands'**
+  String get offersAndBrands;
+
+  /// No description provided for @favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// No description provided for @topRatedRestaurants.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Rated Restaurants'**
+  String get topRatedRestaurants;
+
+  /// No description provided for @bestSelling.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Selling'**
+  String get bestSelling;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get seeAll;
+
+  /// No description provided for @orderNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Now'**
+  String get orderNow;
+
+  /// No description provided for @availableForDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Available for delivery'**
+  String get availableForDelivery;
+
+  /// No description provided for @viewMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'View Menu'**
+  String get viewMenu;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @readAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Read All'**
+  String get readAll;
+
+  /// No description provided for @offerTodayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Deals'**
+  String get offerTodayTitle;
+
+  /// No description provided for @offerTodaySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'29% Discount'**
+  String get offerTodaySubtitle;
+
+  /// No description provided for @offerFreeDeliveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Delivery'**
+  String get offerFreeDeliveryTitle;
+
+  /// No description provided for @offerFreeDeliverySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For the first order'**
+  String get offerFreeDeliverySubtitle;
+
+  /// No description provided for @offerPizzaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'50% Off'**
+  String get offerPizzaTitle;
+
+  /// No description provided for @offerPizzaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On Pizza'**
+  String get offerPizzaSubtitle;
+
+  /// No description provided for @offerFreeDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get offerFreeDiscount;
+
+  /// No description provided for @categoryFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get categoryFood;
+
+  /// No description provided for @categoryGrocery.
+  ///
+  /// In en, this message translates to:
+  /// **'Grocery'**
+  String get categoryGrocery;
+
+  /// No description provided for @categoryMarkets.
+  ///
+  /// In en, this message translates to:
+  /// **'Markets'**
+  String get categoryMarkets;
+
+  /// No description provided for @categoryPharmacies.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacies'**
+  String get categoryPharmacies;
+
+  /// No description provided for @categoryGifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Gifts & Donate'**
+  String get categoryGifts;
+
+  /// No description provided for @categoryStores.
+  ///
+  /// In en, this message translates to:
+  /// **'Stores'**
+  String get categoryStores;
+
+  /// No description provided for @tagDiscounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Discounts'**
+  String get tagDiscounts;
+
+  /// No description provided for @tagNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get tagNew;
+
+  /// No description provided for @tagFreeDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Delivery'**
+  String get tagFreeDelivery;
+
+  /// No description provided for @tagFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast'**
+  String get tagFast;
+
+  /// No description provided for @tagHealthy.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy'**
+  String get tagHealthy;
+
+  /// No description provided for @tagDrinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Drinks'**
+  String get tagDrinks;
+
+  /// No description provided for @tagSweets.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweets'**
+  String get tagSweets;
+
+  /// Snackbar message when an offer is tapped
+  ///
+  /// In en, this message translates to:
+  /// **'Tapped on offer: {offerTitle}'**
+  String offerTappedSnackbar(String offerTitle);
+
+  /// Snackbar message when a category is tapped
+  ///
+  /// In en, this message translates to:
+  /// **'Selected category: {categoryName}'**
+  String categoryTappedSnackbar(String categoryName);
 }
 
 class _AppLocalizationsDelegate
