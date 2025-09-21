@@ -431,4 +431,122 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get or_continue_with => 'Or continue with';
+
+  @override
+  String get deliveryTo => 'Deliver to';
+
+  @override
+  String get homePageTitle => 'Home';
+
+  @override
+  String get ordersTitle => 'Orders';
+
+  @override
+  String get offersTitle => 'Offers';
+
+  @override
+  String get accountTitle => 'Account';
+
+  @override
+  String get categories => 'Categories';
+
+  @override
+  String get offersAndBrands => 'Offers & Brands';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get topRatedRestaurants => 'Top Rated Restaurants';
+
+  @override
+  String get bestSelling => 'Best Selling';
+
+  @override
+  String get seeAll => 'See All';
+
+  @override
+  String get orderNow => 'Order Now';
+
+  @override
+  String get availableForDelivery => 'Available for delivery';
+
+  @override
+  String get viewMenu => 'View Menu';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get readAll => 'Read All';
+
+  @override
+  String get offerTodayTitle => 'Today\'s Deals';
+
+  @override
+  String get offerTodaySubtitle => '29% Discount';
+
+  @override
+  String get offerFreeDeliveryTitle => 'Free Delivery';
+
+  @override
+  String get offerFreeDeliverySubtitle => 'For the first order';
+
+  @override
+  String get offerPizzaTitle => '50% Off';
+
+  @override
+  String get offerPizzaSubtitle => 'On Pizza';
+
+  @override
+  String get offerFreeDiscount => 'Free';
+
+  @override
+  String get categoryFood => 'Food';
+
+  @override
+  String get categoryGrocery => 'Grocery';
+
+  @override
+  String get categoryMarkets => 'Markets';
+
+  @override
+  String get categoryPharmacies => 'Pharmacies';
+
+  @override
+  String get categoryGifts => 'Gifts & Donate';
+
+  @override
+  String get categoryStores => 'Stores';
+
+  @override
+  String get tagDiscounts => 'Discounts';
+
+  @override
+  String get tagNew => 'New';
+
+  @override
+  String get tagFreeDelivery => 'Free Delivery';
+
+  @override
+  String get tagFast => 'Fast';
+
+  @override
+  String get tagHealthy => 'Healthy';
+
+  @override
+  String get tagDrinks => 'Drinks';
+
+  @override
+  String get tagSweets => 'Sweets';
+
+  @override
+  String offerTappedSnackbar(String offerTitle) {
+    return 'Tapped on offer: $offerTitle';
+  }
+
+  @override
+  String categoryTappedSnackbar(String categoryName) {
+    return 'Selected category: $categoryName';
+  }
 }

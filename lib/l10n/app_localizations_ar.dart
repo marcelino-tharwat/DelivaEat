@@ -431,4 +431,122 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get or_continue_with => 'أو تابع باستخدام';
+
+  @override
+  String get deliveryTo => 'التوصيل إلى';
+
+  @override
+  String get homePageTitle => 'الرئيسية';
+
+  @override
+  String get ordersTitle => 'الطلبات';
+
+  @override
+  String get offersTitle => 'العروض';
+
+  @override
+  String get accountTitle => 'الحساب';
+
+  @override
+  String get categories => 'الفئات';
+
+  @override
+  String get offersAndBrands => 'العروض والعلامات';
+
+  @override
+  String get favorites => 'المفضلة';
+
+  @override
+  String get topRatedRestaurants => 'أفضل المطاعم تقييماً';
+
+  @override
+  String get bestSelling => 'الأكثر مبيعاً';
+
+  @override
+  String get seeAll => 'عرض الكل';
+
+  @override
+  String get orderNow => 'اطلب الآن';
+
+  @override
+  String get availableForDelivery => 'متاح للتوصيل';
+
+  @override
+  String get viewMenu => 'عرض القائمة';
+
+  @override
+  String get notifications => 'الإشعارات';
+
+  @override
+  String get readAll => 'قراءة الكل';
+
+  @override
+  String get offerTodayTitle => 'عروض اليوم';
+
+  @override
+  String get offerTodaySubtitle => 'خصم 29%';
+
+  @override
+  String get offerFreeDeliveryTitle => 'توصيل مجاني';
+
+  @override
+  String get offerFreeDeliverySubtitle => 'لأول طلب';
+
+  @override
+  String get offerPizzaTitle => 'خصم 50%';
+
+  @override
+  String get offerPizzaSubtitle => 'على البيتزا';
+
+  @override
+  String get offerFreeDiscount => 'مجاني';
+
+  @override
+  String get categoryFood => 'أكل';
+
+  @override
+  String get categoryGrocery => 'بقالة';
+
+  @override
+  String get categoryMarkets => 'ماركتس';
+
+  @override
+  String get categoryPharmacies => 'صيدليات';
+
+  @override
+  String get categoryGifts => 'هدايا وتبرع';
+
+  @override
+  String get categoryStores => 'متاجر';
+
+  @override
+  String get tagDiscounts => 'خصومات';
+
+  @override
+  String get tagNew => 'جديد';
+
+  @override
+  String get tagFreeDelivery => 'توصيل مجاني';
+
+  @override
+  String get tagFast => 'سريع';
+
+  @override
+  String get tagHealthy => 'صحي';
+
+  @override
+  String get tagDrinks => 'مشروبات';
+
+  @override
+  String get tagSweets => 'حلويات';
+
+  @override
+  String offerTappedSnackbar(String offerTitle) {
+    return 'تم النقر على عرض: $offerTitle';
+  }
+
+  @override
+  String categoryTappedSnackbar(String categoryName) {
+    return 'تم اختيار فئة: $categoryName';
+  }
 }

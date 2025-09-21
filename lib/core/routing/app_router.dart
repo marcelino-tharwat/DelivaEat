@@ -10,7 +10,8 @@ import 'package:deliva_eat/features/auth/otp/cubit/otp_cubit.dart';
 import 'package:deliva_eat/features/auth/otp/ui/otp_page.dart';
 import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
-import 'package:deliva_eat/setting.dart';
+import 'package:deliva_eat/features/home/home_page.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,11 +21,11 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return 
-         BlocProvider(
-          create: (context) => getIt<LoginCubit>(),
-          child: LoginPage(),
-        );
+        return FoodDeliveryHomePage();
+        //  BlocProvider(
+        //   create: (context) => getIt<LoginCubit>(),
+        //   child: LoginPage(),
+        // );
       },
       routes: <RouteBase>[
         GoRoute(
