@@ -10,7 +10,7 @@ import 'package:deliva_eat/features/auth/otp/cubit/otp_cubit.dart';
 import 'package:deliva_eat/features/auth/otp/ui/otp_page.dart';
 import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
-import 'package:deliva_eat/features/home/home_page.dart';
+import 'package:deliva_eat/features/home/ui/home_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
