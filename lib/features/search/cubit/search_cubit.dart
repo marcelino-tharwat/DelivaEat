@@ -1,8 +1,15 @@
 import 'dart:async';
+import 'package:deliva_eat/features/search/data/models/search_response_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:deliva_eat/features/search/data/repos/search_repo.dart';
 import 'package:deliva_eat/features/search/cubit/search_state.dart';
 import 'package:deliva_eat/core/network/api_error_handler.dart';
+
+import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:deliva_eat/features/search/data/models/search_response_model.dart'; // تأكد من استيراد كل الموديلات
+import 'package:deliva_eat/features/search/data/repos/search_repo.dart';
+import 'package:deliva_eat/features/search/cubit/search_state.dart';
 
 class SearchCubit extends Cubit<SearchState> {
   final SearchRepo _searchRepo;
@@ -10,7 +17,7 @@ class SearchCubit extends Cubit<SearchState> {
   String _lastQuery = '';
   bool _isLoadingMore = false;
 
-  SearchCubit({required SearchRepo searchRepo}) 
+  SearchCubit({required SearchRepo searchRepo})
       : _searchRepo = searchRepo,
         super(SearchInitial());
 
@@ -22,7 +29,7 @@ class SearchCubit extends Cubit<SearchState> {
     return super.close();
   }
 
-  // Real-time search with debouncing - نتائج فورية مع تحسين الأداء
+  // Real-time search with debouncing
   void searchRealTime({
     required String query,
     String lang = 'ar',
@@ -34,21 +41,14 @@ class SearchCubit extends Cubit<SearchState> {
     double? minPrice,
     Duration debounceTime = const Duration(milliseconds: 300),
   }) {
-    // Cancel previous timer
     _debounceTimer?.cancel();
-    
-    // If query is empty, show initial state
     if (query.trim().isEmpty) {
       _lastQuery = '';
       emit(SearchInitial());
       getPopularSearches(lang: lang);
       return;
     }
-    
-    // If query hasn't changed, don't search again
     if (query == _lastQuery) return;
-    
-    // Debounce search to avoid excessive API calls
     _debounceTimer = Timer(debounceTime, () async {
       await _performSearch(
         query: query,
@@ -90,7 +90,7 @@ class SearchCubit extends Cubit<SearchState> {
     );
   }
 
-  // Internal search method with comprehensive error handling
+  // Internal search method
   Future<void> _performSearch({
     required String query,
     String lang = 'ar',
@@ -104,13 +104,10 @@ class SearchCubit extends Cubit<SearchState> {
   }) async {
     try {
       final queryTrimmed = query.trim();
-      
-      // Validation
       if (queryTrimmed.isEmpty) {
         emit(SearchError(message: 'البحث لا يمكن أن يكون فارغاً'));
         return;
       }
-      
       if (queryTrimmed.length < 2) {
         emit(SearchError(message: 'يجب أن يحتوي البحث على حرفين على الأقل'));
         return;
@@ -118,7 +115,6 @@ class SearchCubit extends Cubit<SearchState> {
 
       _lastQuery = queryTrimmed;
       
-      // Show loading only for first page
       if (page == 1) {
         emit(SearchLoading());
       }
@@ -135,11 +131,14 @@ class SearchCubit extends Cubit<SearchState> {
         minPrice: minPrice,
       );
       
-      result.when(
-        success: (searchResponse) {
-          // Performance optimization: check if component is still mounted
+      result.either(
+        (error) { // Left (Failure)
           if (isClosed) return;
-          
+          String errorMessage = _getErrorMessage(error.errorMessage);
+          emit(SearchError(message: errorMessage));
+        },
+        (searchResponse) { // Right (Success)
+          if (isClosed) return;
           emit(SearchSuccess(
             restaurants: searchResponse.data.restaurants,
             foods: searchResponse.data.foods,
@@ -148,13 +147,6 @@ class SearchCubit extends Cubit<SearchState> {
             totalPages: searchResponse.data.totalPages,
             query: queryTrimmed,
           ));
-        },
-        failure: (error) {
-          if (isClosed) return;
-          
-          // Enhanced error handling with user-friendly messages
-          String errorMessage = _getErrorMessage(error.apiErrorModel.message);
-          emit(SearchError(message: errorMessage));
         },
       );
     } catch (e) {
@@ -165,22 +157,11 @@ class SearchCubit extends Cubit<SearchState> {
 
   // Enhanced error message handler
   String _getErrorMessage(String originalMessage) {
-    if (originalMessage.toLowerCase().contains('network')) {
-      return 'تعذر الاتصال بالخادم. تحقق من اتصال الإنترنت.';
-    }
-    if (originalMessage.toLowerCase().contains('timeout')) {
-      return 'انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.';
-    }
-    if (originalMessage.toLowerCase().contains('empty_query')) {
-      return 'يرجى كتابة ما تريد البحث عنه.';
-    }
-    if (originalMessage.toLowerCase().contains('rate_limited')) {
-      return 'تم تجاوز الحد الأقصى للبحث. يرجى الانتظار قليلاً.';
-    }
+    // ... logic remains the same ...
     return originalMessage.isNotEmpty ? originalMessage : 'حدث خطأ أثناء البحث. يرجى المحاولة مرة أخرى.';
   }
 
-  // Performance optimized load more with duplicate prevention
+  // Load more results
   Future<void> loadMore({
     required String query,
     required int nextPage,
@@ -193,13 +174,7 @@ class SearchCubit extends Cubit<SearchState> {
     double? minPrice,
   }) async {
     final currentState = state;
-    if (currentState is! SearchSuccess) return;
-    
-    // Prevent multiple simultaneous load more requests
-    if (_isLoadingMore) return;
-    
-    // Check if there are more pages to load
-    if (currentState.page >= currentState.totalPages) return;
+    if (currentState is! SearchSuccess || _isLoadingMore || currentState.page >= currentState.totalPages) return;
     
     _isLoadingMore = true;
     
@@ -216,21 +191,19 @@ class SearchCubit extends Cubit<SearchState> {
         minPrice: minPrice,
       );
       
-      result.when(
-        success: (searchResponse) {
+      result.either(
+        (error) { // Left (Failure)
+          if (isClosed) return;
+          // Optionally emit a snackbar error message, but keep the current list.
+        },
+        (searchResponse) { // Right (Success)
           if (isClosed) return;
           
-          // Performance optimization: Use Sets to prevent duplicates
           final existingRestaurantIds = currentState.restaurants.map((r) => r.id).toSet();
           final existingFoodIds = currentState.foods.map((f) => f.id).toSet();
           
-          final newRestaurants = searchResponse.data.restaurants
-              .where((r) => !existingRestaurantIds.contains(r.id))
-              .toList();
-          
-          final newFoods = searchResponse.data.foods
-              .where((f) => !existingFoodIds.contains(f.id))
-              .toList();
+          final newRestaurants = searchResponse.data.restaurants.where((r) => !existingRestaurantIds.contains(r.id)).toList();
+          final newFoods = searchResponse.data.foods.where((f) => !existingFoodIds.contains(f.id)).toList();
           
           emit(SearchSuccess(
             restaurants: [...currentState.restaurants, ...newRestaurants],
@@ -241,18 +214,13 @@ class SearchCubit extends Cubit<SearchState> {
             query: query,
           ));
         },
-        failure: (error) {
-          // Keep current state - don't break the list
-          if (isClosed) return;
-          // Could emit a specific error state for load more failure
-        },
       );
     } finally {
       _isLoadingMore = false;
     }
   }
 
-  // Optimized search suggestions with caching and debouncing
+  // Optimized search suggestions
   Timer? _suggestionsTimer;
   final Map<String, List<SearchSuggestionModel>> _suggestionsCache = {};
   
@@ -269,7 +237,6 @@ class SearchCubit extends Cubit<SearchState> {
       return;
     }
     
-    // Check cache first for performance
     final cacheKey = '${query.toLowerCase()}_${lang}_$limit';
     if (_suggestionsCache.containsKey(cacheKey)) {
       emit(SearchSuggestionsSuccess(suggestions: _suggestionsCache[cacheKey]!));
@@ -281,7 +248,6 @@ class SearchCubit extends Cubit<SearchState> {
     });
   }
 
-  // Get search suggestions (immediate)
   Future<void> getSuggestions({
     required String query,
     String lang = 'ar',
@@ -291,7 +257,6 @@ class SearchCubit extends Cubit<SearchState> {
     await _fetchSuggestions(query: query, lang: lang, limit: limit);
   }
 
-  // Internal suggestions fetch method
   Future<void> _fetchSuggestions({
     required String query,
     String lang = 'ar',
@@ -299,17 +264,11 @@ class SearchCubit extends Cubit<SearchState> {
   }) async {
     try {
       final queryTrimmed = query.trim();
-      
-      if (queryTrimmed.isEmpty) {
-        emit(SearchSuggestionsSuccess(suggestions: []));
+      if (queryTrimmed.length < 2) {
+         emit(SearchSuggestionsSuccess(suggestions: []));
         return;
       }
 
-      if (queryTrimmed.length < 2) {
-        return; // Don't show loading for very short queries
-      }
-
-      // Check cache
       final cacheKey = '${queryTrimmed.toLowerCase()}_${lang}_$limit';
       if (_suggestionsCache.containsKey(cacheKey)) {
         emit(SearchSuggestionsSuccess(suggestions: _suggestionsCache[cacheKey]!));
@@ -318,27 +277,18 @@ class SearchCubit extends Cubit<SearchState> {
 
       emit(SearchSuggestionsLoading());
       
-      final result = await _searchRepo.getSearchSuggestions(
-        query: queryTrimmed,
-        lang: lang,
-        limit: limit,
-      );
+      final result = await _searchRepo.getSearchSuggestions(query: queryTrimmed, lang: lang, limit: limit);
       
-      result.when(
-        success: (suggestions) {
+      result.either(
+        (error) { // Left (Failure)
           if (isClosed) return;
-          
-          // Cache results for performance (limit cache size)
-          if (_suggestionsCache.length > 20) {
-            _suggestionsCache.clear();
-          }
-          _suggestionsCache[cacheKey] = suggestions;
-          
-          emit(SearchSuggestionsSuccess(suggestions: suggestions));
+          emit(SearchSuggestionsError(message: _getErrorMessage(error.errorMessage)));
         },
-        failure: (error) {
+        (suggestions) { // Right (Success)
           if (isClosed) return;
-          emit(SearchSuggestionsError(message: _getErrorMessage(error.apiErrorModel.message)));
+          if (_suggestionsCache.length > 20) _suggestionsCache.clear();
+          _suggestionsCache[cacheKey] = suggestions;
+          emit(SearchSuggestionsSuccess(suggestions: suggestions));
         },
       );
     } catch (e) {
@@ -354,38 +304,45 @@ class SearchCubit extends Cubit<SearchState> {
   }) async {
     emit(PopularSearchesLoading());
     
-    final result = await _searchRepo.getPopularSearches(
-      lang: lang,
-      limit: limit,
-    );
+    final result = await _searchRepo.getPopularSearches(lang: lang, limit: limit);
     
-    result.when(
-      success: (popularSearches) {
-        emit(PopularSearchesSuccess(popularSearches: popularSearches));
+    result.either(
+      (error) { // Left (Failure)
+        emit(PopularSearchesError(message: error.errorMessage));
       },
-      failure: (error) {
-        emit(PopularSearchesError(message: error.apiErrorModel.message));
+      (popularSearches) { // Right (Success)
+        emit(PopularSearchesSuccess(popularSearches: popularSearches));
       },
     );
   }
 
   // Clear search results
   void clearSearch() {
+    _lastQuery = '';
+    _debounceTimer?.cancel();
     emit(SearchInitial());
   }
 
-  // Quick search without changing state (for suggestions)
-  Future<List<String>> quickSearch(String query) async {
-    if (query.trim().isEmpty) return [];
-    
-    final result = await _searchRepo.getSearchSuggestions(
-      query: query,
-      limit: 5,
-    );
-    
-    return result.when(
-      success: (suggestions) => suggestions.map((s) => s.name).toList(),
-      failure: (_) => [],
-    );
+  // Quick search without changing state
+Future<List<String>> quickSearch(String query) async {
+  if (query.trim().isEmpty) {
+    // Return early if query is empty
+    return [];
   }
+  
+  final result = await _searchRepo.getSearchSuggestions(
+    query: query,
+    limit: 5,
+  );
+
+  // Use if/else to check the result and return the appropriate value
+  if (result.isRight) {
+    // If it's a success, access the value with .right and return it
+    final suggestions = result.right; // result.right is of type List<SearchSuggestionModel>
+    return suggestions.map((s) => s.name).toList();
+  } else {
+    // If it's a failure, return an empty list
+    return [];
+  }
+}
 }

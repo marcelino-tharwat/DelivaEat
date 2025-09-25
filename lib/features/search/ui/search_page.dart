@@ -1,9 +1,10 @@
+import 'package:deliva_eat/features/home/data/models/food_model.dart';
+import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:deliva_eat/core/di/dependency_injection.dart';
 import 'package:deliva_eat/features/search/cubit/search_cubit.dart';
 import 'package:deliva_eat/features/search/cubit/search_state.dart';
-import 'package:deliva_eat/l10n/app_localizations.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,7 +17,7 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
-  
+
   late SearchCubit _searchCubit;
 
   @override
@@ -36,10 +37,8 @@ class _SearchPageState extends State<SearchPage> {
 
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      // Load more when reached bottom
       final currentState = _searchCubit.state;
-      if (currentState is SearchSuccess && 
-          currentState.page < currentState.totalPages) {
+      if (currentState is SearchSuccess && currentState.page < currentState.totalPages) {
         _searchCubit.loadMore(
           query: currentState.query,
           nextPage: currentState.page + 1,
@@ -50,13 +49,11 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final appLocalizations = AppLocalizations.of(context)!;
-    
     return BlocProvider<SearchCubit>.value(
       value: _searchCubit..getPopularSearches(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(appLocalizations.search ?? 'البحث'),
+          title: const Text("البحث"),
           elevation: 0,
         ),
         body: BlocBuilder<SearchCubit, SearchState>(
@@ -64,7 +61,6 @@ class _SearchPageState extends State<SearchPage> {
           builder: (context, state) {
             return Column(
               children: [
-                // Enhanced Search Bar with real-time search
                 Container(
                   padding: const EdgeInsets.all(16.0),
                   color: Theme.of(context).scaffoldBackgroundColor,
@@ -72,7 +68,7 @@ class _SearchPageState extends State<SearchPage> {
                     controller: _searchController,
                     focusNode: _searchFocusNode,
                     decoration: InputDecoration(
-                      hintText: appLocalizations.searchHint ?? 'ابحث عن مطاعم أو أطعمة...',
+                      hintText: "ابحث عن مطاعم أو أطعمة...",
                       prefixIcon: const Icon(Icons.search),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
@@ -94,11 +90,8 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                     onChanged: (value) {
                       setState(() {});
-                      
-                      // Real-time search with debouncing
                       if (value.isNotEmpty && value.length >= 2) {
                         _searchCubit.searchRealTime(query: value);
-                        // Also get suggestions for autocomplete
                         _searchCubit.getSuggestionsRealTime(query: value);
                       } else if (value.isEmpty) {
                         _searchCubit.clearSearch();
@@ -112,10 +105,8 @@ class _SearchPageState extends State<SearchPage> {
                     },
                   ),
                 ),
-                
-                // Search Results/Content with scroll controller
                 Expanded(
-                  child: _buildSearchContent(context, state, appLocalizations),
+                  child: _buildSearchContent(context, state),
                 ),
               ],
             );
@@ -125,17 +116,17 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildSearchContent(BuildContext context, SearchState state, AppLocalizations appLocalizations) {
+  Widget _buildSearchContent(BuildContext context, SearchState state) {
     if (state is SearchLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    
+
     if (state is SearchError) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 60, color: Colors.red),
+            const Icon(Icons.error_outline, size: 60, color: Colors.red),
             const SizedBox(height: 16),
             Text(state.message, textAlign: TextAlign.center),
             const SizedBox(height: 16),
@@ -145,29 +136,29 @@ class _SearchPageState extends State<SearchPage> {
                   context.read<SearchCubit>().search(query: _searchController.text);
                 }
               },
-              child: Text(appLocalizations.retry ?? 'إعادة المحاولة'),
+              child: const Text("إعادة المحاولة"),
             ),
           ],
         ),
       );
     }
-    
+
     if (state is SearchSuccess) {
-      return _buildSearchResults(context, state, appLocalizations);
+      return _buildSearchResults(context, state);
     }
-    
+
     if (state is SearchSuggestionsSuccess && _searchController.text.isNotEmpty) {
-      return _buildSuggestions(context, state, appLocalizations);
+      return _buildSuggestions(context, state);
     }
-    
+
     if (state is PopularSearchesSuccess) {
-      return _buildPopularSearches(context, state, appLocalizations);
+      return _buildPopularSearches(context, state);
     }
-    
-    return _buildEmptyState(context, appLocalizations);
+
+    return _buildEmptyState();
   }
 
-  Widget _buildSearchResults(BuildContext context, SearchSuccess state, AppLocalizations appLocalizations) {
+  Widget _buildSearchResults(BuildContext context, SearchSuccess state) {
     return RefreshIndicator(
       onRefresh: () async {
         await _searchCubit.search(query: state.query);
@@ -176,7 +167,7 @@ class _SearchPageState extends State<SearchPage> {
         controller: _scrollController,
         itemCount: _calculateTotalItems(state),
         itemBuilder: (context, index) {
-          return _buildResultItem(context, state, index, appLocalizations);
+          return _buildResultItem(context, state, index);
         },
       ),
     );
@@ -185,66 +176,62 @@ class _SearchPageState extends State<SearchPage> {
   int _calculateTotalItems(SearchSuccess state) {
     int items = 0;
     if (state.restaurants.isNotEmpty) {
-      items += 1; // Header
+      items += 1;
       items += state.restaurants.length;
     }
     if (state.foods.isNotEmpty) {
-      items += 1; // Header
+      items += 1;
       items += state.foods.length;
     }
     if (state.restaurants.isEmpty && state.foods.isEmpty) {
-      items = 1; // Empty state
+      items = 1;
     }
     if (state.page < state.totalPages) {
-      items += 1; // Loading indicator
+      items += 1;
     }
     return items;
   }
 
-  Widget _buildResultItem(BuildContext context, SearchSuccess state, int index, AppLocalizations appLocalizations) {
+  Widget _buildResultItem(BuildContext context, SearchSuccess state, int index) {
     int currentIndex = 0;
-    
-    // Restaurants section
+
     if (state.restaurants.isNotEmpty) {
       if (index == currentIndex) {
-        return _buildSectionHeader('${appLocalizations.restaurants ?? 'المطاعم'} (${state.restaurants.length})', context);
+        return _buildSectionHeader("المطاعم (${state.restaurants.length})", context);
       }
       currentIndex++;
-      
+
       if (index < currentIndex + state.restaurants.length) {
         final restaurant = state.restaurants[index - currentIndex];
         return _buildRestaurantTile(restaurant);
       }
       currentIndex += state.restaurants.length;
     }
-    
-    // Foods section
+
     if (state.foods.isNotEmpty) {
       if (index == currentIndex) {
-        return _buildSectionHeader('${appLocalizations.foods ?? 'الأطعمة'} (${state.foods.length})', context);
+        return _buildSectionHeader("الأطعمة (${state.foods.length})", context);
       }
       currentIndex++;
-      
+
       if (index < currentIndex + state.foods.length) {
         final food = state.foods[index - currentIndex];
         return _buildFoodTile(food);
       }
       currentIndex += state.foods.length;
     }
-    
-    // Empty state
+
     if (state.restaurants.isEmpty && state.foods.isEmpty && index == currentIndex) {
       return _buildEmptySearchResult(state.query);
     }
-    
-    // Load more indicator
+
     if (state.page < state.totalPages && index == currentIndex) {
       return const Padding(
         padding: EdgeInsets.all(16.0),
         child: Center(child: CircularProgressIndicator()),
       );
     }
-    
+
     return const SizedBox.shrink();
   }
 
@@ -254,8 +241,8 @@ class _SearchPageState extends State<SearchPage> {
       child: Text(
         title,
         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
+              fontWeight: FontWeight.bold,
+            ),
       ),
     );
   }
@@ -284,13 +271,10 @@ class _SearchPageState extends State<SearchPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('⭐ ${restaurant.rating} • ${restaurant.deliveryTime}'),
-            Text('رسوم التوصيل: ${restaurant.deliveryFee} ريال'),
+            Text("⭐ ${restaurant.rating} • ${restaurant.deliveryTime}"),
+            Text("رسوم التوصيل: ${restaurant.deliveryFee} ريال"),
           ],
         ),
-        onTap: () {
-          // Navigate to restaurant details
-        },
       ),
     );
   }
@@ -319,10 +303,10 @@ class _SearchPageState extends State<SearchPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('${food.price} ريال • ⭐ ${food.rating}'),
+            Text("${food.price} ريال • ⭐ ${food.rating}"),
             if (food.restaurant != null)
-              Text('من: ${food.restaurant!.nameAr}', 
-                   style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              Text("من: ${food.restaurant!.nameAr}",
+                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
           ],
         ),
         trailing: food.originalPrice != null && food.originalPrice! > food.price
@@ -331,23 +315,17 @@ class _SearchPageState extends State<SearchPage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${food.originalPrice} ريال',
+                    "${food.originalPrice} ريال",
                     style: const TextStyle(
                       decoration: TextDecoration.lineThrough,
                       color: Colors.grey,
                       fontSize: 12,
                     ),
                   ),
-                  const Text(
-                    'خصم!',
-                    style: TextStyle(color: Colors.red, fontSize: 10),
-                  ),
+                  const Text("خصم!", style: TextStyle(color: Colors.red, fontSize: 10)),
                 ],
               )
             : null,
-        onTap: () {
-          // Navigate to food details
-        },
       ),
     );
   }
@@ -366,7 +344,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'جرب كلمات مختلفة أو تحقق من الإملاء',
+            "جرب كلمات مختلفة أو تحقق من الإملاء",
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey[600]),
           ),
@@ -375,128 +353,15 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  // Old method - converted to use new optimized structure above
-  Widget _buildSearchResultsOld(BuildContext context, SearchSuccess state, AppLocalizations appLocalizations) {
-    return ListView(
-        if (state.restaurants.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '${appLocalizations.restaurants ?? 'المطاعم'} (${state.restaurants.length})',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-          ),
-          ...state.restaurants.map((restaurant) => ListTile(
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                restaurant.image,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 60,
-                  height: 60,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.restaurant),
-                ),
-              ),
-            ),
-            title: Text(restaurant.nameAr),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('⭐ ${restaurant.rating} • ${restaurant.deliveryTime}'),
-                Text('رسوم التوصيل: ${restaurant.deliveryFee} ريال'),
-              ],
-            ),
-            onTap: () {
-              // Navigate to restaurant details
-            },
-          )),
-        ],
-        
-        if (state.foods.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '${appLocalizations.foods ?? 'الأطعمة'} (${state.foods.length})',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-          ),
-          ...state.foods.map((food) => ListTile(
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                food.image,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 60,
-                  height: 60,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.fastfood),
-                ),
-              ),
-            ),
-            title: Text(food.nameAr),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('${food.price} ريال • ⭐ ${food.rating}'),
-                if (food.restaurant != null)
-                  Text('من: ${food.restaurant!.nameAr}'),
-              ],
-            ),
-            trailing: food.originalPrice != null && food.originalPrice! > food.price
-                ? Text(
-                    '${food.originalPrice} ريال',
-                    style: const TextStyle(
-                      decoration: TextDecoration.lineThrough,
-                      color: Colors.grey,
-                    ),
-                  )
-                : null,
-            onTap: () {
-              // Navigate to food details
-            },
-          )),
-        ],
-        
-        if (state.restaurants.isEmpty && state.foods.isEmpty)
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                children: [
-                  Icon(Icons.search_off, size: 60, color: Colors.grey),
-                  const SizedBox(height: 16),
-                  Text(
-                    'لا توجد نتائج للبحث "${state.query}"',
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildSuggestions(BuildContext context, SearchSuggestionsSuccess state, AppLocalizations appLocalizations) {
+  Widget _buildSuggestions(BuildContext context, SearchSuggestionsSuccess state) {
     return ListView.builder(
       itemCount: state.suggestions.length,
       itemBuilder: (context, index) {
         final suggestion = state.suggestions[index];
         return ListTile(
-          leading: Icon(
-            suggestion.type == 'restaurant' ? Icons.restaurant : Icons.fastfood,
-          ),
+          leading: Icon(suggestion.type == "restaurant" ? Icons.restaurant : Icons.fastfood),
           title: Text(suggestion.name),
-          subtitle: suggestion.restaurant != null 
-              ? Text('من: ${suggestion.restaurant}')
-              : null,
+          subtitle: suggestion.restaurant != null ? Text("من: ${suggestion.restaurant}") : null,
           onTap: () {
             _searchController.text = suggestion.name;
             context.read<SearchCubit>().search(query: suggestion.name);
@@ -506,15 +371,12 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildPopularSearches(BuildContext context, PopularSearchesSuccess state, AppLocalizations appLocalizations) {
+  Widget _buildPopularSearches(BuildContext context, PopularSearchesSuccess state) {
     return ListView(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            appLocalizations.popularSearches ?? 'البحث الشائع',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+        const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text("البحث الشائع", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
         Wrap(
           children: state.popularSearches
@@ -534,18 +396,14 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, AppLocalizations appLocalizations) {
-    return Center(
+  Widget _buildEmptyState() {
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.search, size: 80, color: Colors.grey),
-          const SizedBox(height: 16),
-          Text(
-            appLocalizations.searchEmpty ?? 'ابحث عن مطاعمك المفضلة وأطعمتك المفضلة',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          SizedBox(height: 16),
+          Text("ابحث عن مطاعمك المفضلة وأطعمتك المفضلة", textAlign: TextAlign.center),
         ],
       ),
     );
