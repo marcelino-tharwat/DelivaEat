@@ -23,15 +23,23 @@ class OffersSlider extends StatelessWidget {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
     return Container(
-      height: screenWidth * 0.5,
+      height: screenWidth * 0.6, // increase a bit to eliminate tight vertical constraints
       child: PageView.builder(
         controller: pageController,
         onPageChanged: onPageChanged,
         itemCount: offers.length,
         itemBuilder: (context, index) {
           final offer = offers[index];
-          return Container(
-            child: Hero(
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final maxH = constraints.maxHeight;
+              // sizes based on available height
+              final titleSize = (maxH * 0.11).clamp(13.0, 20.0);
+              final subtitleSize = (maxH * 0.075).clamp(11.0, 16.0);
+              final discountSize = (maxH * 0.07).clamp(10.0, 15.0);
+              final emojiSize = (maxH * 0.2).clamp(18.0, screenWidth * 0.11);
+
+              return Hero(
               tag: 'offer_$index',
               child: Card(
                 elevation: 8,
@@ -56,54 +64,52 @@ class OffersSlider extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Flexible(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         offer['title'],
-                                        style: context.textStyles.headlineSmall
-                                            ?.copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: screenWidth * 0.055,
-                                              shadows: [
-                                                Shadow(
-                                                  color: Colors.black
-                                                      .withOpacity(0.3),
-                                                  offset: const Offset(0, 2),
-                                                  blurRadius: 4,
-                                                ),
-                                              ],
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: context.textStyles.headlineSmall?.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: titleSize,
+                                          shadows: [
+                                            Shadow(
+                                              color: Colors.black.withOpacity(0.3),
+                                              offset: const Offset(0, 2),
+                                              blurRadius: 4,
                                             ),
+                                          ],
+                                        ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
                                         offer['subtitle'],
-                                        style: context.textStyles.titleMedium
-                                            ?.copyWith(
-                                              color: Colors.white.withOpacity(
-                                                0.9,
-                                              ),
-                                              fontSize: screenWidth * 0.04,
-                                              shadows: [
-                                                Shadow(
-                                                  color: Colors.black
-                                                      .withOpacity(0.3),
-                                                  offset: const Offset(0, 1),
-                                                  blurRadius: 2,
-                                                ),
-                                              ],
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: context.textStyles.titleMedium?.copyWith(
+                                          color: Colors.white.withOpacity(0.9),
+                                          fontSize: subtitleSize,
+                                          height: 1.1,
+                                          shadows: [
+                                            Shadow(
+                                              color: Colors.black.withOpacity(0.3),
+                                              offset: const Offset(0, 1),
+                                              blurRadius: 2,
                                             ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -125,7 +131,7 @@ class OffersSlider extends StatelessWidget {
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: screenWidth * 0.035,
+                                      fontSize: discountSize,
                                     ),
                                   ),
                                 ),
@@ -156,7 +162,7 @@ class OffersSlider extends StatelessWidget {
                                 Text(
                                   offer['icon'],
                                   style: TextStyle(
-                                    fontSize: screenWidth * 0.12,
+                                    fontSize: emojiSize,
                                     shadows: const [
                                       Shadow(
                                         color: Colors.black26,
@@ -175,7 +181,8 @@ class OffersSlider extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
+            );
+            },
           );
         },
       ),

@@ -11,6 +11,7 @@ import 'package:deliva_eat/features/auth/otp/ui/otp_page.dart';
 import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
 import 'package:deliva_eat/features/home/ui/home_page.dart';
+import 'package:deliva_eat/features/home/ui/home_page_wrapper.dart';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,7 +22,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return FoodDeliveryHomePage();
+        return const HomePageWrapper();
         //  BlocProvider(
         //   create: (context) => getIt<LoginCubit>(),
         //   child: LoginPage(),

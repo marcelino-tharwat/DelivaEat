@@ -15,6 +15,7 @@ class OfferModel {
   final String image;
   final String discount;
   final String discountType;
+  @JsonKey(defaultValue: true)
   final bool isActive;
   final DateTime startDate;
   final DateTime endDate;

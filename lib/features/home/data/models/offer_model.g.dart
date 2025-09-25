@@ -17,7 +17,7 @@ OfferModel _$OfferModelFromJson(Map<String, dynamic> json) => OfferModel(
   image: json['image'] as String,
   discount: json['discount'] as String,
   discountType: json['discountType'] as String,
-  isActive: json['isActive'] as bool,
+  isActive: (json['isActive'] as bool?) ?? true,
   startDate: DateTime.parse(json['startDate'] as String),
   endDate: DateTime.parse(json['endDate'] as String),
   order: (json['order'] as num).toInt(),

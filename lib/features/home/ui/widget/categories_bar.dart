@@ -20,7 +20,7 @@ class CategoriesBar extends StatelessWidget {
     final textStyles = context.textStyles;
 
     return Container(
-      height: screenWidth * 0.27,
+      height: screenWidth * 0.2, // Reduced from 0.27 to 0.2
       child: PageView.builder(
         controller: pageController,
         padEnds: false,
@@ -28,46 +28,73 @@ class CategoriesBar extends StatelessWidget {
         itemBuilder: (context, index) {
           final category = categories[index];
 
-          return GestureDetector(
-            onTap: () => onCategoryTap(category),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 6),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Card(
-                    elevation: 4,
-                    shadowColor: colors.shadow.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Container(
-                      width: double.infinity,
-                      height: screenWidth * 0.15,
-                      color: colors.surface,
-                      child: Icon(
-                        category['icon'],
-                        size: screenWidth * 0.08,
-                        color: category['color'],
-                      ),
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final itemHeight = constraints.maxHeight; // height allocated by the PageView item
+              // Allocate vertical space percentages that always sum <= 1.0 to avoid overflow
+              final cardSize = itemHeight * 0.60; // 60% for the square card
+              final gap = itemHeight * 0.05;       // 5% vertical gap
+              final textBoxHeight = itemHeight * 0.25; // 25% reserved box for text
+              final iconSize = cardSize * 0.55;    // icon fits nicely inside card
+              final fontSize = textBoxHeight * 0.45; // text size proportional to its box
+
+              return GestureDetector(
+                onTap: () => onCategoryTap(category),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4), // compact side margin
+                  child: SizedBox(
+                    height: itemHeight,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: cardSize,
+                          height: cardSize,
+                          child: Card(
+                          elevation: 2,
+                          shadowColor: colors.shadow.withOpacity(0.1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          color: colors.surface,
+                          child: Center(
+                            child: Icon(
+                              category['icon'],
+                              size: iconSize,
+                              color: category['color'],
+                            ),
+                          ),
+                        ),
+                        ),
+                        SizedBox(height: gap),
+                        SizedBox(
+                          height: textBoxHeight,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: cardSize * 1.1),
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Text(
+                                category['name'],
+                                textAlign: TextAlign.center,
+                                style: textStyles.bodySmall?.copyWith(
+                                  color: colors.onBackground,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: fontSize.clamp(8.0, 16.0),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textHeightBehavior: const TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    category['name'],
-                    textAlign: TextAlign.center,
-                    style: textStyles.bodySmall?.copyWith(
-                      color: colors.onBackground,
-                      fontWeight: FontWeight.w600,
-                      fontSize: screenWidth * 0.03,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         },
       ),

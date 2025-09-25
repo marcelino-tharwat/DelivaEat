@@ -17,8 +17,11 @@ class FoodModel {
   final double rating;
   final int reviewCount;
   final String preparationTime;
+  @JsonKey(defaultValue: true)
   final bool isAvailable;
+  @JsonKey(defaultValue: false)
   final bool isPopular;
+  @JsonKey(defaultValue: false)
   final bool isBestSelling;
   final RestaurantModel? restaurant;
   final List<String>? ingredients;

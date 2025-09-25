@@ -1,49 +1,38 @@
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
+import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:flutter/material.dart';
 
 class FavoriteRestaurantsList extends StatelessWidget {
+  final List<RestaurantModel> restaurants;
   final Function(String, int) onRestaurantTap;
 
-  const FavoriteRestaurantsList({super.key, required this.onRestaurantTap});
+  const FavoriteRestaurantsList({super.key, required this.restaurants, required this.onRestaurantTap});
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    if (restaurants.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
       height: screenHeight * 0.18,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16), // Added horizontal padding
-        itemCount: 4,
+        itemCount: restaurants.length,
         itemBuilder: (context, index) {
-          final restaurants = [
-            {
-              'name': 'مطعم النور',
-              'rating': '4.8',
-              'image': 'assets/restaurant_1.jpg',
-            },
-            {
-              'name': 'برجر ستيشن',
-              'rating': '4.6',
-              'image': 'assets/restaurant_2.jpg',
-            },
-            {
-              'name': 'سوشي هاوس',
-              'rating': '4.9',
-              'image': 'assets/restaurant_3.jpg',
-            },
-            {
-              'name': 'كافيه السعادة',
-              'rating': '4.5',
-              'image': 'assets/restaurant_4.jpg',
-            },
-          ];
+          final RestaurantModel r = restaurants[index];
+          final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+          final displayName = isArabic ? r.nameAr : r.name;
+          final ratingStr = r.rating.toStringAsFixed(1);
+          final imageUrl = r.image;
 
           return _buildFavoriteCard(
             context,
-            restaurants[index]['name']!,
-            restaurants[index]['rating']!,
-            restaurants[index]['image']!,
+            displayName,
+            ratingStr,
+            imageUrl,
             index,
           );
         },
@@ -54,8 +43,8 @@ class FavoriteRestaurantsList extends StatelessWidget {
   Widget _buildFavoriteCard(
     BuildContext context,
     String name,
-    String rating,
-    String imagePath,
+    String ratingStr,
+    String imageUrl,
     int index,
   ) {
     final colors = context.colors;
@@ -83,8 +72,8 @@ class FavoriteRestaurantsList extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.asset(
-                        imagePath,
+                      Image.network(
+                        imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
                           decoration: BoxDecoration(
@@ -177,7 +166,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
                               ),
                               const SizedBox(width: 2),
                               Text(
-                                rating,
+                                ratingStr,
                                 style: textStyles.bodySmall?.copyWith(
                                   color: colors.onSurface,
                                   fontWeight: FontWeight.w600,

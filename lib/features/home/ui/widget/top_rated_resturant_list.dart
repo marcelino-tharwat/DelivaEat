@@ -1,13 +1,16 @@
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
+import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class TopRatedRestaurantsList extends StatelessWidget {
+  final List<RestaurantModel> restaurants;
   final Function(Map<String, dynamic>, int) onRestaurantDetailTap;
   final Function(Map<String, dynamic>) onViewMenuTap;
 
   const TopRatedRestaurantsList({
     super.key,
+    required this.restaurants,
     required this.onRestaurantDetailTap,
     required this.onViewMenuTap,
   });
@@ -15,44 +18,29 @@ class TopRatedRestaurantsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    if (restaurants.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
       height: screenHeight * 0.35,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16), // Added horizontal padding
-        itemCount: 3,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: restaurants.length,
         itemBuilder: (context, index) {
-          final restaurants = [
-            {
-              'name': 'قصر البيتزا',
-              'rating': '4.5',
-              'avgPrice': '15 ريال متوسط',
-              'emoji': '🍕',
-              'image': 'assets/pizza_place.png',
-              'deliveryTime': '25-35 دقيقة',
-              'specialty': 'إيطالي',
-            },
-            {
-              'name': 'برجر بارن',
-              'rating': '4.7',
-              'avgPrice': '12 ريال متوسط',
-              'emoji': '🍔',
-              'image': 'assets/burger_place.png',
-              'deliveryTime': '20-30 دقيقة',
-              'specialty': 'أمريكي',
-            },
-            {
-              'name': 'سوشي سبوت',
-              'rating': '4.8',
-              'avgPrice': '35 ريال متوسط',
-              'emoji': '🍣',
-              'image': 'assets/sushi_place.png',
-              'deliveryTime': '30-45 دقيقة',
-              'specialty': 'ياباني',
-            },
-          ];
-
-          return _buildRestaurantCard(context, restaurants[index], index);
+          final RestaurantModel r = restaurants[index];
+          final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+          final Map<String, dynamic> item = {
+            'name': isArabic ? r.nameAr : r.name,
+            'rating': r.rating.toStringAsFixed(1),
+            'avgPrice': '',
+            'emoji': '🍽️',
+            'image': r.image,
+            'deliveryTime': r.deliveryTime,
+            'specialty': '',
+          };
+          return _buildRestaurantCard(context, item, index);
         },
       ),
     );
@@ -74,7 +62,7 @@ class TopRatedRestaurantsList extends StatelessWidget {
         tag: 'top_restaurant_$index',
         child: Container(
           width: screenWidth * 0.55,
-          margin: const EdgeInsets.only(right: 16), // Added margin to separate cards
+          margin: const EdgeInsets.only(right: 16),
           child: Card(
             elevation: 10,
             shadowColor: colors.shadow.withOpacity(0.2),
@@ -95,7 +83,7 @@ class TopRatedRestaurantsList extends StatelessWidget {
                           topLeft: Radius.circular(20),
                           topRight: Radius.circular(20),
                         ),
-                        child: Image.asset(
+                        child: Image.network(
                           restaurant['image'],
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
@@ -110,7 +98,7 @@ class TopRatedRestaurantsList extends StatelessWidget {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    restaurant['emoji'],
+                                    restaurant['emoji'] ?? '🍽️',
                                     style: const TextStyle(fontSize: 50),
                                   ),
                                 ),

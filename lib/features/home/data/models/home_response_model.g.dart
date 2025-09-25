@@ -8,7 +8,7 @@ part of 'home_response_model.dart';
 
 HomeResponseModel _$HomeResponseModelFromJson(Map<String, dynamic> json) =>
     HomeResponseModel(
-      success: json['success'] as bool,
+      success: json['success'] as bool?,
       data: HomeDataModel.fromJson(json['data'] as Map<String, dynamic>),
     );
 

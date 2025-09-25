@@ -130,8 +130,8 @@ const seedRestaurants = async () => {
   try {
     const restaurantsCount = await Restaurant.countDocuments();
     if (restaurantsCount > 0) {
-      console.log('Restaurants already exist, skipping seed...');
-      return;
+      console.log('Restaurants already exist, skipping initial insert...');
+      // do not return; we will still ensure flags below via upserts
     }
 
     const categories = await Category.find();
@@ -189,8 +189,15 @@ const seedRestaurants = async () => {
       }
     ];
 
-    await Restaurant.insertMany(restaurants);
-    console.log('Restaurants seeded successfully');
+    if (restaurantsCount === 0) {
+      await Restaurant.insertMany(restaurants);
+      console.log('Restaurants seeded successfully');
+    }
+    // Ensure flags for favorites and top rated even if docs already existed
+    await Restaurant.updateOne({ name: 'Burger House' }, { $set: { isFavorite: true, isTopRated: true } }, { upsert: false });
+    await Restaurant.updateOne({ name: 'Pizza Palace' }, { $set: { isTopRated: true } }, { upsert: false });
+    await Restaurant.updateOne({ name: 'Shawarma Corner' }, { $set: { isFavorite: true } }, { upsert: false });
+    console.log('Restaurant flags ensured (favorites/top rated)');
   } catch (error) {
     console.error('Error seeding restaurants:', error);
   }
@@ -200,8 +207,8 @@ const seedFoods = async () => {
   try {
     const foodsCount = await Food.countDocuments();
     if (foodsCount > 0) {
-      console.log('Foods already exist, skipping seed...');
-      return;
+      console.log('Foods already exist, skipping initial insert...');
+      // do not return; we will still ensure flags below via updates
     }
 
     const restaurants = await Restaurant.find();
@@ -261,8 +268,15 @@ const seedFoods = async () => {
       }
     ];
 
-    await Food.insertMany(foods);
-    console.log('Foods seeded successfully');
+    if (foodsCount === 0) {
+      await Food.insertMany(foods);
+      console.log('Foods seeded successfully');
+    }
+    // Ensure best-selling flags on a few foods by name in case docs pre-exist
+    await Food.updateOne({ name: 'Classic Burger' }, { $set: { isBestSelling: true } }, { upsert: false });
+    await Food.updateOne({ name: 'Margherita Pizza' }, { $set: { isBestSelling: true } }, { upsert: false });
+    await Food.updateOne({ name: 'Chicken Shawarma' }, { $set: { isBestSelling: true, isPopular: true } }, { upsert: false });
+    console.log('Food flags ensured (best selling/popular)');
   } catch (error) {
     console.error('Error seeding foods:', error);
   }

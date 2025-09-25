@@ -8,7 +8,7 @@ part 'home_response_model.g.dart';
 
 @JsonSerializable()
 class HomeResponseModel {
-  final bool success;
+  final bool? success;
   final HomeDataModel data;
 
   HomeResponseModel({

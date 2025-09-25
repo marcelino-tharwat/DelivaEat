@@ -11,6 +11,7 @@ class CategoryModel {
   final String icon;
   final String color;
   final List<String> gradient;
+  @JsonKey(defaultValue: true)
   final bool isActive;
   final int order;
 

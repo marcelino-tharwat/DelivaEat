@@ -18,9 +18,9 @@ FoodModel _$FoodModelFromJson(Map<String, dynamic> json) => FoodModel(
   rating: (json['rating'] as num).toDouble(),
   reviewCount: (json['reviewCount'] as num).toInt(),
   preparationTime: json['preparationTime'] as String,
-  isAvailable: json['isAvailable'] as bool,
-  isPopular: json['isPopular'] as bool,
-  isBestSelling: json['isBestSelling'] as bool,
+  isAvailable: (json['isAvailable'] as bool?) ?? true,
+  isPopular: (json['isPopular'] as bool?) ?? false,
+  isBestSelling: (json['isBestSelling'] as bool?) ?? false,
   restaurant: json['restaurant'] == null
       ? null
       : RestaurantModel.fromJson(json['restaurant'] as Map<String, dynamic>),

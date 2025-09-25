@@ -28,43 +28,61 @@ class SectionHeader extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              if (icon != null) ...[
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: (iconColor ?? colors.primary).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: iconColor ?? colors.primary,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
-              ],
-              Text(
-                title,
-                style: textStyles.titleLarge?.copyWith(
-                  color: colors.onBackground,
-                  fontWeight: FontWeight.bold,
-                  fontSize: screenWidth * 0.05, // Responsive font size
-                ),
+          if (icon != null) ...[
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: (iconColor ?? colors.primary).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
               ),
-            ],
+              child: Icon(
+                icon,
+                color: iconColor ?? colors.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+          ],
+          Expanded(
+            child: Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: textStyles.titleLarge?.copyWith(
+                color: colors.onBackground,
+                fontWeight: FontWeight.bold,
+                fontSize: screenWidth * 0.05, // Responsive font size
+              ),
+            ),
           ),
           if (showSeeAll)
-            TextButton.icon(
-              onPressed: () => onSeeAllTap(title),
-              icon: const Icon(Icons.arrow_forward_ios, size: 14),
-              label: Text(appLocalizations.seeAll),
-              style: TextButton.styleFrom(
-                foregroundColor: colors.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            Flexible(
+              fit: FlexFit.loose,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: () => onSeeAllTap(title),
+                  icon: Icon(
+                    // Respect RTL by flipping the arrow direction
+                    Directionality.of(context) == TextDirection.rtl
+                        ? Icons.arrow_back_ios
+                        : Icons.arrow_forward_ios,
+                    size: 14,
+                  ),
+                  label: Text(
+                    appLocalizations.seeAll,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: colors.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    minimumSize: const Size(0, 36),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ),
               ),
             ),
         ],

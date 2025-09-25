@@ -1,35 +1,44 @@
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
+import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class FoodCardList extends StatelessWidget {
+  final List<FoodModel> foods;
   final Function(String, int) onFoodCardTap;
 
-  const FoodCardList({super.key, required this.onFoodCardTap});
+  const FoodCardList({super.key, required this.foods, required this.onFoodCardTap});
 
   @override
   Widget build(BuildContext context) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     final screenHeight = MediaQuery.of(context).size.height;
+    if (foods.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
       height: screenHeight * 0.3,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16), // Added horizontal padding
-        itemCount: 4,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: foods.length,
         itemBuilder: (context, index) {
+          final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+          final FoodModel f = foods[index];
+          final name = isArabic ? f.nameAr : f.name;
+          final imageUrl = f.image;
+          final rating = f.rating;
+          final priceStr = f.price.toStringAsFixed(0);
+          final emoji = '🍽️';
+
           return _buildFoodCard(
             context,
-            ['نودلز حار', 'تاكو اللحم', 'لفافة فلافل', 'بيتزا مارجريتا'][index],
-            [
-              'assets/noodles.jpg',
-              'assets/tacos.jpg',
-              'assets/falafel.jpg',
-              'assets/pizza.jpg',
-            ][index],
-            [4.5, 4.7, 4.3, 4.6][index],
-            ['25 ريال', '30 ريال', '20 ريال', '40 ريال'][index],
-            ['🍜', '🌮', '🌯', '🍕'][index],
+            name,
+            imageUrl,
+            rating,
+            priceStr,
+            emoji,
             index,
           );
         },
@@ -40,7 +49,7 @@ class FoodCardList extends StatelessWidget {
   Widget _buildFoodCard(
     BuildContext context,
     String name,
-    String imagePath,
+    String imageUrl,
     double rating,
     String price,
     String emojiFallback,
@@ -50,6 +59,7 @@ class FoodCardList extends StatelessWidget {
     final colors = context.colors;
     final textStyles = context.textStyles;
     final screenWidth = MediaQuery.of(context).size.width;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return GestureDetector(
       onTap: () => onFoodCardTap(name, index),
@@ -57,7 +67,7 @@ class FoodCardList extends StatelessWidget {
         tag: 'food_$index',
         child: Container(
           width: screenWidth * 0.48,
-          margin: const EdgeInsets.only(right: 16), // Added margin to separate cards
+          margin: const EdgeInsets.only(right: 16),
           child: Card(
             elevation: 8,
             shadowColor: colors.shadow.withOpacity(0.15),
@@ -73,8 +83,8 @@ class FoodCardList extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.asset(
-                        imagePath,
+                      Image.network(
+                        imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
                           decoration: BoxDecoration(
@@ -186,7 +196,7 @@ class FoodCardList extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              price,
+                              isArabic ? '$price ريال' : '$price SAR',
                               style: textStyles.titleMedium?.copyWith(
                                 color: colors.primary,
                                 fontWeight: FontWeight.bold,

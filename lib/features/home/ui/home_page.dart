@@ -183,7 +183,6 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     super.dispose();
   }
 
-  @override
   Widget build(BuildContext context) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -191,69 +190,136 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
 
     return Scaffold(
       backgroundColor: colors.background,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            HomeHeader(onNotificationTap: _showNotificationsBottomSheet),
-            // SizedBox(height: screenHeight * 0.01),
-            SectionHeader(
-              title: appLocalizations.categories,
-              showSeeAll: false,
-              onSeeAllTap: _handleSeeAll,
-            ),
-            CategoriesBar(
-              categories: _categories,
-              pageController: _categoriesPageController,
-              onCategoryTap: _handleCategoryTap,
-            ),
-            SizedBox(height: screenHeight * 0.01),
-            OffersSlider(
-              offers: _offers,
-              pageController: pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentSlide = index;
-                });
-                HapticFeedback.lightImpact();
-              },
-              onOfferTap: _handleOfferTap,
-            ),
-            PageIndicator(
-              itemCount: _offers.length,
-              currentIndex: _currentSlide,
-            ),
+      body: BlocBuilder<HomeCubit, HomeState>(
+        buildWhen: (previous, current) =>
+            current is HomeInitial || current is HomeLoading || current is HomeSuccess || current is HomeError,
+        builder: (context, state) {
+          if (state is HomeInitial || state is HomeLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is HomeError) {
+            final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.wifi_off, size: 48, color: colors.primary),
+                    const SizedBox(height: 12),
+                    Text(
+                      state.message,
+                      textAlign: TextAlign.center,
+                      style: context.textStyles.titleMedium,
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: () => context.read<HomeCubit>().getHomeData(lang: isArabic ? 'ar' : 'en'),
+                      icon: const Icon(Icons.refresh),
+                      label: Text(AppLocalizations.of(context)!.resend),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
 
-            SizedBox(height: screenHeight * 0.01),
-            SectionHeader(
-              title: appLocalizations.favorites,
-              icon: Icons.favorite,
-              iconColor: const Color(0xFFFFD93D),
-              onSeeAllTap: _handleSeeAll,
-            ),
-            FavoriteRestaurantsList(onRestaurantTap: _handleRestaurantTap),
-            SizedBox(height: screenHeight * 0.01),
-            SectionHeader(
-              title: appLocalizations.topRatedRestaurants,
-              onSeeAllTap: _handleSeeAll,
-            ),
-            TopRatedRestaurantsList(
-              onRestaurantDetailTap: _handleRestaurantDetailTap,
-              onViewMenuTap: _handleViewMenu,
-            ),
-            SizedBox(height: screenHeight * 0.01),
+          // Map backend data to UI maps expected by widgets; fallback to local data
+          final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+          final categories = state is HomeSuccess
+              ? state.categories
+                  .map((cat) => {
+                        'name': isArabic ? cat.nameAr : cat.name,
+                        'icon': _mapCategoryIcon(cat.icon),
+                        'color': _parseHexColor(cat.color) ?? const Color(0xFFFF9800),
+                        'gradient': [
+                          _parseHexColor(cat.gradient.isNotEmpty ? cat.gradient.first : cat.color) ?? const Color(0xFFFF9800),
+                          _parseHexColor(cat.gradient.length > 1 ? cat.gradient[1] : cat.color) ?? const Color(0xFFFFCC02),
+                        ],
+                      })
+                  .toList()
+              : _categories;
 
-          ],
-        ),
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: _selectedNavIndex,
-        onItemSelected: (index) {
-          setState(() {
-            _selectedNavIndex = index;
-          });
-          HapticFeedback.lightImpact();
-          _handleNavigation(index);
+          final offers = state is HomeSuccess
+              ? state.offers
+                  .map((offer) => {
+                        'title': isArabic ? offer.titleAr : offer.title,
+                        'subtitle': isArabic ? offer.subtitleAr : offer.subtitle,
+                        'color': _parseHexColor(offer.color) ?? const Color(0xFFFF6B35),
+                        'icon': offer.icon.isNotEmpty ? offer.icon : '🍔',
+                        'image': offer.image,
+                        'discount': offer.discount,
+                      })
+                  .toList()
+              : _offers;
+
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                HomeHeader(onNotificationTap: _showNotificationsBottomSheet),
+                // SizedBox(height: screenHeight * 0.01),
+                SectionHeader(
+                  title: appLocalizations.categories,
+                  showSeeAll: false,
+                  onSeeAllTap: _handleSeeAll,
+                ),
+                CategoriesBar(
+                  categories: categories,
+                  pageController: _categoriesPageController,
+                  onCategoryTap: _handleCategoryTap,
+                ),
+                SizedBox(height: screenHeight * 0.01),
+                OffersSlider(
+                  offers: offers,
+                  pageController: pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentSlide = index;
+                    });
+                    HapticFeedback.lightImpact();
+                  },
+                  onOfferTap: _handleOfferTap,
+                ),
+                PageIndicator(
+                  itemCount: offers.length,
+                  currentIndex: _currentSlide,
+                ),
+
+                SizedBox(height: screenHeight * 0.01),
+                SectionHeader(
+                  title: appLocalizations.favorites,
+                  icon: Icons.favorite,
+                  iconColor: const Color(0xFFFFD93D),
+                  onSeeAllTap: _handleSeeAll,
+                ),
+                FavoriteRestaurantsList(
+                  restaurants: state is HomeSuccess ? state.favoriteRestaurants : const [],
+                  onRestaurantTap: _handleRestaurantTap,
+                ),
+                SizedBox(height: screenHeight * 0.01),
+                SectionHeader(
+                  title: appLocalizations.topRatedRestaurants,
+                  onSeeAllTap: _handleSeeAll,
+                ),
+                TopRatedRestaurantsList(
+                  restaurants: state is HomeSuccess ? state.topRatedRestaurants : const [],
+                  onRestaurantDetailTap: _handleRestaurantDetailTap,
+                  onViewMenuTap: _handleViewMenu,
+                ),
+                SizedBox(height: screenHeight * 0.01),
+                SectionHeader(
+                  title: appLocalizations.bestSelling,
+                  onSeeAllTap: _handleSeeAll,
+                ),
+                FoodCardList(
+                  foods: state is HomeSuccess ? state.bestSellingFoods : const [],
+                  onFoodCardTap: _handleFoodCardTap,
+                ),
+                SizedBox(height: screenHeight * 0.01),
+              ],
+            ),
+          );
         },
       ),
     );
@@ -380,5 +446,39 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       backgroundColor: Colors.transparent,
       builder: (context) => const NotificationsBottomSheet(),
     );
+  }
+}
+
+// Helper methods within the State class scope
+extension _HomePageHelpers on FoodDeliveryHomePageState {
+  Color? _parseHexColor(String hex) {
+    try {
+      String value = hex.trim();
+      if (value.startsWith('#')) value = value.substring(1);
+      if (value.length == 6) value = 'FF$value';
+      final intColor = int.parse(value, radix: 16);
+      return Color(intColor);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  IconData _mapCategoryIcon(String name) {
+    switch (name) {
+      case 'restaurant_menu':
+        return Icons.restaurant_menu;
+      case 'local_grocery_store':
+        return Icons.local_grocery_store;
+      case 'store':
+        return Icons.store;
+      case 'medical_services':
+        return Icons.medical_services;
+      case 'card_giftcard':
+        return Icons.card_giftcard;
+      case 'shopping_bag':
+        return Icons.shopping_bag;
+      default:
+        return Icons.category;
+    }
   }
 }

@@ -17,9 +17,13 @@ class RestaurantModel {
   final String deliveryTime;
   final double deliveryFee;
   final double minimumOrder;
+  @JsonKey(defaultValue: true)
   final bool isOpen;
+  @JsonKey(defaultValue: true)
   final bool isActive;
+  @JsonKey(defaultValue: false)
   final bool isFavorite;
+  @JsonKey(defaultValue: false)
   final bool isTopRated;
   final String address;
   final String phone;
