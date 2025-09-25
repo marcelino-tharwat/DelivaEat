@@ -223,13 +223,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
               itemCount: _offers.length,
               currentIndex: _currentSlide,
             ),
-            SizedBox(height: screenHeight * 0.001),
-            SectionHeader(
-              title: appLocalizations.offersAndBrands,
-              showSeeAll: false,
-              onSeeAllTap: _handleSeeAll,
-            ),
-            TagsOffersSection(onTagTap: _handleTagTap),
+
             SizedBox(height: screenHeight * 0.01),
             SectionHeader(
               title: appLocalizations.favorites,
@@ -248,11 +242,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
               onViewMenuTap: _handleViewMenu,
             ),
             SizedBox(height: screenHeight * 0.01),
-            SectionHeader(
-              title: appLocalizations.bestSelling,
-              onSeeAllTap: _handleSeeAll,
-            ),
-            FoodCardList(onFoodCardTap: _handleFoodCardTap),
+
           ],
         ),
       ),

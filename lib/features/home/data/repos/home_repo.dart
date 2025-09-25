@@ -1,3 +1,7 @@
+// 1. استيراد مكتبة either_dart
+import 'package:either_dart/either.dart';
+
+// 2. استيراد باقي الملفات المطلوبة
 import 'package:deliva_eat/core/network/api_service.dart';
 import 'package:deliva_eat/core/network/api_error_handler.dart';
 import 'package:deliva_eat/features/home/data/models/home_response_model.dart';
@@ -5,61 +9,119 @@ import 'package:deliva_eat/features/home/data/models/category_model.dart';
 import 'package:deliva_eat/features/home/data/models/offer_model.dart';
 import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/data/models/food_model.dart';
+import 'package:dio/dio.dart'; // ستحتاج هذا للتعامل مع DioException
 
 class HomeRepo {
   final ApiService _apiService;
 
   HomeRepo({required ApiService apiService}) : _apiService = apiService;
 
-  Future<ApiResult<HomeResponseModel>> getHomeData(String lang) async {
+  // الدالة الأولى تم تحويلها
+  Future<Either<ApiErrorHandler, HomeResponseModel>> getHomeData(
+    String lang,
+  ) async {
     try {
       final response = await _apiService.getHomeData(lang);
-      return ApiResult.success(response);
+      return Right(response);
     } catch (error) {
-      return ApiResult.failure(ApiErrorHandler.handle(error));
+      // استخدام نفس منطق التعامل مع الأخطاء في المثال
+      if (error is DioException) {
+        return Left(ServerError.fromDioError(error));
+      } else {
+        return Left(ServerError(error.toString()));
+      }
     }
   }
 
-  Future<ApiResult<List<CategoryModel>>> getCategories(String lang) async {
+  // الدالة الثانية تم تحويلها
+  Future<Either<ApiErrorHandler, List<CategoryModel>>> getCategories(
+    String lang,
+  ) async {
     try {
       final response = await _apiService.getCategories(lang);
-      return ApiResult.success(response.data);
+      final data = response.data; // استخراج البيانات في متغير
+      if (data != null) {
+        // إذا لم تكن البيانات null، أرجعها كـ Right
+        return Right(data);
+      } else {
+        // إذا كانت البيانات null، أرجعها كـ Left مع رسالة خطأ مناسبة
+        return Left(ServerError("The response from the server was empty."));
+      }
     } catch (error) {
-      return ApiResult.failure(ApiErrorHandler.handle(error));
+      if (error is DioException) {
+        return Left(ServerError.fromDioError(error));
+      } else {
+        return Left(ServerError(error.toString()));
+      }
     }
   }
 
-  Future<ApiResult<List<OfferModel>>> getOffers(String lang) async {
+  // الدالة الثالثة تم تحويلها
+  Future<Either<ApiErrorHandler, List<OfferModel>>> getOffers(
+    String lang,
+  ) async {
     try {
       final response = await _apiService.getOffers(lang);
-      return ApiResult.success(response.data);
+      final data = response.data;
+      if (data != null) {
+        return Right(data);
+      } else {
+        return Left(ServerError("The response from the server was empty."));
+      }
     } catch (error) {
-      return ApiResult.failure(ApiErrorHandler.handle(error));
+      // ... نفس الـ catch block
+      if (error is DioException) {
+        return Left(ServerError.fromDioError(error));
+      } else {
+        return Left(ServerError(error.toString()));
+      }
     }
   }
 
-  Future<ApiResult<List<RestaurantModel>>> getRestaurants(
+  // الدالة الرابعة تم تحويلها
+  Future<Either<ApiErrorHandler, List<RestaurantModel>>> getRestaurants(
     String type,
     int limit,
     String lang,
   ) async {
     try {
       final response = await _apiService.getRestaurants(type, limit, lang);
-      return ApiResult.success(response.data);
+      final data = response.data;
+      if (data != null) {
+        return Right(data);
+      } else {
+        return Left(ServerError("The response from the server was empty."));
+      }
     } catch (error) {
-      return ApiResult.failure(ApiErrorHandler.handle(error));
+      // ... نفس الـ catch block
+      if (error is DioException) {
+        return Left(ServerError.fromDioError(error));
+      } else {
+        return Left(ServerError(error.toString()));
+      }
     }
   }
 
-  Future<ApiResult<List<FoodModel>>> getBestSellingFoods(
+  // الدالة الخامسة تم تحويلها
+  Future<Either<ApiErrorHandler, List<FoodModel>>> getBestSellingFoods(
     int limit,
     String lang,
   ) async {
     try {
       final response = await _apiService.getBestSellingFoods(limit, lang);
-      return ApiResult.success(response.data);
+      final data = response.data;
+      if (data != null) {
+        return Right(data);
+      } else {
+        return Left(ServerError("The response from the server was empty."));
+      }
     } catch (error) {
-      return ApiResult.failure(ApiErrorHandler.handle(error));
+      // ... نفس الـ catch block
+      if (error is DioException) {
+        return Left(ServerError.fromDioError(error));
+      } else {
+        return Left(ServerError(error.toString()));
+      }
     }
   }
 }

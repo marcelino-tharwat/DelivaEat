@@ -44,31 +44,31 @@ abstract class ApiService {
   Future<ApiResponse<SuccessData>> verifyResetCode(
     @Body() VerifyCodeRequest request,
   );
-  @POST(ApiConstant.resetPasswordUrl)
-  @DioResponseType(ResponseType.json) // <-- أضف هذا السطر
-  Future<Map<String, dynamic>> resetPassword(
-    @Body() ResetPasswordRequestBody resetPasswordRequestBody,
-  );
+@POST(ApiConstant.resetPasswordUrl)
+@DioResponseType(ResponseType.json) 
+Future<dynamic> resetPassword(
+  @Body() ResetPasswordRequestBody resetPasswordRequestBody,
+);
 
   // Home endpoints
   @GET(ApiConstant.homeUrl)
   Future<HomeResponseModel> getHomeData(@Query('lang') String lang);
 
   @GET(ApiConstant.categoriesUrl)
-  Future<ApiResponseModel<List<CategoryModel>>> getCategories(@Query('lang') String lang);
+  Future<HomeResultResponseModel<List<CategoryModel>>> getCategories(@Query('lang') String lang);
 
   @GET(ApiConstant.offersUrl)
-  Future<ApiResponseModel<List<OfferModel>>> getOffers(@Query('lang') String lang);
+  Future<HomeResultResponseModel<List<OfferModel>>> getOffers(@Query('lang') String lang);
 
   @GET(ApiConstant.restaurantsUrl)
-  Future<ApiResponseModel<List<RestaurantModel>>> getRestaurants(
+  Future<HomeResultResponseModel<List<RestaurantModel>>> getRestaurants(
     @Query('type') String type,
     @Query('limit') int limit,
     @Query('lang') String lang,
   );
 
   @GET(ApiConstant.bestSellingFoodsUrl)
-  Future<ApiResponseModel<List<FoodModel>>> getBestSellingFoods(
+  Future<HomeResultResponseModel<List<FoodModel>>> getBestSellingFoods(
     @Query('limit') int limit,
     @Query('lang') String lang,
   );

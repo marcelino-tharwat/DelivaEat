@@ -13,10 +13,14 @@ class HomeCubit extends Cubit<HomeState> {
   // Get all home data at once
   Future<void> getHomeData({String lang = 'ar'}) async {
     emit(HomeLoading());
-    
+
     final result = await _homeRepo.getHomeData(lang);
-    result.when(
-      success: (homeResponse) {
+    result.fold(
+      (error) { // الدالة الأولى: حالة الفشل (Left)
+        // ملاحظة: تأكد من أن كلاس الخطأ لديك يحتوي على 'message' أو 'errorMessage'
+        emit(HomeError(message: error.errorMessage)); 
+      },
+      (homeResponse) { // الدالة الثانية: حالة النجاح (Right)
         emit(HomeSuccess(
           categories: homeResponse.data.categories,
           offers: homeResponse.data.offers,
@@ -25,38 +29,34 @@ class HomeCubit extends Cubit<HomeState> {
           bestSellingFoods: homeResponse.data.bestSellingFoods,
         ));
       },
-      failure: (error) {
-        emit(HomeError(message: error.apiErrorModel.message));
-      },
     );
   }
 
   // Get categories only
   Future<void> getCategories({String lang = 'ar'}) async {
     emit(CategoriesLoading());
-    
+
     final result = await _homeRepo.getCategories(lang);
-    result.when(
-      success: (categories) {
-        emit(CategoriesSuccess(categories: categories));
+    result.fold(
+      (error) {
+        emit(CategoriesError(message: error.errorMessage));
       },
-      failure: (error) {
-        emit(CategoriesError(message: error.apiErrorModel.message));
+      (categories) {
+        emit(CategoriesSuccess(categories: categories));
       },
     );
   }
-
   // Get offers only
-  Future<void> getOffers({String lang = 'ar'}) async {
+   Future<void> getOffers({String lang = 'ar'}) async {
     emit(OffersLoading());
-    
+
     final result = await _homeRepo.getOffers(lang);
-    result.when(
-      success: (offers) {
-        emit(OffersSuccess(offers: offers));
+    result.fold(
+      (error) {
+        emit(OffersError(message: error.errorMessage));
       },
-      failure: (error) {
-        emit(OffersError(message: error.apiErrorModel.message));
+      (offers) {
+        emit(OffersSuccess(offers: offers));
       },
     );
   }
@@ -70,13 +70,14 @@ class HomeCubit extends Cubit<HomeState> {
     emit(RestaurantsLoading());
     
     final result = await _homeRepo.getRestaurants(type, limit, lang);
-    result.when(
-      success: (restaurants) {
+    result.fold(
+      (error) {
+        emit(RestaurantsError(message: error.errorMessage));
+      },
+     (restaurants) {
         emit(RestaurantsSuccess(restaurants: restaurants, type: type));
-      },
-      failure: (error) {
-        emit(RestaurantsError(message: error.apiErrorModel.message));
-      },
+      }
+      
     );
   }
 
@@ -86,14 +87,14 @@ class HomeCubit extends Cubit<HomeState> {
     String lang = 'ar',
   }) async {
     emit(BestSellingFoodsLoading());
-    
+
     final result = await _homeRepo.getBestSellingFoods(limit, lang);
-    result.when(
-      success: (foods) {
-        emit(BestSellingFoodsSuccess(foods: foods));
+    result.fold(
+      (error) {
+        emit(BestSellingFoodsError(message: error.errorMessage));
       },
-      failure: (error) {
-        emit(BestSellingFoodsError(message: error.apiErrorModel.message));
+      (foods) {
+        emit(BestSellingFoodsSuccess(foods: foods));
       },
     );
   }

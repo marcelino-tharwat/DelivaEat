@@ -43,7 +43,6 @@ import 'package:deliva_eat/features/auth/new_password/data/model/reset_password_
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
 import 'package:deliva_eat/core/network/api_service.dart';
-
 class NewPasswordRepo {
   final ApiService _apiService;
 
@@ -53,25 +52,29 @@ class NewPasswordRepo {
     ResetPasswordRequestBody resetPasswordRequestBody,
   ) async {
     try {
-      // الآن 'response' هو Map<String, dynamic> مباشرة من الـ JSON
-      final response = await _apiService.resetPassword(
+      // 1. استقبل الـ dynamic response
+      final dynamic rawResponse = await _apiService.resetPassword(
         resetPasswordRequestBody,
       );
 
+      // 2. قم بعمل cast إلى Map<String, dynamic>
+      // هذا هو التعديل الأساسي
+      final response = rawResponse as Map<String, dynamic>;
+
+      // من هنا، الكود الخاص بك سيعمل كما هو بدون أي تغيير
       final bool success = response['success'] ?? false;
       final dynamic data = response['data'];
 
       if (success && data != null && data is Map<String, dynamic>) {
-        // إذا نجحت العملية، قم بالتحليل إلى SuccessData
         return Right(SuccessData.fromJson(data));
       } else {
-        // إذا فشلت، استخرج رسالة الخطأ أو أرجع خطأً عامًا
         final errorMessage = (data is Map && data.containsKey('error'))
             ? data['error'].toString()
             : 'Password reset failed. Please try again.';
         return Left(ServerError(errorMessage));
       }
     } catch (e) {
+      // التعامل مع الأخطاء يبقى كما هو
       if (e is DioException) {
         return Left(ServerError.fromDioError(e));
       } else {

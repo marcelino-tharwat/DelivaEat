@@ -44,25 +44,30 @@ class HomeDataModel {
   Map<String, dynamic> toJson() => _$HomeDataModelToJson(this);
 }
 
-@JsonSerializable()
-class ApiResponseModel<T> {
-  final bool success;
-  final T data;
+@JsonSerializable(genericArgumentFactories: true)
+class HomeResultResponseModel<T> {
+  final bool? success;
+  final T? data;
 
-  ApiResponseModel({
+  HomeResultResponseModel({
     required this.success,
     required this.data,
   });
 
-  factory ApiResponseModel.fromJson(Map<String, dynamic> json, T Function(Object? json) fromJsonT) => 
-      ApiResponseModel<T>(
-        success: json['success'] as bool,
-        data: fromJsonT(json['data']),
+  factory HomeResultResponseModel.fromJson(
+    Map<String, dynamic> json,
+    T Function(Object? json) fromJsonT,
+  ) =>
+      HomeResultResponseModel<T>(
+        success: json['success'] as bool?,
+        data: json['data'] == null ? null : fromJsonT(json['data']),
       );
 
-  Map<String, dynamic> toJson(Object Function(T value) toJsonT) => 
+  Map<String, dynamic> toJson(
+    Object? Function(T value) toJsonT,
+  ) =>
       <String, dynamic>{
         'success': success,
-        'data': toJsonT(data),
+        'data': data == null ? null : toJsonT(data as T),
       };
 }
