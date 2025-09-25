@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const { connectDB } = require('./config/db');
 const { configureCloudinary } = require('./config/cloudinary');
+const { seedAllData } = require('./utils/seedData');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const compression = require('compression');
@@ -13,6 +14,8 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const authRoutes = require('./routes/authRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const homeRoutes = require('./routes/homeRoutes');
+const searchRoutes = require('./routes/searchRoutes');
 const merchantApi = require('./api/merchant');
 const riderApi = require('./api/rider');
 const adminApi = require('./api/admin');
@@ -67,6 +70,8 @@ app.get('/health', (req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/home', homeRoutes);
+app.use('/api/search', searchRoutes);
 app.use('/api/merchant', merchantApi);
 app.use('/api/rider', riderApi);
 app.use('/api/admin', adminApi);
@@ -79,9 +84,15 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 connectDB()
-  .then(() => {
+  .then(async () => {
     // Configure Cloudinary after env is loaded
     configureCloudinary();
+    
+    // Seed data if in development mode
+    if (process.env.NODE_ENV !== 'production') {
+      await seedAllData();
+    }
+    
     app.listen(PORT, () => {
       console.log(`Server listening on port ${PORT}`);
     });

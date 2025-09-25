@@ -5,6 +5,10 @@ import 'package:deliva_eat/features/auth/new_password/cubit/new_password_cubit.d
 import 'package:deliva_eat/features/auth/new_password/data/repo/new_password_repo.dart';
 import 'package:deliva_eat/features/auth/otp/cubit/otp_cubit.dart';
 import 'package:deliva_eat/features/auth/otp/data/repo/otp_verify_code.dart';
+import 'package:deliva_eat/features/home/data/repos/home_repo.dart';
+import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
+import 'package:deliva_eat/features/search/data/repos/search_repo.dart';
+import 'package:deliva_eat/features/search/cubit/search_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:deliva_eat/core/network/dio_factory.dart';
@@ -46,4 +50,12 @@ void setupGetIt() {
   // New Password
   getIt.registerLazySingleton<NewPasswordRepo>(() => NewPasswordRepo(getIt()));
   getIt.registerFactory<NewPasswordCubit>(() => NewPasswordCubit(getIt()));
+  
+  // HOME
+  getIt.registerLazySingleton<HomeRepo>(() => HomeRepo(apiService: getIt()));
+  getIt.registerFactory<HomeCubit>(() => HomeCubit(homeRepo: getIt()));
+  
+  // SEARCH
+  getIt.registerLazySingleton<SearchRepo>(() => SearchRepo(apiService: getIt()));
+  getIt.registerFactory<SearchCubit>(() => SearchCubit(searchRepo: getIt()));
 }

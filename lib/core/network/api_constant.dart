@@ -8,4 +8,16 @@ class ApiConstant {
   static const String forgetPasswordUrl = 'auth/password/request';
   static const String resetPasswordUrl = 'auth/password/reset';
   static const String verifyCodeUrl = 'auth/password/verify';
+  
+  // Home endpoints
+  static const String homeUrl = 'home';
+  static const String categoriesUrl = 'home/categories';
+  static const String offersUrl = 'home/offers';
+  static const String restaurantsUrl = 'home/restaurants';
+  static const String bestSellingFoodsUrl = 'home/foods/best-selling';
+  
+  // Search endpoints
+  static const String searchUrl = 'search';
+  static const String searchSuggestionsUrl = 'search/suggestions';
+  static const String popularSearchesUrl = 'search/popular';
 }
