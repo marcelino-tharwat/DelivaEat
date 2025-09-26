@@ -2,20 +2,30 @@ const Category = require('../models/Category');
 const Offer = require('../models/Offer');
 const Restaurant = require('../models/Restaurant');
 const Food = require('../models/Food');
-const { validationResult } = require('express-validator');
 
-// @desc    Get home page data
+const formatCategoryResponse = (categories) =>
+  categories.map((category) => {
+    const { icon, image, ...rest } = category;
+    return {
+      ...rest,
+      image: image ?? icon ?? '',
+    };
+  });
+
+// @desc    Get all home page data
 // @route   GET /api/home
 // @access  Public
 const getHomeData = async (req, res) => {
   try {
     const lang = req.query.lang || 'ar';
-    
+
     // Get categories
-    const categories = await Category.find({ isActive: true })
+    const rawCategories = await Category.find({ isActive: true })
       .sort({ order: 1 })
-      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr icon color gradient order`)
+      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr icon color gradient order image`)
       .lean();
+
+    const categories = formatCategoryResponse(rawCategories);
 
     // Get active offers
     const offers = await Offer.find({
@@ -24,7 +34,7 @@ const getHomeData = async (req, res) => {
       endDate: { $gte: new Date() }
     })
       .sort({ order: 1 })
-      .select(`title${lang === 'ar' ? 'Ar' : ''} subtitle${lang === 'ar' ? 'Ar' : ''} title titleAr subtitle subtitleAr color icon image discount discountType`)
+      .select(`title${lang === 'ar' ? 'Ar' : ''} subtitle${lang === 'ar' ? 'Ar' : ''} title titleAr subtitle subtitleAr color icon image discount discountType isActive startDate endDate order`)
       .lean();
 
     // Get favorite restaurants
@@ -35,7 +45,7 @@ const getHomeData = async (req, res) => {
     })
       .sort({ rating: -1 })
       .limit(10)
-      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr image rating deliveryTime deliveryFee`)
+      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image rating reviewCount deliveryTime deliveryFee minimumOrder isOpen isActive isFavorite isTopRated address phone`)
       .lean();
 
     // Get top rated restaurants
@@ -46,7 +56,7 @@ const getHomeData = async (req, res) => {
     })
       .sort({ rating: -1 })
       .limit(10)
-      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image rating reviewCount deliveryTime deliveryFee`)
+      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image rating reviewCount deliveryTime deliveryFee minimumOrder isOpen isActive isFavorite isTopRated address phone`)
       .lean();
 
     // Get best selling foods
@@ -56,8 +66,8 @@ const getHomeData = async (req, res) => {
     })
       .sort({ rating: -1 })
       .limit(15)
-      .populate('restaurant', `name${lang === 'ar' ? 'Ar' : ''} name nameAr image rating`)
-      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr image price originalPrice rating preparationTime`)
+      .populate('restaurant', `name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image rating reviewCount deliveryTime deliveryFee minimumOrder isOpen isActive address phone`)
+      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image price originalPrice rating reviewCount preparationTime isAvailable isPopular isBestSelling ingredients allergens tags`)
       .lean();
 
     res.json({
@@ -90,10 +100,12 @@ const getCategories = async (req, res) => {
   try {
     const lang = req.query.lang || 'ar';
     
-    const categories = await Category.find({ isActive: true })
+    const rawCategories = await Category.find({ isActive: true })
       .sort({ order: 1 })
       .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr icon color gradient order`)
       .lean();
+
+    const categories = formatCategoryResponse(rawCategories);
 
     res.json({
       success: true,
