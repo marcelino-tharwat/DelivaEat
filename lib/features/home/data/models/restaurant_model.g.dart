@@ -7,26 +7,26 @@ part of 'restaurant_model.dart';
 // **************************************************************************
 
 RestaurantModel _$RestaurantModelFromJson(Map<String, dynamic> json) =>
-      RestaurantModel(
-        id: json['_id'] as String,
-        name: json['name'] as String,
-        nameAr: json['nameAr'] as String,
-        description: json['description'] as String?,
-        descriptionAr: json['descriptionAr'] as String?,
-        image: json['image'] as String,
-        coverImage: json['coverImage'] as String?,
-        rating: (json['rating'] as num).toDouble(),
-        reviewCount: (json['reviewCount'] as num).toInt(),
-        deliveryTime: json['deliveryTime'] as String,
-        deliveryFee: (json['deliveryFee'] as num).toDouble(),
-        minimumOrder: (json['minimumOrder'] as num).toDouble(),
-        isOpen: (json['isOpen'] as bool?) ?? true,
-        isActive: (json['isActive'] as bool?) ?? true,
-        isFavorite: (json['isFavorite'] as bool?) ?? false,
-        isTopRated: (json['isTopRated'] as bool?) ?? false,
-        address: json['address'] as String,
-        phone: json['phone'] as String,
-      );
+    RestaurantModel(
+      id: json['_id'] as String,
+      name: json['name'] as String,
+      nameAr: json['nameAr'] as String,
+      description: json['description'] as String?,
+      descriptionAr: json['descriptionAr'] as String?,
+      image: json['image'] as String,
+      coverImage: json['coverImage'] as String?,
+      rating: (json['rating'] as num?)?.toDouble(),
+      reviewCount: (json['reviewCount'] as num?)?.toInt(),
+      deliveryTime: json['deliveryTime'] as String?,
+      deliveryFee: (json['deliveryFee'] as num?)?.toDouble(),
+      minimumOrder: (json['minimumOrder'] as num?)?.toDouble(),
+      isOpen: json['isOpen'] as bool? ?? true,
+      isActive: json['isActive'] as bool? ?? true,
+      isFavorite: json['isFavorite'] as bool? ?? false,
+      isTopRated: json['isTopRated'] as bool? ?? false,
+      address: json['address'] as String?,
+      phone: json['phone'] as String?,
+    );
 
 Map<String, dynamic> _$RestaurantModelToJson(RestaurantModel instance) =>
     <String, dynamic>{

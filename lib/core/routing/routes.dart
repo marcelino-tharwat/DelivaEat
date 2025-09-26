@@ -4,5 +4,12 @@ class AppRoutes {
   static const String forgetPasswordPage = '/forgetPasswordPage';
   static const String otpPage = '/otpPage';
   static const String newPasswordPage = '/newPasswordPage';
+  static const String homePage = '/homePage';
+  static const String categoryPage = '/categoryPage';
+  static const String searchPage = '/productPage';
+  static const String productDetailsPage = '/productDetailsPage';
+  static const String cartPage = '/cartPage';
+  static const String checkoutPage = '/checkoutPage';
+
 
 }

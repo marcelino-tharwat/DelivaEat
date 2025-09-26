@@ -25,7 +25,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
           final RestaurantModel r = restaurants[index];
           final isArabic = Localizations.localeOf(context).languageCode == 'ar';
           final displayName = isArabic ? r.nameAr : r.name;
-          final ratingStr = r.rating.toStringAsFixed(1);
+          final ratingStr = r.rating!.toStringAsFixed(1);
           final imageUrl = r.image;
 
           return _buildFavoriteCard(

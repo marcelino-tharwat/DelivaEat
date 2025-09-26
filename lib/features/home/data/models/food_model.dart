@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'restaurant_model.dart';
 
 part 'food_model.g.dart';
-
 @JsonSerializable()
 class FoodModel {
   @JsonKey(name: '_id')
@@ -12,11 +11,11 @@ class FoodModel {
   final String? description;
   final String? descriptionAr;
   final String image;
-  final double price;
+  final double? price;
   final double? originalPrice;
-  final double rating;
-  final int reviewCount;
-  final String preparationTime;
+  final double? rating;
+  final int? reviewCount;
+  final String? preparationTime;
   @JsonKey(defaultValue: true)
   final bool isAvailable;
   @JsonKey(defaultValue: false)
@@ -35,11 +34,11 @@ class FoodModel {
     this.description,
     this.descriptionAr,
     required this.image,
-    required this.price,
+    this.price,
     this.originalPrice,
-    required this.rating,
-    required this.reviewCount,
-    required this.preparationTime,
+    this.rating,
+    this.reviewCount,
+    this.preparationTime,
     required this.isAvailable,
     required this.isPopular,
     required this.isBestSelling,
@@ -49,7 +48,7 @@ class FoodModel {
     this.tags,
   });
 
-  factory FoodModel.fromJson(Map<String, dynamic> json) => 
+  factory FoodModel.fromJson(Map<String, dynamic> json) =>
       _$FoodModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$FoodModelToJson(this);
