@@ -7,6 +7,7 @@ import 'package:deliva_eat/features/home/ui/widget/home_header.dart';
 import 'package:deliva_eat/features/home/ui/widget/show_notifications_bottom_sheet.dart';
 import 'package:deliva_eat/features/home/ui/widget/top_rated_resturant_list.dart';
 import 'package:flutter/material.dart';
+import 'package:deliva_eat/features/restaurant/ui/restaurant_menu_page.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -216,12 +217,10 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
               ? state.categories
                     .map(
                       (cat) => {
+                        'id': cat.id,
                         'name': isArabic ? cat.nameAr : cat.name,
-                        'image': cat
-                            .icon, // Assuming the image URL comes from the backend
-                        'color':
-                            _parseHexColor(cat.color) ??
-                            const Color(0xFFFF9800),
+                        'image': cat.icon,
+                        'color': _parseHexColor(cat.color) ?? const Color(0xFFFF9800),
                       },
                     )
                     .toList()
@@ -394,26 +393,12 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
 
   void _handleRestaurantDetailTap(Map<String, dynamic> restaurant, int index) {
     HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('عرض تفاصيل: ${restaurant['name']}'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
+    _openRestaurantMenu(restaurant);
   }
 
   void _handleViewMenu(Map<String, dynamic> restaurant) {
     HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('عرض قائمة: ${restaurant['name']}'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
+    _openRestaurantMenu(restaurant);
   }
 
   void _handleSeeAll(String section) {
@@ -458,6 +443,29 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
 }
 
 extension _HomePageHelpers on FoodDeliveryHomePageState {
+  void _openRestaurantMenu(Map<String, dynamic> restaurant) {
+    final id = (restaurant['id'] ?? restaurant['_id'])?.toString() ?? '';
+    final name = (restaurant['name'] ?? '')?.toString() ?? '';
+    if (id.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('معرف المطعم غير متوفر'),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+      return;
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => RestaurantMenuPage(
+          restaurantId: id,
+          restaurantName: name.isEmpty ? 'القائمة' : name,
+        ),
+      ),
+    );
+  }
   Color? _parseHexColor(String hex) {
     try {
       String value = hex.trim();

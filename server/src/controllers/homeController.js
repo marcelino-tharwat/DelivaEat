@@ -93,6 +93,47 @@ const getHomeData = async (req, res) => {
   }
 };
 
+// @desc    Get foods by restaurant
+// @route   GET /api/home/foods/by-restaurant
+// @access  Public
+const getFoodsByRestaurant = async (req, res) => {
+  try {
+    const { restaurantId, limit = 50, lang = 'ar' } = req.query;
+
+    if (!restaurantId) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'restaurantId is required'
+        }
+      });
+    }
+
+    const foods = await Food.find({
+      isAvailable: true,
+      restaurant: restaurantId,
+    })
+      .sort({ rating: -1 })
+      .limit(parseInt(limit))
+      .select(
+        `name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image price originalPrice rating reviewCount preparationTime isAvailable isPopular isBestSelling ingredients allergens tags`
+      )
+      .lean();
+
+    res.json({ success: true, data: foods });
+  } catch (error) {
+    console.error('Error getting foods by restaurant:', error);
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to get foods by restaurant'
+      }
+    });
+  }
+};
+
 // @desc    Get categories
 // @route   GET /api/home/categories
 // @access  Public
@@ -232,10 +273,78 @@ const getBestSellingFoods = async (req, res) => {
   }
 };
 
+// @desc    Get restaurants by category
+// @route   GET /api/home/restaurants/by-category
+// @access  Public
+const getRestaurantsByCategory = async (req, res) => {
+  try {
+    const { categoryId, limit = 20, lang = 'ar', random = 'false', sort = 'rating' } = req.query;
+
+    if (!categoryId) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'categoryId is required'
+        }
+      });
+    }
+
+    const filter = {
+      isActive: true,
+      isOpen: true,
+      categories: categoryId
+    };
+
+    let query = Restaurant.find(filter)
+      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image rating reviewCount deliveryTime deliveryFee minimumOrder isOpen isActive isFavorite isTopRated address phone`)
+      .lean();
+
+    if (random === 'true') {
+      // Randomize by using aggregation pipeline for better performance
+      const limitNum = parseInt(limit);
+      const pipeline = [
+        { $match: filter },
+        { $addFields: { sortKey: { $rand: {} } } },
+        { $sort: { sortKey: 1 } },
+        { $limit: limitNum },
+        { $project: { sortKey: 0 } }
+      ];
+      const restaurants = await Restaurant.aggregate(pipeline);
+      return res.json({ success: true, data: restaurants });
+    }
+
+    // Default sorting
+    if (sort === 'topRated') {
+      query = query.sort({ isTopRated: -1, rating: -1 });
+    } else {
+      query = query.sort({ rating: -1 });
+    }
+
+    const restaurants = await query.limit(parseInt(limit));
+
+    res.json({
+      success: true,
+      data: restaurants
+    });
+  } catch (error) {
+    console.error('Error getting restaurants by category:', error);
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to get restaurants by category'
+      }
+    });
+  }
+};
+
 module.exports = {
   getHomeData,
   getCategories,
   getOffers,
   getRestaurants,
-  getBestSellingFoods
+  getBestSellingFoods,
+  getRestaurantsByCategory,
+  getFoodsByRestaurant
 };

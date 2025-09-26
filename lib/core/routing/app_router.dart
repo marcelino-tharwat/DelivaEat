@@ -76,8 +76,10 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.categoryPage,
           builder: (BuildContext context, GoRouterState state) {
-            final String title = state.extra as String;
-            return CategoriesPage(title: title);
+            final data = state.extra as Map<String, dynamic>;
+            final String title = data['title'] as String? ?? '';
+            final String categoryId = data['id'] as String? ?? '';
+            return CategoriesPage(title: title, categoryId: categoryId);
           },
         ),
         GoRoute(

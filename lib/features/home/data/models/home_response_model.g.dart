@@ -8,7 +8,7 @@ part of 'home_response_model.dart';
 
 HomeResponseModel _$HomeResponseModelFromJson(Map<String, dynamic> json) =>
     HomeResponseModel(
-      success: json['success'] as bool?,
+      success: json['success'] as bool? ?? false,
       data: HomeDataModel.fromJson(json['data'] as Map<String, dynamic>),
     );
 
@@ -47,7 +47,7 @@ HomeResultResponseModel<T> _$HomeResultResponseModelFromJson<T>(
   Map<String, dynamic> json,
   T Function(Object? json) fromJsonT,
 ) => HomeResultResponseModel<T>(
-  success: json['success'] as bool?,
+  success: json['success'] as bool? ?? false,
   data: _$nullableGenericFromJson(json['data'], fromJsonT),
 );
 

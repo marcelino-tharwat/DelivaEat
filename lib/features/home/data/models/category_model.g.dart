@@ -11,11 +11,13 @@ CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) =>
       id: json['_id'] as String,
       name: json['name'] as String,
       nameAr: json['nameAr'] as String,
-      icon: json['icon'] as String,
-      color: json['color'] as String,
-      gradient: (json['gradient'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      icon: json['image'] as String? ?? '',
+      color: json['color'] as String? ?? '',
+      gradient:
+          (json['gradient'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       isActive: json['isActive'] as bool? ?? true,
       order: (json['order'] as num?)?.toInt(),
     );
@@ -25,7 +27,7 @@ Map<String, dynamic> _$CategoryModelToJson(CategoryModel instance) =>
       '_id': instance.id,
       'name': instance.name,
       'nameAr': instance.nameAr,
-      'icon': instance.icon,
+      'image': instance.icon,
       'color': instance.color,
       'gradient': instance.gradient,
       'isActive': instance.isActive,

@@ -67,8 +67,18 @@ Future<dynamic> resetPassword(
     @Query('lang') String lang,
   );
 
+
+
   @GET(ApiConstant.bestSellingFoodsUrl)
   Future<HomeResultResponseModel<List<FoodModel>>> getBestSellingFoods(
+    @Query('limit') int limit,
+    @Query('lang') String lang,
+  );
+
+  // Foods by restaurant
+  @GET(ApiConstant.foodsByRestaurantUrl)
+  Future<HomeResultResponseModel<List<FoodModel>>> getFoodsByRestaurant(
+    @Query('restaurantId') String restaurantId,
     @Query('limit') int limit,
     @Query('lang') String lang,
   );

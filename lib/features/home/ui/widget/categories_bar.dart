@@ -21,63 +21,70 @@ class CategoriesBar extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final colors = context.colors;
     final textStyles = context.textStyles;
+    final labelFontSize = (screenWidth * 0.026).clamp(9.0, 12.0);
+    // Provide a fixed, bounded height for the horizontal list
+    final double imageAreaHeight = 70; // slightly smaller to avoid overflow on small devices
+    final double barHeight = imageAreaHeight + 32; // include label + spacing
 
     return SizedBox(
-      height: screenWidth * 0.27,
-      child: PageView.builder(
-        controller: pageController,
-        padEnds: false,
+      height: barHeight,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 6),
         itemCount: categories.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 6),
         itemBuilder: (context, index) {
           final category = categories[index];
           final imageUrl = category['image'] as String?;
           final isNetworkImage = imageUrl?.startsWith('http') ?? false;
 
-          return GestureDetector(
-            onTap: () => context.go(AppRoutes.categoryPage, extra: category['name']),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 6),
+          return SizedBox(
+            width: 96, // fixed item width for consistent layout
+            child: GestureDetector(
+              onTap: () => context.go(
+                AppRoutes.categoryPage,
+                extra: {
+                  'id': category['id'],
+                  'title': category['name'],
+                },
+              ),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: <Widget>[
                   Card(
                     elevation: 4,
                     shadowColor: colors.shadow.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     clipBehavior: Clip.antiAlias,
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
-                      height: screenWidth * 0.16,
-                      color: colors.surface,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: (imageUrl != null)
-                            ? (isNetworkImage
-                                ? Image.network(
-                                    imageUrl,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.category),
-                                  )
-                                : Image.asset(
-                                    imageUrl,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.category),
-                                  ))
-                            : const Icon(Icons.category),
+                      height: imageAreaHeight,
+                      child: Container(
+                        color: colors.surface,
+                        padding: const EdgeInsets.all(6.0),
+                        child: _buildCategoryImage(imageUrl, isNetworkImage),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  Text(
-                    category['name'],
-                    textAlign: TextAlign.center,
-                    style: textStyles.bodySmall?.copyWith(
-                      color: colors.onBackground,
-                      fontWeight: FontWeight.w600,
-                      fontSize: screenWidth * 0.03,
+                  const SizedBox(height: 4),
+                  SizedBox(
+                    height: 18,
+                    child: Center(
+                      child: Text(
+                        category['name'] ?? '',
+                        textAlign: TextAlign.center,
+                        style: textStyles.bodySmall?.copyWith(
+                          color: colors.onBackground,
+                          fontWeight: FontWeight.w600,
+                          fontSize: labelFontSize.toDouble(),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -86,5 +93,23 @@ class CategoriesBar extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Widget _buildCategoryImage(String? imageUrl, bool isNetworkImage) {
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return const Icon(Icons.category);
+    }
+
+    return isNetworkImage
+        ? Image.network(
+            imageUrl,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => const Icon(Icons.category),
+          )
+        : Image.asset(
+            imageUrl,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => const Icon(Icons.category),
+          );
   }
 }

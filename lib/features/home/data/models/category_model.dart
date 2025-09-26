@@ -8,8 +8,11 @@ class CategoryModel {
   final String id;
   final String name;
   final String nameAr;
+  @JsonKey(name: 'image', defaultValue: '')
   final String icon;
+  @JsonKey(defaultValue: '')
   final String color;
+  @JsonKey(defaultValue: const [])
   final List<String> gradient;
   @JsonKey(defaultValue: true)
   final bool? isActive;

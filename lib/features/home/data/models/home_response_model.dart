@@ -8,7 +8,8 @@ part 'home_response_model.g.dart';
 
 @JsonSerializable()
 class HomeResponseModel {
-  final bool? success;
+  @JsonKey(defaultValue: false)
+  final bool success;
   final HomeDataModel data;
 
   HomeResponseModel({
@@ -46,7 +47,8 @@ class HomeDataModel {
 
 @JsonSerializable(genericArgumentFactories: true)
 class HomeResultResponseModel<T> {
-  final bool? success;
+  @JsonKey(defaultValue: false)
+  final bool success;
   final T? data;
 
   HomeResultResponseModel({
@@ -59,7 +61,7 @@ class HomeResultResponseModel<T> {
     T Function(Object? json) fromJsonT,
   ) =>
       HomeResultResponseModel<T>(
-        success: json['success'] as bool?,
+        success: (json['success'] as bool?) ?? false,
         data: json['data'] == null ? null : fromJsonT(json['data']),
       );
 

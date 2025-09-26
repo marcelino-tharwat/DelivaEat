@@ -5,13 +5,8 @@ const Food = require('../models/Food');
 
 const seedCategories = async () => {
   try {
-    const categoriesCount = await Category.countDocuments();
-    if (categoriesCount > 0) {
-      console.log('Categories already exist, skipping seed...');
-      return;
-    }
-
-    const categories = [
+    // Ensure base categories exist (upsert)
+    const baseCategories = [
       {
         name: 'Food',
         nameAr: 'طعام',
@@ -62,8 +57,28 @@ const seedCategories = async () => {
       }
     ];
 
-    await Category.insertMany(categories);
-    console.log('Categories seeded successfully');
+    // Cuisine categories
+    const cuisineCategories = [
+      { name: 'Pizza', nameAr: 'بيتزا', icon: 'local_pizza', color: '#E53935', gradient: ['#E53935', '#FF7043'], order: 11 },
+      { name: 'Burger', nameAr: 'برجر', icon: 'lunch_dining', color: '#8D6E63', gradient: ['#8D6E63', '#D7CCC8'], order: 12 },
+      { name: 'Shawarma', nameAr: 'شاورما', icon: 'kebab_dining', color: '#6D4C41', gradient: ['#6D4C41', '#A1887F'], order: 13 },
+      { name: 'Fried Chicken', nameAr: 'دجاج مقلي', icon: 'set_meal', color: '#FFB300', gradient: ['#FFB300', '#FFE082'], order: 14 },
+      { name: 'Desserts', nameAr: 'حلويات', icon: 'cake', color: '#EC407A', gradient: ['#EC407A', '#F48FB1'], order: 15 },
+      { name: 'Grills', nameAr: 'مشويات', icon: 'outdoor_grill', color: '#5D4037', gradient: ['#5D4037', '#8D6E63'], order: 16 }
+    ];
+
+    const ensureCategory = async (c) => {
+      await Category.updateOne(
+        { name: c.name },
+        { $setOnInsert: c },
+        { upsert: true }
+      );
+    };
+
+    for (const c of baseCategories) await ensureCategory(c);
+    for (const c of cuisineCategories) await ensureCategory(c);
+
+    console.log('Categories ensured successfully');
   } catch (error) {
     console.error('Error seeding categories:', error);
   }
@@ -136,8 +151,14 @@ const seedRestaurants = async () => {
 
     const categories = await Category.find();
     const foodCategory = categories.find(cat => cat.name === 'Food');
+    const pizzaCat = categories.find(cat => cat.name === 'Pizza');
+    const burgerCat = categories.find(cat => cat.name === 'Burger');
+    const shawarmaCat = categories.find(cat => cat.name === 'Shawarma');
+    const friedCat = categories.find(cat => cat.name === 'Fried Chicken');
+    const dessertsCat = categories.find(cat => cat.name === 'Desserts');
+    const grillsCat = categories.find(cat => cat.name === 'Grills');
 
-    const restaurants = [
+    const baseRestaurants = [
       {
         name: 'Burger House',
         nameAr: 'بيت البرجر',
@@ -151,7 +172,7 @@ const seedRestaurants = async () => {
         minimumOrder: 50,
         isTopRated: true,
         isFavorite: true,
-        categories: [foodCategory._id],
+        categories: [foodCategory?._id, burgerCat?._id].filter(Boolean),
         address: 'الرياض، حي النخيل',
         phone: '+966501234567'
       },
@@ -167,7 +188,7 @@ const seedRestaurants = async () => {
         deliveryFee: 12,
         minimumOrder: 60,
         isTopRated: true,
-        categories: [foodCategory._id],
+        categories: [foodCategory?._id, pizzaCat?._id].filter(Boolean),
         address: 'الرياض، حي الملك فهد',
         phone: '+966502345678'
       },
@@ -183,15 +204,86 @@ const seedRestaurants = async () => {
         deliveryFee: 10,
         minimumOrder: 30,
         isFavorite: true,
-        categories: [foodCategory._id],
+        categories: [foodCategory?._id, shawarmaCat?._id].filter(Boolean),
         address: 'الرياض، حي العليا',
         phone: '+966503456789'
       }
     ];
 
     if (restaurantsCount === 0) {
-      await Restaurant.insertMany(restaurants);
+      await Restaurant.insertMany(baseRestaurants);
       console.log('Restaurants seeded successfully');
+    }
+
+    // Upsert many restaurants per cuisine to ensure rich category listings
+    const ensureRestaurant = async (doc) => {
+      await Restaurant.updateOne(
+        { name: doc.name },
+        { $set: doc, $setOnInsert: { isActive: true, isOpen: true } },
+        { upsert: true }
+      );
+    };
+
+    const mk = (overrides = {}) => ({
+      rating: 4 + Math.random() * 1,
+      reviewCount: Math.floor(50 + Math.random() * 800),
+      deliveryTime: `${20 + Math.floor(Math.random()*25)}- ${30 + Math.floor(Math.random()*30)} دقيقة`,
+      deliveryFee: [0, 8, 10, 12, 15][Math.floor(Math.random()*5)],
+      minimumOrder: [30, 40, 50, 60, 70][Math.floor(Math.random()*5)],
+      isTopRated: Math.random() > 0.6,
+      isFavorite: Math.random() > 0.7,
+      address: 'الرياض',
+      phone: '+9665' + Math.floor(10000000 + Math.random()*89999999),
+      ...overrides,
+    });
+
+    const pizzaList = [
+      mk({ name: 'Napoli Pizza', nameAr: 'بيتزا نابولي', image: 'https://images.unsplash.com/photo-1548365328-9f547fb09542?w=400', categories: [foodCategory?._id, pizzaCat?._id].filter(Boolean) }),
+      mk({ name: 'Roma Slice', nameAr: 'شريحة روما', image: 'https://images.unsplash.com/photo-1600628422011-64773ba1c1f2?w=400', categories: [foodCategory?._id, pizzaCat?._id].filter(Boolean) }),
+      mk({ name: 'Mamma Mia Pizza', nameAr: 'ماماميا بيتزا', image: 'https://images.unsplash.com/photo-1545048702-79362596cdc9?w=400', categories: [foodCategory?._id, pizzaCat?._id].filter(Boolean) }),
+      mk({ name: 'Firewood Pizza', nameAr: 'بيتزا الحطب', image: 'https://images.unsplash.com/photo-1541745537413-b804b0c5091f?w=400', categories: [foodCategory?._id, pizzaCat?._id].filter(Boolean) }),
+      mk({ name: 'Cheesy Crust', nameAr: 'قشرة الجبن', image: 'https://images.unsplash.com/photo-1541745537413-1e6a8f6d26d4?w=400', categories: [foodCategory?._id, pizzaCat?._id].filter(Boolean) }),
+    ];
+
+    const burgerList = [
+      mk({ name: 'Smash Burger Co', nameAr: 'سماش برجر', image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=400', categories: [foodCategory?._id, burgerCat?._id].filter(Boolean) }),
+      mk({ name: 'Grill & Bun', nameAr: 'الشواية و البان', image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400', categories: [foodCategory?._id, burgerCat?._id].filter(Boolean) }),
+      mk({ name: 'Prime Burger', nameAr: 'برايم برجر', image: 'https://images.unsplash.com/photo-1550547660-7f30e2f8f0b3?w=400', categories: [foodCategory?._id, burgerCat?._id].filter(Boolean) }),
+      mk({ name: 'Urban Beef', nameAr: 'أوربان بيف', image: 'https://images.unsplash.com/photo-1552632159-1b11f4c1a3b1?w=400', categories: [foodCategory?._id, burgerCat?._id].filter(Boolean) }),
+      mk({ name: 'Burger Factory', nameAr: 'مصنع البرجر', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400', categories: [foodCategory?._id, burgerCat?._id].filter(Boolean) }),
+    ];
+
+    const shawarmaList = [
+      mk({ name: 'Shawarma Al Sultan', nameAr: 'شاورما السلطان', image: 'https://images.unsplash.com/photo-1615873968403-89e068629265?w=400', categories: [foodCategory?._id, shawarmaCat?._id].filter(Boolean) }),
+      mk({ name: 'Damascus Shawarma', nameAr: 'شاورما دمشق', image: 'https://images.unsplash.com/photo-1552332386-f8dd00dc2f85?w=400', categories: [foodCategory?._id, shawarmaCat?._id].filter(Boolean) }),
+      mk({ name: 'Cedar Shawarma', nameAr: 'سيدر شاورما', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400', categories: [foodCategory?._id, shawarmaCat?._id].filter(Boolean) }),
+      mk({ name: 'Shawarma Express', nameAr: 'شاورما اكسبرس', image: 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?w=400', categories: [foodCategory?._id, shawarmaCat?._id].filter(Boolean) }),
+    ];
+
+    const friedList = [
+      mk({ name: 'Crispy Chicken', nameAr: 'دجاج مقرمش', image: 'https://images.unsplash.com/photo-1604908176997-4312f9b1b175?w=400', categories: [foodCategory?._id, friedCat?._id].filter(Boolean) }),
+      mk({ name: 'Golden Fried', nameAr: 'المقلي الذهبي', image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400', categories: [foodCategory?._id, friedCat?._id].filter(Boolean) }),
+      mk({ name: 'Wing Box', nameAr: 'وينج بوكس', image: 'https://images.unsplash.com/photo-1606756790138-261d2b21cd87?w=400', categories: [foodCategory?._id, friedCat?._id].filter(Boolean) }),
+    ];
+
+    const dessertsList = [
+      mk({ name: 'Sweet Heaven', nameAr: 'سويت هيفن', image: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=400', categories: [dessertsCat?._id].filter(Boolean) }),
+      mk({ name: 'Sugar & Cream', nameAr: 'سكر وكريمة', image: 'https://images.unsplash.com/photo-1551024709-8f23befc6cf7?w=400', categories: [dessertsCat?._id].filter(Boolean) }),
+      mk({ name: 'Joy Desserts', nameAr: 'جوي ديسيرتس', image: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=400', categories: [dessertsCat?._id].filter(Boolean) }),
+    ];
+
+    const grillsList = [
+      mk({ name: 'Kabob Palace', nameAr: 'قصر الكباب', image: 'https://images.unsplash.com/photo-1562158070-2f9b5b4b5390?w=400', categories: [grillsCat?._id].filter(Boolean) }),
+      mk({ name: 'Grill Master', nameAr: 'جرل ماستر', image: 'https://images.unsplash.com/photo-1555992336-03a23c43a3d1?w=400', categories: [grillsCat?._id].filter(Boolean) }),
+      mk({ name: 'Al Mashawi', nameAr: 'المشاوي', image: 'https://images.unsplash.com/photo-1625944526686-3a9e3ebc2c86?w=400', categories: [grillsCat?._id].filter(Boolean) }),
+      mk({ name: 'Charcoal House', nameAr: 'بيت الفحم', image: 'https://images.unsplash.com/photo-1550547660-7a9b6c0f6f3d?w=400', categories: [grillsCat?._id].filter(Boolean) }),
+    ];
+
+    const allLists = [pizzaList, burgerList, shawarmaList, friedList, dessertsList, grillsList];
+    for (const list of allLists) {
+      for (const r of list) {
+        await ensureRestaurant(r);
+      }
     }
     // Ensure flags for favorites and top rated even if docs already existed
     await Restaurant.updateOne({ name: 'Burger House' }, { $set: { isFavorite: true, isTopRated: true } }, { upsert: false });
@@ -271,6 +363,46 @@ const seedFoods = async () => {
     if (foodsCount === 0) {
       await Food.insertMany(foods);
       console.log('Foods seeded successfully');
+    }
+
+    // Helper to upsert a food by name for a restaurant
+    const ensureFood = async (doc) => {
+      await Food.updateOne(
+        { name: doc.name, restaurant: doc.restaurant },
+        { $set: doc },
+        { upsert: true }
+      );
+    };
+
+    // Generate a handful of foods per restaurant
+    const makeFood = (overrides = {}) => ({
+      price: [18, 22, 28, 32, 38, 45][Math.floor(Math.random()*6)],
+      originalPrice: null,
+      rating: (4 + Math.random()).toFixed(1),
+      reviewCount: Math.floor(10 + Math.random()*300),
+      preparationTime: `${10 + Math.floor(Math.random()*20)}- ${20 + Math.floor(Math.random()*25)} دقيقة`,
+      isAvailable: true,
+      isPopular: Math.random() > 0.6,
+      isBestSelling: Math.random() > 0.7,
+      ingredients: [],
+      allergens: [],
+      tags: [],
+      ...overrides,
+    });
+
+    for (const r of restaurants) {
+      const baseName = r.name;
+      const rId = r._id;
+      const common = { restaurant: rId, category: foodCategory?._id };
+      const items = [
+        makeFood({ name: `${baseName} Special 1`, nameAr: `${r.nameAr ?? baseName} خاص 1`, image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400', ...common }),
+        makeFood({ name: `${baseName} Special 2`, nameAr: `${r.nameAr ?? baseName} خاص 2`, image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400', ...common }),
+        makeFood({ name: `${baseName} Combo`, nameAr: `${r.nameAr ?? baseName} كومبو`, image: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400', ...common }),
+        makeFood({ name: `${baseName} Classic`, nameAr: `${r.nameAr ?? baseName} كلاسيك`, image: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=400', ...common }),
+      ];
+      for (const f of items) {
+        await ensureFood(f);
+      }
     }
     // Ensure best-selling flags on a few foods by name in case docs pre-exist
     await Food.updateOne({ name: 'Classic Burger' }, { $set: { isBestSelling: true } }, { upsert: false });

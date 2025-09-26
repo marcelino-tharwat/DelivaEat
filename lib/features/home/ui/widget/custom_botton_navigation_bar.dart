@@ -18,7 +18,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     final colors = context.colors;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final navBarHeight = (screenHeight * 0.09).clamp(70.0, 90.0);
+    final navBarHeight = (screenHeight * 0.09).clamp(60.0, 90.0);
 
     return Container(
       height: navBarHeight,
@@ -63,46 +63,50 @@ class CustomBottomNavigationBar extends StatelessWidget {
       onTap: () => onItemSelected(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                if (isSelected)
-                  Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: colors.primary.withOpacity(0.2),
-                      shape: BoxShape.circle,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (isSelected)
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: colors.primary.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
-                Icon(
-                  icon,
-                  color: isSelected
-                      ? colors.primary
-                      : colors.onSurface.withOpacity(0.6),
-                  size: isSelected ? 26 : 24,
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 200),
-              style:
-                  textStyles.bodySmall?.copyWith(
+                  Icon(
+                    icon,
                     color: isSelected
                         ? colors.primary
                         : colors.onSurface.withOpacity(0.6),
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                    fontSize: isSelected ? 11 : 10,
-                  ) ??
-                  const TextStyle(),
-              child: Text(title),
-            ),
-          ],
+                    size: isSelected ? 24 : 22,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 2),
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 200),
+                style:
+                    textStyles.bodySmall?.copyWith(
+                      color: isSelected
+                          ? colors.primary
+                          : colors.onSurface.withOpacity(0.6),
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontSize: isSelected ? 10 : 9,
+                    ) ??
+                    const TextStyle(),
+                child: Text(title),
+              ),
+            ],
+          ),
         ),
       ),
     );

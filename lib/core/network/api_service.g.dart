@@ -12,7 +12,7 @@ part of 'api_service.dart';
 
 class _ApiService implements ApiService {
   _ApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://192.168.1.6:5000/api/';
+    baseUrl ??= 'http://192.168.1.3:5000/api/';
   }
 
   final Dio _dio;
@@ -392,6 +392,50 @@ class _ApiService implements ApiService {
           .compose(
             _dio.options,
             'home/foods/best-selling',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late HomeResultResponseModel<List<FoodModel>> _value;
+    try {
+      _value = HomeResultResponseModel<List<FoodModel>>.fromJson(
+        _result.data!,
+        (json) => json is List<dynamic>
+            ? json
+                  .map<FoodModel>(
+                    (i) => FoodModel.fromJson(i as Map<String, dynamic>),
+                  )
+                  .toList()
+            : List.empty(),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<HomeResultResponseModel<List<FoodModel>>> getFoodsByRestaurant(
+    String restaurantId,
+    int limit,
+    String lang,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'restaurantId': restaurantId,
+      r'limit': limit,
+      r'lang': lang,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<HomeResultResponseModel<List<FoodModel>>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'home/foods/by-restaurant',
             queryParameters: queryParameters,
             data: _data,
           )

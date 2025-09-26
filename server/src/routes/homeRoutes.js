@@ -4,7 +4,9 @@ const {
   getCategories,
   getOffers,
   getRestaurants,
-  getBestSellingFoods
+  getBestSellingFoods,
+  getRestaurantsByCategory,
+  getFoodsByRestaurant
 } = require('../controllers/homeController');
 
 const router = express.Router();
@@ -29,9 +31,19 @@ router.get('/offers', getOffers);
 // @access  Public
 router.get('/restaurants', getRestaurants);
 
+// @route   GET /api/home/restaurants/by-category
+// @desc    Get restaurants by categoryId (query: categoryId, limit, random=true|false, sort=rating|topRated)
+// @access  Public
+router.get('/restaurants/by-category', getRestaurantsByCategory);
+
 // @route   GET /api/home/foods/best-selling
 // @desc    Get best selling foods
 // @access  Public
 router.get('/foods/best-selling', getBestSellingFoods);
+
+// @route   GET /api/home/foods/by-restaurant
+// @desc    Get foods for a specific restaurant (query: restaurantId, limit, lang)
+// @access  Public
+router.get('/foods/by-restaurant', getFoodsByRestaurant);
 
 module.exports = router;

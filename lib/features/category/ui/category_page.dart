@@ -2,10 +2,13 @@ import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
+import 'package:deliva_eat/core/network/api_constant.dart';
 
 class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({super.key, this.title = ""});
+  const CategoriesPage({super.key, this.title = "", this.categoryId = ""});
   final String title;
+  final String categoryId;
   @override
   State<CategoriesPage> createState() => _CategoriesPageState();
 }
@@ -13,6 +16,16 @@ class CategoriesPage extends StatefulWidget {
 class _CategoriesPageState extends State<CategoriesPage> {
   String _selectedCategoryId = '';
   String _selectedFilter = 'الأعلى تقييماً';
+  bool _loading = true;
+  String? _error;
+  // name (en/ar) -> backend categoryId
+  final Map<String, String> _categoryNameToId = {};
+
+  final Dio _dio = Dio(BaseOptions(
+    baseUrl: ApiConstant.baseUrl,
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 20),
+  ));
 
   final List<FoodCategory> _categories = [
     FoodCategory(
@@ -151,9 +164,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
     if (_selectedCategoryId.isNotEmpty) {
       restaurants = _restaurantsByCategory[_selectedCategoryId] ?? [];
     } else {
-      restaurants = _restaurantsByCategory.values
-          .expand((list) => list)
-          .toList();
+      // Prefer the fetched top list if present; otherwise fall back to any local demo data
+      if (_restaurantsByCategory.containsKey('__top__')) {
+        restaurants = _restaurantsByCategory['__top__'] ?? [];
+      } else {
+        restaurants = _restaurantsByCategory.values.expand((list) => list).toList();
+      }
     }
 
     switch (_selectedFilter) {
@@ -176,6 +192,144 @@ class _CategoriesPageState extends State<CategoriesPage> {
     }
 
     return restaurants;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize selection from route if provided
+    _selectedCategoryId = widget.categoryId;
+    // Fetch initial data
+    _loadBackendCategoryMap().whenComplete(() {
+      if (_selectedCategoryId.isEmpty) {
+        _fetchTopRatedRandom();
+      } else {
+        _fetchByCategory(_selectedCategoryId);
+      }
+    });
+  }
+
+  Future<void> _fetchTopRatedRandom() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final lang = Localizations.localeOf(context).languageCode;
+      final res = await _dio.get('home/restaurants', queryParameters: {
+        'type': 'topRated',
+        'limit': 20,
+        'lang': lang,
+      });
+      final List data = (res.data?['data'] ?? []) as List;
+      final list = data.map((e) => _mapApiToRestaurant(e as Map<String, dynamic>)).toList();
+      list.shuffle();
+      _restaurantsByCategory['__top__'] = list;
+      _selectedCategoryId = '';
+    } catch (e) {
+      _error = 'فشل في تحميل المطاعم، حاول لاحقاً';
+    } finally {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchByCategory(String categoryId) async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final lang = Localizations.localeOf(context).languageCode;
+      final res = await _dio.get('home/restaurants/by-category', queryParameters: {
+        'categoryId': categoryId,
+        'limit': 50,
+        'lang': lang,
+        'sort': 'topRated',
+      });
+      final List data = (res.data?['data'] ?? []) as List;
+      final list = data.map((e) => _mapApiToRestaurant(e as Map<String, dynamic>)).toList();
+      _restaurantsByCategory[categoryId] = list;
+    } catch (e) {
+      String message = 'فشل في تحميل مطاعم الفئة، حاول لاحقاً';
+      if (e is DioException) {
+        final data = e.response?.data;
+        final serverMsg = (data is Map) ? (data['error']?['message'] ?? data['message']) : null;
+        if (serverMsg is String && serverMsg.isNotEmpty) {
+          message = serverMsg;
+        }
+        // Debug log
+        // ignore: avoid_print
+        print('Category fetch error: status=${e.response?.statusCode}, body=${e.response?.data}');
+      } else {
+        // ignore: avoid_print
+        print('Category fetch error: $e');
+      }
+      _error = message;
+      // Fallback to top rated list so the page isn't empty
+      await _fetchTopRatedRandom();
+    } finally {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  Restaurant _mapApiToRestaurant(Map<String, dynamic> json) {
+    final nameAr = (json['nameAr'] ?? '') as String;
+    final name = (json['name'] ?? '') as String;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    return Restaurant(
+      id: (json['_id'] ?? '').toString(),
+      name: isArabic && nameAr.isNotEmpty ? nameAr : name,
+      image: (json['image'] ?? '') as String,
+      rating: ((json['rating'] ?? 0) as num).toDouble(),
+      reviewsCount: ((json['reviewCount'] ?? 0) as num).toInt(),
+      deliveryTime: (json['deliveryTime'] ?? '30-45').toString().replaceAll(' دقيقة', ''),
+      deliveryFee: ((json['deliveryFee'] ?? 0) as num).toInt(),
+      originalDeliveryFee: null,
+      cuisine: '',
+      discount: null,
+      isFavorite: (json['isFavorite'] ?? false) as bool,
+      isPromoted: (json['isTopRated'] ?? false) as bool,
+      tags: const [],
+      minimumOrder: ((json['minimumOrder'] ?? 0) as num).toInt(),
+    );
+  }
+
+  Future<void> _loadBackendCategoryMap() async {
+    try {
+      final lang = Localizations.localeOf(context).languageCode;
+      // use home/categories to get list only
+      final res = await _dio.get('home/categories', queryParameters: {
+        'lang': lang,
+      });
+      final List list = (res.data?['data'] ?? []) as List;
+      for (final item in list) {
+        if (item is Map<String, dynamic>) {
+          final id = (item['_id'] ?? '').toString();
+          final name = (item['name'] ?? '').toString();
+          final nameAr = (item['nameAr'] ?? '').toString();
+          if (id.isNotEmpty) {
+            if (name.isNotEmpty) _categoryNameToId[name] = id;
+            if (nameAr.isNotEmpty) _categoryNameToId[nameAr] = id;
+          }
+        }
+      }
+    } catch (_) {
+      // ignore; we can still show default top rated
+    }
+  }
+
+  String? _resolveBackendCategoryId(String displayName) {
+    // try exact match, case-insensitive
+    if (_categoryNameToId.containsKey(displayName)) return _categoryNameToId[displayName];
+    final lower = displayName.toLowerCase();
+    for (final entry in _categoryNameToId.entries) {
+      if (entry.key.toLowerCase() == lower) return entry.value;
+    }
+    return null;
   }
 
   @override
@@ -271,12 +425,34 @@ class _CategoriesPageState extends State<CategoriesPage> {
       final category = _categories[index];
       final isSelected = _selectedCategoryId == category.id;
       return GestureDetector(
-        onTap: () {
+        onTap: () async {
           HapticFeedback.mediumImpact();
           setState(() {
             _selectedCategoryId = isSelected ? '' : category.id;
             _selectedFilter = 'الأعلى تقييماً';
           });
+          if (_selectedCategoryId.isEmpty) {
+            _fetchTopRatedRandom();
+          } else {
+            // Resolve backend category id by name if we have a mapping
+            if (_categoryNameToId.isEmpty) {
+              await _loadBackendCategoryMap();
+            }
+            final resolvedId = _resolveBackendCategoryId(category.name);
+            if (resolvedId != null && resolvedId.isNotEmpty) {
+              _selectedCategoryId = resolvedId;
+              _fetchByCategory(resolvedId);
+            } else {
+              // Show a friendly message and revert selection
+              _selectedCategoryId = '';
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('هذه الفئة غير متاحة حالياً')),
+                );
+              }
+              _fetchTopRatedRandom();
+            }
+          }
         },
         child: Container(
           width: 120, // نفس العرض زي الأول
@@ -481,7 +657,23 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 ],
               ),
             ),
-            _filteredRestaurants.isEmpty
+            _loading
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 64.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : (_error != null)
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 64.0),
+                          child: Text(
+                            _error!,
+                            style: theme.textTheme.bodyLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                : _filteredRestaurants.isEmpty
                 ? Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 64.0),

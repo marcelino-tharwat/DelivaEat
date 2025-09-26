@@ -32,6 +32,7 @@ class TopRatedRestaurantsList extends StatelessWidget {
           final RestaurantModel r = restaurants[index];
           final isArabic = Localizations.localeOf(context).languageCode == 'ar';
           final Map<String, dynamic> item = {
+            'id': r.id,
             'name': isArabic ? r.nameAr : r.name,
             'rating': r.rating!.toStringAsFixed(1),
             'avgPrice': '',
