@@ -16,10 +16,10 @@ class OfferModel {
   final String discount;
   final String discountType;
   @JsonKey(defaultValue: true)
-  final bool isActive;
-  final DateTime startDate;
-  final DateTime endDate;
-  final int order;
+  final bool? isActive;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final int? order;
 
   OfferModel({
     required this.id,

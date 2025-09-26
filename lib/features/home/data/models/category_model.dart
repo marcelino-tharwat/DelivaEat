@@ -12,8 +12,8 @@ class CategoryModel {
   final String color;
   final List<String> gradient;
   @JsonKey(defaultValue: true)
-  final bool isActive;
-  final int order;
+  final bool? isActive;
+  final int? order;
 
   CategoryModel({
     required this.id,

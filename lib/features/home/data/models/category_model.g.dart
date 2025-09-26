@@ -16,8 +16,8 @@ CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) =>
       gradient: (json['gradient'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      isActive: (json['isActive'] as bool?) ?? true,
-      order: (json['order'] as num).toInt(),
+      isActive: json['isActive'] as bool? ?? true,
+      order: (json['order'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$CategoryModelToJson(CategoryModel instance) =>

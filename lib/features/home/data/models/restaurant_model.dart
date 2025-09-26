@@ -12,21 +12,22 @@ class RestaurantModel {
   final String? descriptionAr;
   final String image;
   final String? coverImage;
-  final double rating;
-  final int reviewCount;
-  final String deliveryTime;
-  final double deliveryFee;
-  final double minimumOrder;
+  final double? rating;
+  final int? reviewCount;
+  final String? deliveryTime;
+  final double? deliveryFee;
+  final double? minimumOrder;
+
   @JsonKey(defaultValue: true)
-  final bool isOpen;
+  final bool? isOpen;
   @JsonKey(defaultValue: true)
-  final bool isActive;
+  final bool? isActive;
   @JsonKey(defaultValue: false)
-  final bool isFavorite;
+  final bool? isFavorite;
   @JsonKey(defaultValue: false)
-  final bool isTopRated;
-  final String address;
-  final String phone;
+  final bool? isTopRated;
+  final String? address;
+  final String? phone;
 
   RestaurantModel({
     required this.id,
@@ -36,20 +37,20 @@ class RestaurantModel {
     this.descriptionAr,
     required this.image,
     this.coverImage,
-    required this.rating,
-    required this.reviewCount,
-    required this.deliveryTime,
-    required this.deliveryFee,
-    required this.minimumOrder,
-    required this.isOpen,
-    required this.isActive,
-    required this.isFavorite,
-    required this.isTopRated,
-    required this.address,
-    required this.phone,
+    this.rating,
+    this.reviewCount,
+    this.deliveryTime,
+    this.deliveryFee,
+    this.minimumOrder,
+    this.isOpen,
+    this.isActive,
+    this.isFavorite,
+    this.isTopRated,
+    this.address,
+    this.phone,
   });
 
-  factory RestaurantModel.fromJson(Map<String, dynamic> json) => 
+  factory RestaurantModel.fromJson(Map<String, dynamic> json) =>
       _$RestaurantModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$RestaurantModelToJson(this);

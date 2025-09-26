@@ -33,7 +33,7 @@ class TopRatedRestaurantsList extends StatelessWidget {
           final isArabic = Localizations.localeOf(context).languageCode == 'ar';
           final Map<String, dynamic> item = {
             'name': isArabic ? r.nameAr : r.name,
-            'rating': r.rating.toStringAsFixed(1),
+            'rating': r.rating!.toStringAsFixed(1),
             'avgPrice': '',
             'emoji': '🍽️',
             'image': r.image,
@@ -105,28 +105,31 @@ class TopRatedRestaurantsList extends StatelessWidget {
                               ),
                         ),
                       ),
-                      Positioned(
-                        top: 12,
-                        right: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colors.primary,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            restaurant['specialty'],
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
+                      restaurant['specialty'] == null ||
+                              restaurant['specialty'] == ''
+                          ? SizedBox.shrink()
+                          : Positioned(
+                              top: 12,
+                              right: 12,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: colors.primary,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  restaurant['specialty'],
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
                       Positioned(
                         bottom: 12,
                         right: 12,

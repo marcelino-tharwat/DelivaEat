@@ -17,10 +17,14 @@ OfferModel _$OfferModelFromJson(Map<String, dynamic> json) => OfferModel(
   image: json['image'] as String,
   discount: json['discount'] as String,
   discountType: json['discountType'] as String,
-  isActive: (json['isActive'] as bool?) ?? true,
-  startDate: DateTime.parse(json['startDate'] as String),
-  endDate: DateTime.parse(json['endDate'] as String),
-  order: (json['order'] as num).toInt(),
+  isActive: json['isActive'] as bool? ?? true,
+  startDate: json['startDate'] == null
+      ? null
+      : DateTime.parse(json['startDate'] as String),
+  endDate: json['endDate'] == null
+      ? null
+      : DateTime.parse(json['endDate'] as String),
+  order: (json['order'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$OfferModelToJson(OfferModel instance) =>
@@ -36,7 +40,7 @@ Map<String, dynamic> _$OfferModelToJson(OfferModel instance) =>
       'discount': instance.discount,
       'discountType': instance.discountType,
       'isActive': instance.isActive,
-      'startDate': instance.startDate.toIso8601String(),
-      'endDate': instance.endDate.toIso8601String(),
+      'startDate': instance.startDate?.toIso8601String(),
+      'endDate': instance.endDate?.toIso8601String(),
       'order': instance.order,
     };

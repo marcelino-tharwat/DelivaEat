@@ -1,29 +1,25 @@
-import 'package:deliva_eat/core/theme/light_dark_mode.dart';
+import 'dart:async';
 import 'package:deliva_eat/features/home/ui/widget/SectionHeader.dart';
-import 'package:deliva_eat/features/home/ui/widget/categories_bar.dart';
 import 'package:deliva_eat/features/home/ui/widget/custom_botton_navigation_bar.dart';
 import 'package:deliva_eat/features/home/ui/widget/favorite_restaurant_list.dart';
 import 'package:deliva_eat/features/home/ui/widget/food_card_list.dart';
 import 'package:deliva_eat/features/home/ui/widget/home_header.dart';
-import 'package:deliva_eat/features/home/ui/widget/offer_slider.dart';
-import 'package:deliva_eat/features/home/ui/widget/page_indecator.dart';
 import 'package:deliva_eat/features/home/ui/widget/show_notifications_bottom_sheet.dart';
-import 'package:deliva_eat/features/home/ui/widget/tages_offer_section.dart';
 import 'package:deliva_eat/features/home/ui/widget/top_rated_resturant_list.dart';
-import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
-import 'package:deliva_eat/core/di/dependency_injection.dart';
-import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
-import 'package:deliva_eat/features/home/cubit/home_state.dart';
-import 'package:deliva_eat/features/home/data/models/category_model.dart';
-import 'package:deliva_eat/features/home/data/models/offer_model.dart';
-import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
-import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// --- PLACEHOLDER IMPORTS (استبدلها بمسارات ملفاتك الصحيحة) ---
+import 'package:deliva_eat/core/theme/light_dark_mode.dart';
+import 'package:deliva_eat/l10n/app_localizations.dart';
+import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
+import 'package:deliva_eat/features/home/cubit/home_state.dart';
+// -----------------------------------------------------------------
 
+//##############################################################################
+//## 1. WIDGET: FoodDeliveryHomePage (الصفحة الرئيسية)
+//##############################################################################
 
 class FoodDeliveryHomePage extends StatefulWidget {
   const FoodDeliveryHomePage({super.key});
@@ -46,15 +42,13 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
 
   int _selectedNavIndex = 0;
 
-  final List<Map<String, dynamic>> _offers = []; // Initialized in initState using localizations
-
-  final List<Map<String, dynamic>> _categories = []; // Initialized in initState using localizations
+  final List<Map<String, dynamic>> _offers = [];
+  final List<Map<String, dynamic>> _categories = [];
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize _categories and _offers after context is available for localizations
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeDataWithLocalizations();
       _startAutoSlide();
@@ -101,39 +95,27 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       _categories.addAll([
         {
           'name': appLocalizations.categoryFood,
-          'icon': Icons.restaurant_menu,
-          'color': const Color(0xFFFF9800),
-          'gradient': [const Color(0xFFFF9800), const Color(0xFFFFCC02)],
+          'image': "assets/images/food.png",
         },
         {
           'name': appLocalizations.categoryGrocery,
-          'icon': Icons.local_grocery_store,
-          'color': const Color(0xFFFF9800),
-          'gradient': [const Color(0xFFFF9800), const Color(0xFFFFCC02)],
+          'image': "assets/images/groceries.png",
         },
         {
           'name': appLocalizations.categoryMarkets,
-          'icon': Icons.store,
-          'color': const Color(0xFFFF9800),
-          'gradient': [const Color(0xFFFF9800), const Color(0xFFFFCC02)],
+          'image': "assets/images/markets.png",
         },
         {
           'name': appLocalizations.categoryPharmacies,
-          'icon': Icons.medical_services,
-          'color': const Color(0xFFFF9800),
-          'gradient': [const Color(0xFFFF9800), const Color(0xFFFFCC02)],
+          'image': "assets/images/pharma2.png",
         },
         {
           'name': appLocalizations.categoryGifts,
-          'icon': Icons.card_giftcard,
-          'color': const Color(0xFFFF9800),
-          'gradient': [const Color(0xFFFF9800), const Color(0xFFFFCC02)],
+          'image': "assets/images/gifts.png",
         },
         {
           'name': appLocalizations.categoryStores,
-          'icon': Icons.shopping_bag,
-          'color': const Color(0xFFFF9800),
-          'gradient': [const Color(0xFFFF9800), const Color(0xFFFFCC02)],
+          'image': "assets/images/markets.png",
         },
       ]);
     });
@@ -160,11 +142,9 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     _categoriesTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_categoriesPageController.hasClients) {
         _currentCategoryPage++;
-
         if (_currentCategoryPage >= _categories.length - 2) {
           _currentCategoryPage = 0;
         }
-
         _categoriesPageController.animateToPage(
           _currentCategoryPage,
           duration: const Duration(milliseconds: 800),
@@ -183,6 +163,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -192,13 +173,17 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       backgroundColor: colors.background,
       body: BlocBuilder<HomeCubit, HomeState>(
         buildWhen: (previous, current) =>
-            current is HomeInitial || current is HomeLoading || current is HomeSuccess || current is HomeError,
+            current is HomeInitial ||
+            current is HomeLoading ||
+            current is HomeSuccess ||
+            current is HomeError,
         builder: (context, state) {
           if (state is HomeInitial || state is HomeLoading) {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is HomeError) {
-            final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+            final isArabic =
+                Localizations.localeOf(context).languageCode == 'ar';
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -214,7 +199,9 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                     ),
                     const SizedBox(height: 12),
                     ElevatedButton.icon(
-                      onPressed: () => context.read<HomeCubit>().getHomeData(lang: isArabic ? 'ar' : 'en'),
+                      onPressed: () => context.read<HomeCubit>().getHomeData(
+                        lang: isArabic ? 'ar' : 'en',
+                      ),
                       icon: const Icon(Icons.refresh),
                       label: Text(AppLocalizations.of(context)!.resend),
                     ),
@@ -224,56 +211,55 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
             );
           }
 
-          // Map backend data to UI maps expected by widgets; fallback to local data
           final isArabic = Localizations.localeOf(context).languageCode == 'ar';
           final categories = state is HomeSuccess
               ? state.categories
-                  .map((cat) => {
+                    .map(
+                      (cat) => {
                         'name': isArabic ? cat.nameAr : cat.name,
-                        'icon': _mapCategoryIcon(cat.icon),
-                        'color': _parseHexColor(cat.color) ?? const Color(0xFFFF9800),
-                        'gradient': [
-                          _parseHexColor(cat.gradient.isNotEmpty ? cat.gradient.first : cat.color) ?? const Color(0xFFFF9800),
-                          _parseHexColor(cat.gradient.length > 1 ? cat.gradient[1] : cat.color) ?? const Color(0xFFFFCC02),
-                        ],
-                      })
-                  .toList()
+                        'image': cat
+                            .icon, // Assuming the image URL comes from the backend
+                        'color':
+                            _parseHexColor(cat.color) ??
+                            const Color(0xFFFF9800),
+                      },
+                    )
+                    .toList()
               : _categories;
 
           final offers = state is HomeSuccess
               ? state.offers
-                  .map((offer) => {
+                    .map(
+                      (offer) => {
                         'title': isArabic ? offer.titleAr : offer.title,
-                        'subtitle': isArabic ? offer.subtitleAr : offer.subtitle,
-                        'color': _parseHexColor(offer.color) ?? const Color(0xFFFF6B35),
+                        'subtitle': isArabic
+                            ? offer.subtitleAr
+                            : offer.subtitle,
+                        'color':
+                            _parseHexColor(offer.color) ??
+                            const Color(0xFFFF6B35),
                         'icon': offer.icon.isNotEmpty ? offer.icon : '🍔',
                         'image': offer.image,
                         'discount': offer.discount,
-                      })
-                  .toList()
+                      },
+                    )
+                    .toList()
               : _offers;
 
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                HomeHeader(onNotificationTap: _showNotificationsBottomSheet),
-                // SizedBox(height: screenHeight * 0.01),
-                SectionHeader(
-                  title: appLocalizations.categories,
-                  showSeeAll: false,
+                HomeHeader(
+                  onNotificationTap: _showNotificationsBottomSheet,
                   onSeeAllTap: _handleSeeAll,
-                ),
-                CategoriesBar(
-                  categories: categories,
-                  pageController: _categoriesPageController,
+                  categories: categories, // Use mapped categories
+                  categoriesPageController: _categoriesPageController,
                   onCategoryTap: _handleCategoryTap,
-                ),
-                SizedBox(height: screenHeight * 0.01),
-                OffersSlider(
-                  offers: offers,
-                  pageController: pageController,
-                  onPageChanged: (index) {
+                  offers: offers, // Use mapped offers
+                  offersPageController: pageController,
+                  currentOfferSlide: _currentSlide,
+                  onOfferPageChanged: (index) {
                     setState(() {
                       _currentSlide = index;
                     });
@@ -281,45 +267,72 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                   },
                   onOfferTap: _handleOfferTap,
                 ),
-                PageIndicator(
-                  itemCount: offers.length,
-                  currentIndex: _currentSlide,
+                Transform.translate(
+                  offset: const Offset(0, -30),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: colors.background,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        SizedBox(height: screenHeight * 0.01),
+                        SectionHeader(
+                          title: appLocalizations.favorites,
+                          icon: Icons.favorite,
+                          iconColor: const Color(0xFFFFD93D),
+                          onSeeAllTap: _handleSeeAll,
+                        ),
+                        FavoriteRestaurantsList(
+                          restaurants: state is HomeSuccess
+                              ? state.favoriteRestaurants
+                              : const [],
+                          onRestaurantTap: _handleRestaurantTap,
+                        ),
+                        SizedBox(height: screenHeight * 0.01),
+                        SectionHeader(
+                          title: appLocalizations.topRatedRestaurants,
+                          onSeeAllTap: _handleSeeAll,
+                        ),
+                        TopRatedRestaurantsList(
+                          restaurants: state is HomeSuccess
+                              ? state.topRatedRestaurants
+                              : const [],
+                          onRestaurantDetailTap: _handleRestaurantDetailTap,
+                          onViewMenuTap: _handleViewMenu,
+                        ),
+                        SizedBox(height: screenHeight * 0.01),
+                        SectionHeader(
+                          title: appLocalizations.bestSelling,
+                          onSeeAllTap: _handleSeeAll,
+                        ),
+                        FoodCardList(
+                          foods: state is HomeSuccess
+                              ? state.bestSellingFoods
+                              : const [],
+                          onFoodCardTap: _handleFoodCardTap,
+                        ),
+                        SizedBox(height: screenHeight * 0.01),
+                      ],
+                    ),
+                  ),
                 ),
-
-                SizedBox(height: screenHeight * 0.01),
-                SectionHeader(
-                  title: appLocalizations.favorites,
-                  icon: Icons.favorite,
-                  iconColor: const Color(0xFFFFD93D),
-                  onSeeAllTap: _handleSeeAll,
-                ),
-                FavoriteRestaurantsList(
-                  restaurants: state is HomeSuccess ? state.favoriteRestaurants : const [],
-                  onRestaurantTap: _handleRestaurantTap,
-                ),
-                SizedBox(height: screenHeight * 0.01),
-                SectionHeader(
-                  title: appLocalizations.topRatedRestaurants,
-                  onSeeAllTap: _handleSeeAll,
-                ),
-                TopRatedRestaurantsList(
-                  restaurants: state is HomeSuccess ? state.topRatedRestaurants : const [],
-                  onRestaurantDetailTap: _handleRestaurantDetailTap,
-                  onViewMenuTap: _handleViewMenu,
-                ),
-                SizedBox(height: screenHeight * 0.01),
-                SectionHeader(
-                  title: appLocalizations.bestSelling,
-                  onSeeAllTap: _handleSeeAll,
-                ),
-                FoodCardList(
-                  foods: state is HomeSuccess ? state.bestSellingFoods : const [],
-                  onFoodCardTap: _handleFoodCardTap,
-                ),
-                SizedBox(height: screenHeight * 0.01),
               ],
             ),
           );
+        },
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedNavIndex,
+        onItemSelected: (index) {
+          setState(() {
+            _selectedNavIndex = index;
+          });
+          HapticFeedback.lightImpact();
+          _handleNavigation(index);
         },
       ),
     );
@@ -344,7 +357,9 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(appLocalizations.categoryTappedSnackbar(category['name'])),
+        content: Text(
+          appLocalizations.categoryTappedSnackbar(category['name']),
+        ),
         backgroundColor: category['color'],
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -357,7 +372,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تم اختيار: $name'), // Consider adding a localization key for this
+        content: Text('تم اختيار: $name'),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.all(16),
@@ -369,7 +384,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تم اختيار مطعم: $name'), // Consider adding a localization key for this
+        content: Text('تم اختيار مطعم: $name'),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.all(16),
@@ -381,7 +396,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('عرض تفاصيل: ${restaurant['name']}'), // Consider adding a localization key for this
+        content: Text('عرض تفاصيل: ${restaurant['name']}'),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.all(16),
@@ -393,19 +408,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('عرض قائمة: ${restaurant['name']}'), // Consider adding a localization key for this
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
-  }
-
-  void _handleTagTap(String tag) {
-    HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('تصفية حسب: $tag'), // Consider adding a localization key for this
+        content: Text('عرض قائمة: ${restaurant['name']}'),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.all(16),
@@ -417,7 +420,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('عرض المزيد من: $section'), // Consider adding a localization key for this
+        content: Text('عرض المزيد من: $section'),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.all(16),
@@ -427,10 +430,15 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
 
   void _handleNavigation(int index) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
-    final pages = [appLocalizations.homePageTitle, appLocalizations.ordersTitle, appLocalizations.offersTitle, appLocalizations.accountTitle];
+    final pages = [
+      appLocalizations.homePageTitle,
+      appLocalizations.ordersTitle,
+      appLocalizations.offersTitle,
+      appLocalizations.accountTitle,
+    ];
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('انتقال إلى: ${pages[index]}'), // Consider adding a localization key for this
+        content: Text('انتقال إلى: ${pages[index]}'),
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -449,7 +457,6 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
   }
 }
 
-// Helper methods within the State class scope
 extension _HomePageHelpers on FoodDeliveryHomePageState {
   Color? _parseHexColor(String hex) {
     try {

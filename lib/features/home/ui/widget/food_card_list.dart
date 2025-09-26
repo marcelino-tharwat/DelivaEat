@@ -29,14 +29,14 @@ class FoodCardList extends StatelessWidget {
           final name = isArabic ? f.nameAr : f.name;
           final imageUrl = f.image;
           final rating = f.rating;
-          final priceStr = f.price.toStringAsFixed(0);
+          final priceStr = f.price!.toStringAsFixed(0);
           final emoji = '🍽️';
 
           return _buildFoodCard(
             context,
             name,
             imageUrl,
-            rating,
+            rating!,
             priceStr,
             emoji,
             index,

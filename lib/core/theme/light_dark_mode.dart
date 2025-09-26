@@ -28,7 +28,8 @@ class AppTheme {
       secondary: secondaryGray,
       secondaryContainer: lightGray,
       surface: Colors.white,
-      background: Color(0xFFF9F9F9),
+      // background: Color(0xFFFFFFFF),
+      background: Colors.white,
       error: errorRed,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
@@ -38,17 +39,17 @@ class AppTheme {
       outline: Color(0xFFE0E0E0),
     ),
     
-    scaffoldBackgroundColor: const Color(0xFFF9F9F9),
+    scaffoldBackgroundColor:  Colors.white,
     
     // AppBar Theme
     appBarTheme: const AppBarTheme(
-      backgroundColor: primaryYellow,
-      foregroundColor: Colors.white,
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.black,
       elevation: 0,
       centerTitle: true,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       titleTextStyle: TextStyle(
-        color: Colors.white,
+        color: Colors.black,
         fontSize: 20,
         fontWeight: FontWeight.w600,
       ),
