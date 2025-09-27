@@ -1,6 +1,7 @@
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int selectedIndex;
@@ -16,30 +17,30 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     final colors = context.colors;
-    final screenHeight = MediaQuery.of(context).size.height;
 
-    final navBarHeight = (screenHeight * 0.09).clamp(60.0, 90.0);
+    // استخدم .h بدلاً من MediaQuery
+    final navBarHeight = (80.h).clamp(60.h, 90.h); 
 
     return Container(
       height: navBarHeight,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.r),
+          topRight: Radius.circular(30.r),
         ),
         boxShadow: [
           BoxShadow(
             color: colors.shadow.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
+            blurRadius: 20.r,
+            offset: Offset(0, -5.h),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.r),
+          topRight: Radius.circular(30.r),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -63,9 +64,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
       onTap: () => onItemSelected(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 40),
+          constraints: BoxConstraints(minHeight: 40.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -75,8 +76,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
                 children: [
                   if (isSelected)
                     Container(
-                      width: 32,
-                      height: 32,
+                      width: 32.w,
+                      height: 32.w,
                       decoration: BoxDecoration(
                         color: colors.primary.withOpacity(0.2),
                         shape: BoxShape.circle,
@@ -87,20 +88,19 @@ class CustomBottomNavigationBar extends StatelessWidget {
                     color: isSelected
                         ? colors.primary
                         : colors.onSurface.withOpacity(0.6),
-                    size: isSelected ? 24 : 22,
+                    size: isSelected ? 24.sp : 22.sp,
                   ),
                 ],
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: 2.h),
               AnimatedDefaultTextStyle(
                 duration: const Duration(milliseconds: 200),
-                style:
-                    textStyles.bodySmall?.copyWith(
+                style: textStyles.bodySmall?.copyWith(
                       color: isSelected
                           ? colors.primary
                           : colors.onSurface.withOpacity(0.6),
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                      fontSize: isSelected ? 10 : 9,
+                      fontSize: isSelected ? 10.sp : 9.sp,
                     ) ??
                     const TextStyle(),
                 child: Text(title),

@@ -1,42 +1,5 @@
-// import 'package:deliva_eat/core/theme/light_dark_mode.dart';
-// import 'package:flutter/material.dart';
-
-// class PageIndicator extends StatelessWidget {
-//   final int itemCount;
-//   final int currentIndex;
-
-//   const PageIndicator({
-//     super.key,
-//     required this.itemCount,
-//     required this.currentIndex,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final colors = context.colors;
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 12.0),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: List.generate(itemCount, (index) {
-//           return AnimatedContainer(
-//             duration: const Duration(milliseconds: 300),
-//             width: currentIndex == index ? 24.0 : 8.0,
-//             height: 8.0,
-//             margin: const EdgeInsets.symmetric(horizontal: 4.0),
-//             decoration: BoxDecoration(
-//               borderRadius: BorderRadius.circular(4),
-//               color: currentIndex == index
-//                   ? colors.primary
-//                   : colors.outline.withOpacity(0.3),
-//             ),
-//           );
-//         }),
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PageIndicator extends StatelessWidget {
   final int itemCount;
@@ -53,16 +16,17 @@ class PageIndicator extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(itemCount, (index) {
+        final bool isActive = currentIndex == index;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          width: currentIndex == index ? 24.0 : 8.0,
-          height: 8.0,
-          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+          width: isActive ? 10.w : 8.w, // ممكن تعمل فرق بسيط للحجم
+          height: isActive ? 10.w : 8.w,
+          margin: EdgeInsets.symmetric(horizontal: 4.w),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: currentIndex == index
-                ? Colors.white // لون أبيض ناصع للمؤشر النشط
-                : Colors.white.withOpacity(0.5), // لون شبه شفاف لغير النشط
+            shape: BoxShape.circle, // ✅ دايرة مش مستطيل
+            color: isActive
+                ? Colors.white // نقطة نشطة
+                : Colors.white.withOpacity(0.4), // نقطة خاملة
           ),
         );
       }),

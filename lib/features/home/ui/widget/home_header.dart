@@ -1,185 +1,9 @@
-// import 'package:deliva_eat/core/theme/light_dark_mode.dart';
-// import 'package:flutter/material.dart';
-// import 'dart:math';
-
-// class HomeHeader extends StatelessWidget {
-//   final VoidCallback onNotificationTap;
-
-//   const HomeHeader({super.key, required this.onNotificationTap});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final colors = context.colors;
-//     final textStyles = context.textStyles;
-
-//     return ClipPath(
-//       clipper: WaveClipper(),
-//       child: Container(
-//         height: 180, // زودت الارتفاع شوية عشان الـ wave
-//         width: double.infinity,
-//         decoration: BoxDecoration(
-//           color: colors.primary,
-//         ),
-//         child: Padding(
-//           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-//           child: Row(
-//             // عكست الـ Row للـ RTL
-//             // textDirection: TextDirection.rtl,
-//             children: [
-//               // Location Icon - أول حاجة من اليمين
-//               Container(
-//                 padding: const EdgeInsets.all(8),
-//                 decoration: BoxDecoration(
-//                   color: Colors.white.withOpacity(0.2),
-//                   borderRadius: BorderRadius.circular(12),
-//                 ),
-//                 child: const Icon(
-//                   Icons.location_on,
-//                   color: Colors.white,
-//                   size: 24,
-//                 ),
-//               ),
-//               const SizedBox(width: 12),
-          
-//               // Address - في النص
-//               Expanded(
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     Text(
-//                       'التوصيل إلى',
-//                       style: textStyles.bodySmall?.copyWith(
-//                         color: Colors.white.withOpacity(0.8),
-//                         fontSize: 12,
-//                       ),
-//                       textAlign: TextAlign.start,
-//                     ),
-//                     const SizedBox(height: 2),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.start,
-//                       children: [
-//                         // const Icon(
-//                         //   Icons.keyboard_arrow_down,
-//                         //   size: 20,
-//                         //   color: Colors.white,
-//                         // ),
-//                         // const SizedBox(width: 4),
-//                         Expanded(
-//                           child: Text(
-//                             'الرياض, شارع الملك فهد',
-//                             style: textStyles.bodyMedium?.copyWith(
-//                               fontWeight: FontWeight.bold,
-//                               color: Colors.white,
-//                             ),
-//                             maxLines: 1,
-//                             overflow: TextOverflow.ellipsis,
-//                             textAlign: TextAlign.start,
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//               const SizedBox(width: 12),
-          
-//               // Notification - آخر حاجة من اليسار
-//               Container(
-//                 decoration: BoxDecoration(
-//                   color: Colors.white.withOpacity(0.15),
-//                   borderRadius: BorderRadius.circular(12),
-//                   boxShadow: [
-//                     BoxShadow(
-//                       color: Colors.black.withOpacity(0.1),
-//                       blurRadius: 8,
-//                       offset: const Offset(0, 2),
-//                     ),
-//                   ],
-//                 ),
-//                 child: IconButton(
-//                   icon: Stack(
-//                     children: [
-//                       const Icon(
-//                         Icons.notifications_none_rounded,
-//                         color: Colors.white,
-//                         size: 24,
-//                       ),
-//                       Positioned(
-//                         top: 0,
-//                         right: 0,
-//                         child: Container(
-//                           width: 8,
-//                           height: 8,
-//                           decoration: const BoxDecoration(
-//                             color: Color(0xFFFF6B6B),
-//                             shape: BoxShape.circle,
-//                           ),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                   onPressed: onNotificationTap,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class WaveClipper extends CustomClipper<Path> {
-//   @override
-//   Path getClip(Size size) {
-//     final path = Path();
-    
-//     // بداية من أعلى يسار
-//     path.moveTo(0, 0);
-//     path.lineTo(0, size.height - 40); // نسيب مساحة للموجة
-    
-//     // عمل موجة في الأسفل
-//     double waveHeight = 20;
-//     double waveLength = size.width / 4;
-    
-//     for (int i = 0; i <= 4; i++) {
-//       double x = i * waveLength;
-//       if (i == 0) {
-//         // أول نقطة
-//         path.quadraticBezierTo(
-//           x + waveLength / 2, 
-//           size.height - 40 + waveHeight, 
-//           x + waveLength, 
-//           size.height - 40
-//         );
-//       } else if (i < 4) {
-//         // النقط اللي في النص
-//         path.quadraticBezierTo(
-//           x + waveLength / 2, 
-//           i % 2 == 1 ? size.height - 40 - waveHeight : size.height - 40 + waveHeight, 
-//           x + waveLength, 
-//           size.height - 40
-//         );
-//       }
-//     }
-    
-//     // إكمال للنهاية
-//     path.lineTo(size.width, 0);
-//     path.close();
-    
-//     return path;
-//   }
-
-//   @override
-//   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-// }
 import 'package:flutter/material.dart';
-import 'package:deliva_eat/core/theme/light_dark_mode.dart'; 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'categories_bar.dart';
 import 'offer_slider.dart';
-
 
 class HomeHeader extends StatelessWidget {
   final VoidCallback onNotificationTap;
@@ -212,63 +36,77 @@ class HomeHeader extends StatelessWidget {
     final colors = context.colors;
     final textStyles = context.textStyles;
     final appLocalizations = AppLocalizations.of(context)!;
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return Container(
-      height: screenHeight * 0.63,
+      height: 0.53.sh, // 63% من ارتفاع الشاشة
       width: double.infinity,
       decoration: BoxDecoration(color: colors.primary),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 10),
+            padding: EdgeInsets.only(
+              top: 40.h,
+              left: 20.w,
+              right: 20.w,
+              bottom: 10.h,
+            ),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
-                  child: const Icon(Icons.location_on, color: Colors.white, size: 24),
+                  child: Icon(Icons.location_on, color: Colors.white, size: 24.sp),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         appLocalizations.deliveryTo,
-                        style: textStyles.bodySmall?.copyWith(color: Colors.white.withOpacity(0.8)),
+                        style: textStyles.bodySmall?.copyWith(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 12.sp,
+                        ),
                       ),
-                      const SizedBox(height: 2),
+                      SizedBox(height: 2.h),
                       Text(
                         appLocalizations.selected_address,
-                        style: textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                        style: textStyles.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: IconButton(
                     icon: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 24),
+                        Icon(Icons.notifications_none_rounded, color: Colors.white, size: 24.sp),
                         Positioned(
-                          top: 2,
-                          right: 2,
+                          top: 2.h,
+                          right: 2.w,
                           child: Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(color: Color(0xFFFF6B6B), shape: BoxShape.circle),
+                            width: 8.w,
+                            height: 8.w,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFF6B6B),
+                              shape: BoxShape.circle,
+                            ),
                           ),
                         ),
                       ],
@@ -279,15 +117,19 @@ class HomeHeader extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   appLocalizations.categories,
-                  style: textStyles.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: textStyles.titleLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.sp,
+                  ),
                 ),
               ],
             ),
@@ -297,7 +139,7 @@ class HomeHeader extends StatelessWidget {
             pageController: categoriesPageController,
             onCategoryTap: onCategoryTap,
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           MediaQuery.removePadding(
             context: context,
             removeLeft: true,
@@ -311,7 +153,7 @@ class HomeHeader extends StatelessWidget {
               onOfferTap: onOfferTap,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
         ],
       ),
     );

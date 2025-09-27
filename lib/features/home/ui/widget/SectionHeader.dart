@@ -1,6 +1,7 @@
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SectionHeader extends StatelessWidget {
   final String title;
@@ -23,12 +24,11 @@ class SectionHeader extends StatelessWidget {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     final colors = context.colors;
     final textStyles = context.textStyles;
-    final screenWidth = MediaQuery.of(context).size.width;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.w), // متجاوبة
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // 👈 ده المفتاح
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // 👈 العنوان (و الأيقونة لو موجودة)
@@ -37,18 +37,18 @@ class SectionHeader extends StatelessWidget {
             children: [
               if (icon != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
                     color: (iconColor ?? colors.primary).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Icon(
                     icon,
                     color: iconColor ?? colors.primary,
-                    size: 20,
+                    size: 20.sp, // متجاوب
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
               ],
               Text(
                 title,
@@ -57,7 +57,7 @@ class SectionHeader extends StatelessWidget {
                 style: textStyles.titleLarge?.copyWith(
                   color: colors.onBackground,
                   fontWeight: FontWeight.bold,
-                  fontSize: screenWidth * 0.05,
+                  fontSize: 18.sp, // متجاوب بدل screenWidth * 0.05
                 ),
               ),
             ],
@@ -69,20 +69,23 @@ class SectionHeader extends StatelessWidget {
               onPressed: () => onSeeAllTap(title),
               style: TextButton.styleFrom(
                 foregroundColor: colors.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                minimumSize: const Size(0, 36),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                minimumSize: Size(0, 36.h),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(appLocalizations.seeAll),
-                  const SizedBox(width: 4),
+                  Text(
+                    appLocalizations.seeAll,
+                    style: TextStyle(fontSize: 14.sp),
+                  ),
+                  SizedBox(width: 4.w),
                   Icon(
                     Directionality.of(context) == TextDirection.rtl
                         ? Icons.arrow_forward_ios
                         : Icons.arrow_back_ios,
-                    size: 14,
+                    size: 14.sp,
                   ),
                 ],
               ),

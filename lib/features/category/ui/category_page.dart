@@ -1,4 +1,5 @@
 import 'package:deliva_eat/core/routing/routes.dart';
+import 'package:deliva_eat/features/home/ui/widget/offer_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -14,26 +15,53 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
-  String _selectedCategoryId = '';
+  // متغيرات OffersSlider
+  late final PageController _pageController;
+  int _currentPageIndex = 0;
+
+  // فصل متغيرات الحالة: واحد للواجهة (الإضاءة) وواحد للبيانات (API)
+  String _selectedLocalCategoryId = ''; // مسؤول عن الهالة الصفراء
+  String _selectedBackendCategoryId = ''; // مسؤول عن جلب المطاعم
+
   String _selectedFilter = 'الأعلى تقييماً';
   bool _loading = true;
   String? _error;
-  // name (en/ar) -> backend categoryId
   final Map<String, String> _categoryNameToId = {};
 
-  final Dio _dio = Dio(BaseOptions(
-    baseUrl: ApiConstant.baseUrl,
-    connectTimeout: const Duration(seconds: 10),
-    receiveTimeout: const Duration(seconds: 20),
-  ));
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: ApiConstant.baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 20),
+    ),
+  );
+
+  final List<Map<String, dynamic>> _offersData = [
+    {
+      'title': 'خصم 50% على أول طلب',
+      'subtitle': 'استخدم كود: NEW50',
+      'image':
+          'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
+      'color': Colors.red,
+    },
+    {
+      'title': 'توصيل مجاني هذا الأسبوع',
+      'subtitle': 'لجميع المطاعم المشاركة',
+      'image':
+          'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1974&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
+      'color': Colors.blue,
+    },
+    {
+      'title': 'وجبات عائلية بأسعار خاصة',
+      'subtitle': 'اكتشف عروضنا الجديدة',
+      'image':
+          'https://images.unsplash.com/photo-1626074353765-517a681e40be?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
+      'color': Colors.green,
+    },
+  ];
 
   final List<FoodCategory> _categories = [
-    FoodCategory(
-      id: '1',
-      name: 'Pizza',
-      image: "assets/images/Pizza.png",
-      // color: const Color(0xFFE63946),
-    ),
+    FoodCategory(id: '1', name: 'Pizza', image: "assets/images/Pizza.png"),
     FoodCategory(id: '2', name: 'Burger', image: "assets/images/Burger.png"),
     FoodCategory(id: '3', name: 'Crepes', image: "assets/images/Crepes.png"),
     FoodCategory(
@@ -67,7 +95,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         id: '1',
         name: 'برجر كينج',
         image:
-            'https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         rating: 4.5,
         reviewsCount: 1250,
         deliveryTime: '30-45',
@@ -94,81 +122,20 @@ class _CategoriesPageState extends State<CategoriesPage> {
         tags: ['وجبات سريعة', 'برجر', 'إفطار'],
         minimumOrder: 40,
       ),
-      Restaurant(
-        id: '3',
-        name: 'كايرو برجر',
-        image:
-            'https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        rating: 4.7,
-        reviewsCount: 890,
-        deliveryTime: '35-50',
-        deliveryFee: 0,
-        originalDeliveryFee: 18,
-        cuisine: 'برجر محلي',
-        discount: 'توصيل مجاني',
-        isFavorite: false,
-        tags: ['محلي', 'برجر', 'مصري'],
-        minimumOrder: 60,
-      ),
-    ],
-    '2': [
-      Restaurant(
-        id: '4',
-        name: 'بيتزا هت',
-        image:
-            'https://images.unsplash.com/photo-1534308960654-e73722956c2e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        rating: 4.0,
-        reviewsCount: 1500,
-        deliveryTime: '40-55',
-        deliveryFee: 18,
-        cuisine: 'بيتزا إيطالية',
-        isFavorite: false,
-        tags: ['بيتزا', 'إيطالي', 'وجبات سريعة'],
-        minimumOrder: 70,
-      ),
-      Restaurant(
-        id: '5',
-        name: 'دومينوز بيتزا',
-        image:
-            'https://images.unsplash.com/photo-1534308960654-e73722956c2e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        rating: 3.8,
-        reviewsCount: 1800,
-        deliveryTime: '30-45',
-        deliveryFee: 15,
-        cuisine: 'بيتزا أمريكية',
-        isFavorite: true,
-        tags: ['بيتزا', 'أمريكي'],
-        minimumOrder: 60,
-      ),
-    ],
-    '3': [
-      Restaurant(
-        id: '6',
-        name: 'كنتاكي',
-        image:
-            'https://images.unsplash.com/photo-1563242784-0672e8169994?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        rating: 4.3,
-        reviewsCount: 2000,
-        deliveryTime: '35-50',
-        deliveryFee: 16,
-        cuisine: 'دجاج مقلي',
-        isFavorite: false,
-        tags: ['دجاج', 'مقلي', 'وجبات سريعة'],
-        minimumOrder: 55,
-      ),
     ],
   };
 
   List<Restaurant> get _filteredRestaurants {
     List<Restaurant> restaurants;
-    if (_selectedCategoryId.isNotEmpty) {
-      restaurants = _restaurantsByCategory[_selectedCategoryId] ?? [];
+    if (_selectedBackendCategoryId.isNotEmpty) {
+      restaurants = _restaurantsByCategory[_selectedBackendCategoryId] ?? [];
     } else {
-      // Prefer the fetched top list if present; otherwise fall back to any local demo data
       if (_restaurantsByCategory.containsKey('__top__')) {
         restaurants = _restaurantsByCategory['__top__'] ?? [];
       } else {
-        restaurants = _restaurantsByCategory.values.expand((list) => list).toList();
+        restaurants = _restaurantsByCategory.values
+            .expand((list) => list)
+            .toList();
       }
     }
 
@@ -197,16 +164,56 @@ class _CategoriesPageState extends State<CategoriesPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize selection from route if provided
-    _selectedCategoryId = widget.categoryId;
-    // Fetch initial data
+    _pageController = PageController();
+
+    _selectedBackendCategoryId = widget.categoryId;
+
     _loadBackendCategoryMap().whenComplete(() {
-      if (_selectedCategoryId.isEmpty) {
+      if (_selectedBackendCategoryId.isEmpty) {
         _fetchTopRatedRandom();
       } else {
-        _fetchByCategory(_selectedCategoryId);
+        _updateLocalCategoryFromBackendId(_selectedBackendCategoryId);
+        _fetchByCategory(_selectedBackendCategoryId);
       }
     });
+  }
+
+  void _updateLocalCategoryFromBackendId(String backendId) {
+    for (var entry in _categoryNameToId.entries) {
+      if (entry.value == backendId) {
+        final categoryName = entry.key;
+        final matchingCategory = _categories.firstWhere(
+          (cat) => cat.name.toLowerCase() == categoryName.toLowerCase(),
+          orElse: () => FoodCategory(id: '', name: '', image: ''),
+        );
+        if (matchingCategory.id.isNotEmpty) {
+          if (mounted) {
+            setState(() {
+              _selectedLocalCategoryId = matchingCategory.id;
+            });
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentPageIndex = index;
+    });
+  }
+
+  void _onOfferTap(Map<String, dynamic> offer) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('تم الضغط على: ${offer['title']}')));
   }
 
   Future<void> _fetchTopRatedRandom() async {
@@ -216,22 +223,24 @@ class _CategoriesPageState extends State<CategoriesPage> {
     });
     try {
       final lang = Localizations.localeOf(context).languageCode;
-      final res = await _dio.get('home/restaurants', queryParameters: {
-        'type': 'topRated',
-        'limit': 20,
-        'lang': lang,
-      });
+      final res = await _dio.get(
+        'home/restaurants',
+        queryParameters: {'type': 'topRated', 'limit': 20, 'lang': lang},
+      );
       final List data = (res.data?['data'] ?? []) as List;
-      final list = data.map((e) => _mapApiToRestaurant(e as Map<String, dynamic>)).toList();
+      final list = data
+          .map((e) => _mapApiToRestaurant(e as Map<String, dynamic>))
+          .toList();
       list.shuffle();
       _restaurantsByCategory['__top__'] = list;
-      _selectedCategoryId = '';
     } catch (e) {
       _error = 'فشل في تحميل المطاعم، حاول لاحقاً';
     } finally {
-      setState(() {
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
     }
   }
 
@@ -242,37 +251,39 @@ class _CategoriesPageState extends State<CategoriesPage> {
     });
     try {
       final lang = Localizations.localeOf(context).languageCode;
-      final res = await _dio.get('home/restaurants/by-category', queryParameters: {
-        'categoryId': categoryId,
-        'limit': 50,
-        'lang': lang,
-        'sort': 'topRated',
-      });
+      final res = await _dio.get(
+        'home/restaurants/by-category',
+        queryParameters: {
+          'categoryId': categoryId,
+          'limit': 50,
+          'lang': lang,
+          'sort': 'topRated',
+        },
+      );
       final List data = (res.data?['data'] ?? []) as List;
-      final list = data.map((e) => _mapApiToRestaurant(e as Map<String, dynamic>)).toList();
+      final list = data
+          .map((e) => _mapApiToRestaurant(e as Map<String, dynamic>))
+          .toList();
       _restaurantsByCategory[categoryId] = list;
     } catch (e) {
       String message = 'فشل في تحميل مطاعم الفئة، حاول لاحقاً';
       if (e is DioException) {
         final data = e.response?.data;
-        final serverMsg = (data is Map) ? (data['error']?['message'] ?? data['message']) : null;
+        final serverMsg = (data is Map)
+            ? (data['error']?['message'] ?? data['message'])
+            : null;
         if (serverMsg is String && serverMsg.isNotEmpty) {
           message = serverMsg;
         }
-        // Debug log
-        // ignore: avoid_print
-        print('Category fetch error: status=${e.response?.statusCode}, body=${e.response?.data}');
-      } else {
-        // ignore: avoid_print
-        print('Category fetch error: $e');
       }
       _error = message;
-      // Fallback to top rated list so the page isn't empty
       await _fetchTopRatedRandom();
     } finally {
-      setState(() {
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
     }
   }
 
@@ -286,7 +297,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
       image: (json['image'] ?? '') as String,
       rating: ((json['rating'] ?? 0) as num).toDouble(),
       reviewsCount: ((json['reviewCount'] ?? 0) as num).toInt(),
-      deliveryTime: (json['deliveryTime'] ?? '30-45').toString().replaceAll(' دقيقة', ''),
+      deliveryTime: (json['deliveryTime'] ?? '30-45').toString().replaceAll(
+        ' دقيقة',
+        '',
+      ),
       deliveryFee: ((json['deliveryFee'] ?? 0) as num).toInt(),
       originalDeliveryFee: null,
       cuisine: '',
@@ -301,10 +315,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Future<void> _loadBackendCategoryMap() async {
     try {
       final lang = Localizations.localeOf(context).languageCode;
-      // use home/categories to get list only
-      final res = await _dio.get('home/categories', queryParameters: {
-        'lang': lang,
-      });
+      final res = await _dio.get(
+        'home/categories',
+        queryParameters: {'lang': lang},
+      );
       final List list = (res.data?['data'] ?? []) as List;
       for (final item in list) {
         if (item is Map<String, dynamic>) {
@@ -317,14 +331,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
           }
         }
       }
-    } catch (_) {
-      // ignore; we can still show default top rated
-    }
+    } catch (_) {}
   }
 
   String? _resolveBackendCategoryId(String displayName) {
-    // try exact match, case-insensitive
-    if (_categoryNameToId.containsKey(displayName)) return _categoryNameToId[displayName];
+    if (_categoryNameToId.containsKey(displayName))
+      return _categoryNameToId[displayName];
     final lower = displayName.toLowerCase();
     for (final entry in _categoryNameToId.entries) {
       if (entry.key.toLowerCase() == lower) return entry.value;
@@ -342,13 +354,40 @@ class _CategoriesPageState extends State<CategoriesPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 50),
-            Text(
-              'قسم الطعام',
-              textAlign: TextAlign.start,
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
+            Padding(
+              padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Text(
+                    'قسم الطعام',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  Align(
+                    alignment:
+                        AlignmentDirectional.centerStart, // <-- التعديل هنا
+                    child: InkWell(
+                      onTap: () => context.pop(),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: theme.dividerColor),
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          size: 20,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -396,6 +435,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            OffersSlider(
+              offers: _offersData,
+              pageController: _pageController,
+              onPageChanged: _onPageChanged,
+              onOfferTap: _onOfferTap,
+              currentPageIndex: _currentPageIndex,
+            ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Column(
@@ -414,235 +461,124 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       ),
                     ),
                   ),
-                  // const SizedBox(height: 16),
-                 SizedBox(
-  height: 120,
-  child: ListView.builder(
-    scrollDirection: Axis.horizontal,
-    padding: const EdgeInsets.symmetric(horizontal: 0),
-    itemCount: _categories.length,
-    itemBuilder: (context, index) {
-      final category = _categories[index];
-      final isSelected = _selectedCategoryId == category.id;
-      return GestureDetector(
-        onTap: () async {
-          HapticFeedback.mediumImpact();
-          setState(() {
-            _selectedCategoryId = isSelected ? '' : category.id;
-            _selectedFilter = 'الأعلى تقييماً';
-          });
-          if (_selectedCategoryId.isEmpty) {
-            _fetchTopRatedRandom();
-          } else {
-            // Resolve backend category id by name if we have a mapping
-            if (_categoryNameToId.isEmpty) {
-              await _loadBackendCategoryMap();
-            }
-            final resolvedId = _resolveBackendCategoryId(category.name);
-            if (resolvedId != null && resolvedId.isNotEmpty) {
-              _selectedCategoryId = resolvedId;
-              _fetchByCategory(resolvedId);
-            } else {
-              // Show a friendly message and revert selection
-              _selectedCategoryId = '';
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('هذه الفئة غير متاحة حالياً')),
-                );
-              }
-              _fetchTopRatedRandom();
-            }
-          }
-        },
-        child: Container(
-          width: 120, // نفس العرض زي الأول
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Card(
-                elevation: isSelected ? 8 : 4,
-                shadowColor: Theme.of(context)
-                    .shadowColor
-                    .withOpacity(isSelected ? 0.25 : 0.15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(60), // نص القطر = نصف الطول
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: SizedBox(
-                  width: 80, // عرض الكارد
-                  height: 80, // الطول = العرض -> دايرة مظبوطة
-                  child: Container(
-                    color: Theme.of(context).cardColor,
-                    child: Image.asset(
-                      category.image,
-                      fit: BoxFit.fitWidth,
+                  SizedBox(
+                    height: 120,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
+                      itemCount: _categories.length,
+                      itemBuilder: (context, index) {
+                        final category = _categories[index];
+                        final isSelected =
+                            _selectedLocalCategoryId == category.id;
+
+                        return GestureDetector(
+                          onTap: () async {
+                            HapticFeedback.mediumImpact();
+
+                            final tappedLocalId = category.id;
+                            final isCurrentlySelected =
+                                _selectedLocalCategoryId == tappedLocalId;
+
+                            if (isCurrentlySelected) {
+                              setState(() {
+                                _selectedLocalCategoryId = '';
+                                _selectedBackendCategoryId = '';
+                                _selectedFilter = 'الأعلى تقييماً';
+                              });
+                              _fetchTopRatedRandom();
+                            } else {
+                              if (_categoryNameToId.isEmpty) {
+                                await _loadBackendCategoryMap();
+                              }
+                              final resolvedBackendId =
+                                  _resolveBackendCategoryId(category.name);
+
+                              if (resolvedBackendId != null &&
+                                  resolvedBackendId.isNotEmpty) {
+                                setState(() {
+                                  _selectedLocalCategoryId = tappedLocalId;
+                                  _selectedBackendCategoryId =
+                                      resolvedBackendId;
+                                  _selectedFilter = 'الأعلى تقييماً';
+                                });
+                                _fetchByCategory(resolvedBackendId);
+                              } else {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'هذه الفئة غير متاحة حالياً',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          },
+                          child: Container(
+                            width: 120,
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: isSelected
+                                        ? [
+                                            BoxShadow(
+                                              color: Colors.amber.withOpacity(
+                                                0.5,
+                                              ),
+                                              blurRadius: 2,
+                                              spreadRadius: 1,
+                                            ),
+                                          ]
+                                        : [],
+                                  ),
+                                  child: Card(
+                                    elevation: isSelected ? 8 : 4,
+                                    shadowColor: theme.shadowColor.withOpacity(
+                                      isSelected ? 0.25 : 0.15,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(60),
+                                    ),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: SizedBox(
+                                      width: 80,
+                                      height: 80,
+                                      child: Container(
+                                        color: theme.cardColor,
+                                        child: Image.asset(
+                                          category.image,
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  category.name,
+                                  textAlign: TextAlign.center,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: theme.colorScheme.onSurface,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                category.name,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  ),
-)
-
-                  // SizedBox(
-                  //   height: 120,
-                  //   child: ListView.builder(
-                  //     scrollDirection: Axis.horizontal,
-                  //     padding: const EdgeInsets.symmetric(horizontal: 0),
-                  //     itemCount: _categories.length,
-                  //     itemBuilder: (context, index) {
-                  //       final category = _categories[index];
-                  //       final isSelected = _selectedCategoryId == category.id;
-
-                  //       return GestureDetector(
-                  //         onTap: () {
-                  //           HapticFeedback.mediumImpact();
-                  //           setState(() {
-                  //             _selectedCategoryId = isSelected
-                  //                 ? ''
-                  //                 : category.id;
-                  //             _selectedFilter = 'الأعلى تقييماً';
-                  //           });
-                  //         },
-                  //         child: Container(
-                  //           width: 110,
-                  //           // margin: const EdgeInsets.symmetric(horizontal: 6),
-                  //           child: Column(
-                  //             mainAxisAlignment: MainAxisAlignment.center,
-                  //             children: [
-                  //               Card(
-                  //                 elevation: isSelected ? 6 : 3,
-                  //                 shadowColor: Theme.of(
-                  //                   context,
-                  //                 ).shadowColor.withOpacity(0.15),
-                  //                 shape: RoundedRectangleBorder(
-                  //                   // borderRadius: BorderRadius.circular(16),
-                  //                   // side: BorderSide(
-                  //                   //   color: Theme.of(context).dividerColor,
-                  //                   //   width: 1.5,
-                  //                   // ),
-                  //                 ),
-                  //                 clipBehavior: Clip.antiAlias,
-                  //                 child: Container(
-                  //                   width: double.infinity,
-                  //                   height: 70,
-                  //                   color: Theme.of(context).cardColor,
-                  //                   child: Center(
-                  //                     child: Image.asset(category.image),
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //               const SizedBox(height: 5),
-                  //               Text(
-                  //                 category.name,
-                  //                 textAlign: TextAlign.center,
-                  //                 style: Theme.of(context).textTheme.bodySmall
-                  //                     ?.copyWith(
-                  //                       fontWeight: FontWeight.w600,
-                  //                       color: Theme.of(
-                  //                         context,
-                  //                       ).colorScheme.onSurface,
-                  //                     ),
-                  //                 maxLines: 1,
-                  //                 overflow: TextOverflow.ellipsis,
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
-
-                  // SizedBox(
-                  //   height: 110,
-                  //   child: ListView.builder(
-                  //     scrollDirection: Axis.horizontal,
-                  //     padding: const EdgeInsets.symmetric(horizontal: 16),
-                  //     itemCount: _categories.length,
-                  //     itemBuilder: (context, index) {
-                  //       final category = _categories[index];
-
-                  //       return GestureDetector(
-                  //         onTap: () {
-                  //           HapticFeedback.mediumImpact();
-                  //           setState(() {
-                  //             _selectedCategoryId =
-                  //                 _selectedCategoryId == category.id
-                  //                     ? ''
-                  //                     : category.id;
-                  //             _selectedFilter = 'الأعلى تقييماً';
-                  //           });
-                  //         },
-                  //         child: Container(
-                  //           width: 85,
-                  //           margin: const EdgeInsets.symmetric(horizontal: 4),
-                  //           decoration: BoxDecoration(
-                  //             color: theme.cardColor,
-                  //             borderRadius: BorderRadius.circular(20),
-                  //             boxShadow: [
-                  //               BoxShadow(
-                  //                 color: theme.shadowColor.withOpacity(0.1),
-                  //                 blurRadius: 8,
-                  //                 offset: const Offset(0, 3),
-                  //               ),
-                  //             ],
-                  //             border: Border.all(
-                  //               color: _selectedCategoryId == category.id
-                  //                   ? category.color
-                  //                   : theme.dividerColor,
-                  //               width: 1.5,
-                  //             ),
-                  //           ),
-                  //           child: Column(
-                  //             mainAxisAlignment: MainAxisAlignment.center,
-                  //             children: [
-                  //               Container(
-                  //                 padding: const EdgeInsets.all(12),
-                  //                 decoration: BoxDecoration(
-                  //                   color: category.color.withOpacity(0.1),
-                  //                   borderRadius: BorderRadius.circular(12),
-                  //                 ),
-                  //                 child: Icon(
-                  //                   category.icon,
-                  //                   size: 28,
-                  //                   color: category.color,
-                  //                 ),
-                  //               ),
-                  //               const SizedBox(height: 8),
-                  //               Text(
-                  //                 category.name,
-                  //                 style: theme.textTheme.labelMedium?.copyWith(
-                  //                   fontWeight: FontWeight.w600,
-                  //                   color: theme.colorScheme.onSurface,
-                  //                 ),
-                  //                 textAlign: TextAlign.center,
-                  //                 maxLines: 1,
-                  //                 overflow: TextOverflow.ellipsis,
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -663,16 +599,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     child: Center(child: CircularProgressIndicator()),
                   )
                 : (_error != null)
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 64.0),
-                          child: Text(
-                            _error!,
-                            style: theme.textTheme.bodyLarge,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 64.0),
+                      child: Text(
+                        _error!,
+                        style: theme.textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
                 : _filteredRestaurants.isEmpty
                 ? Center(
                     child: Padding(
@@ -780,23 +716,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
           borderRadius: BorderRadius.circular(16),
           onTap: () {
             HapticFeedback.lightImpact();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(Icons.restaurant, color: Colors.white),
-                    const SizedBox(width: 8),
-                    Text('جاري فتح ${restaurant.name}...'),
-                  ],
-                ),
-                backgroundColor: theme.primaryColor,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                margin: const EdgeInsets.all(16),
-              ),
-            );
             // يمكنك هنا إضافة التوجيه لصفحة تفاصيل المطعم
             // context.push('${AppRoutes.restaurantDetails}/${restaurant.id}');
           },
@@ -912,7 +831,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 }
 
-// Data Models (بدون تغيير)
+// Data Models
 class FoodCategory {
   final String id;
   final String name;
