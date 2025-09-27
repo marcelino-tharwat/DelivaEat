@@ -40,10 +40,7 @@ class CategoriesBar extends StatelessWidget {
           return SizedBox(
             width: 120.w, // استعمل .w عشان يتناسب مع عرض الشاشة
             child: GestureDetector(
-              onTap: () => context.go(
-                AppRoutes.categoryPage,
-                extra: {'id': category['id'], 'title': category['name']},
-              ),
+              onTap: () => onCategoryTap(category),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,

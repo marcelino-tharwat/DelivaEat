@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'package:deliva_eat/features/home/ui/widget/SectionHeader.dart';
 import 'package:deliva_eat/features/home/ui/widget/custom_botton_navigation_bar.dart';
-import 'package:deliva_eat/features/home/ui/widget/favorite_restaurant_list.dart';
 import 'package:deliva_eat/features/home/ui/widget/food_card_list.dart';
 import 'package:deliva_eat/features/home/ui/widget/home_header.dart';
 import 'package:deliva_eat/features/home/ui/widget/show_notifications_bottom_sheet.dart';
 import 'package:deliva_eat/features/home/ui/widget/top_rated_resturant_list.dart';
+import 'package:deliva_eat/features/home/ui/widget/favorite_restaurant_list.dart';
 import 'package:flutter/material.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_menu_page.dart';
+import 'package:deliva_eat/features/category/ui/category_page.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // ✅ أضفت المكتبة
@@ -52,6 +53,18 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     _categoriesPageController = PageController(
       viewportFraction: 0.28,
       initialPage: _currentCategoryPage,
+    );
+  }
+
+  void _handleFoodCardTap(String name, int index) {
+    HapticFeedback.lightImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('تم اختيار: $name'),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+      ),
     );
   }
 
@@ -216,19 +229,8 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
 
               final isArabic =
                   Localizations.localeOf(context).languageCode == 'ar';
-              final categories = state is HomeSuccess
-                  ? state.categories
-                      .map(
-                        (cat) => {
-                          'id': cat.id,
-                          'name': isArabic ? cat.nameAr : cat.name,
-                          'image': cat.icon,
-                          'color': _parseHexColor(cat.color) ??
-                              const Color(0xFFFF9800),
-                        },
-                      )
-                      .toList()
-                  : _categories;
+              // Always use the fixed six categories on Home and ignore API categories
+              final categories = _categories;
 
               final offers = state is HomeSuccess
                   ? state.offers
@@ -358,29 +360,19 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
   void _handleCategoryTap(Map<String, dynamic> category) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          appLocalizations.categoryTappedSnackbar(category['name']),
-        ),
-        backgroundColor: category['color'],
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
-  }
 
-  void _handleFoodCardTap(String name, int index) {
-    HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('تم اختيار: $name'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
+    final String tappedName = (category['name'] ?? '').toString();
+    final String foodName = appLocalizations.categoryFood;
+
+    if (tappedName == foodName) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const CategoriesPage(),
+        ),
+      );
+      return;
+    }
+    // Other categories: do nothing for now
   }
 
   void _handleRestaurantTap(String name, int index) {
