@@ -2,6 +2,7 @@ import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NotificationsBottomSheet extends StatelessWidget {
   const NotificationsBottomSheet({super.key});
@@ -10,27 +11,27 @@ class NotificationsBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
+      height: 0.7.sh, // 👈 متجاوب
       decoration: BoxDecoration(
         color: context.colors.surface,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25.r),
+          topRight: Radius.circular(25.r),
         ),
       ),
       child: Column(
         children: [
           Container(
-            margin: const EdgeInsets.only(top: 12),
-            width: 40,
-            height: 4,
+            margin: EdgeInsets.only(top: 12.h),
+            width: 40.w,
+            height: 4.h,
             decoration: BoxDecoration(
               color: context.colors.outline,
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: BorderRadius.circular(2.r),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -38,22 +39,29 @@ class NotificationsBottomSheet extends StatelessWidget {
                   appLocalizations.notifications,
                   style: context.textStyles.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
+                    fontSize: 20.sp, // 👈 متجاوب
                   ),
                 ),
-                TextButton(onPressed: () {}, child: Text(appLocalizations.readAll)),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    appLocalizations.readAll,
+                    style: TextStyle(fontSize: 14.sp), // 👈 متجاوب
+                  ),
+                ),
               ],
             ),
           ),
           Expanded(
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               itemCount: 5,
               separatorBuilder: (context, index) =>
                   Divider(color: context.colors.outline.withOpacity(0.3)),
               itemBuilder: (context, index) {
                 final notifications = [
                   {
-                    'title': 'تم قبول طلبك', // Consider localization for notifications
+                    'title': 'تم قبول طلبك',
                     'subtitle': 'طلبك من مطعم النور قيد التحضير',
                     'time': 'منذ 5 دقائق',
                     'icon': Icons.restaurant,
@@ -93,56 +101,57 @@ class NotificationsBottomSheet extends StatelessWidget {
 
                 return ListTile(
                   leading: Container(
-                    width: 50,
-                    height: 50,
+                    width: 50.w,
+                    height: 50.w,
                     decoration: BoxDecoration(
-                      color: (notification['color'] as Color).withOpacity(
-                        0.1,
-                      ),
+                      color: (notification['color'] as Color).withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       notification['icon'] as IconData,
                       color: notification['color'] as Color,
+                      size: 24.sp,
                     ),
                   ),
                   title: Text(
                     notification['title'] as String,
                     style: context.textStyles.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
+                      fontSize: 16.sp,
                     ),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Text(
                         notification['subtitle'] as String,
                         style: context.textStyles.bodyMedium?.copyWith(
+                          fontSize: 14.sp,
                           color: context.colors.onSurface.withOpacity(0.7),
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Text(
                         notification['time'] as String,
                         style: context.textStyles.bodySmall?.copyWith(
+                          fontSize: 12.sp,
                           color: context.colors.onSurface.withOpacity(0.5),
                         ),
                       ),
                     ],
                   ),
                   trailing: Container(
-                    width: 8,
-                    height: 8,
+                    width: 8.w,
+                    height: 8.w,
                     decoration: BoxDecoration(
                       color: index < 2
                           ? context.colors.primary
-                          // ignore: use_full_hex_values_for_flutter_colors
-                          : const Color(0x0000000),
+                          : const Color(0x00000000),
                       shape: BoxShape.circle,
                     ),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                  contentPadding: EdgeInsets.symmetric(vertical: 8.h),
                   onTap: () {
                     Navigator.pop(context);
                     HapticFeedback.lightImpact();

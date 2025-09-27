@@ -1,8 +1,8 @@
 import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-
 
 class CategoriesBar extends StatelessWidget {
   final List<Map<String, dynamic>> categories;
@@ -18,35 +18,31 @@ class CategoriesBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     final colors = context.colors;
     final textStyles = context.textStyles;
-    final labelFontSize = (screenWidth * 0.026).clamp(9.0, 12.0);
-    // Provide a fixed, bounded height for the horizontal list
-    final double imageAreaHeight = 70; // slightly smaller to avoid overflow on small devices
-    final double barHeight = imageAreaHeight + 32; // include label + spacing
+
+    // استخدم ScreenUtil بدلاً من MediaQuery
+    final double imageAreaHeight = 70.h;
+    final double barHeight = imageAreaHeight + 40.h;
 
     return SizedBox(
       height: barHeight,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 6),
+        // padding: EdgeInsets.symmetric(horizontal: 6.w),
         itemCount: categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 6),
+        separatorBuilder: (_, __) => SizedBox(width: 0.w),
         itemBuilder: (context, index) {
           final category = categories[index];
           final imageUrl = category['image'] as String?;
           final isNetworkImage = imageUrl?.startsWith('http') ?? false;
 
           return SizedBox(
-            width: 96, // fixed item width for consistent layout
+            width: 120.w, // استعمل .w عشان يتناسب مع عرض الشاشة
             child: GestureDetector(
               onTap: () => context.go(
                 AppRoutes.categoryPage,
-                extra: {
-                  'id': category['id'],
-                  'title': category['name'],
-                },
+                extra: {'id': category['id'], 'title': category['name']},
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -56,7 +52,7 @@ class CategoriesBar extends StatelessWidget {
                     elevation: 4,
                     shadowColor: colors.shadow.withOpacity(0.1),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.r),
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: SizedBox(
@@ -64,22 +60,22 @@ class CategoriesBar extends StatelessWidget {
                       height: imageAreaHeight,
                       child: Container(
                         color: colors.surface,
-                        padding: const EdgeInsets.all(6.0),
+                        padding: EdgeInsets.all(6.0.w),
                         child: _buildCategoryImage(imageUrl, isNetworkImage),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   SizedBox(
-                    height: 18,
+                    height: 18.h,
                     child: Center(
                       child: Text(
                         category['name'] ?? '',
                         textAlign: TextAlign.center,
                         style: textStyles.bodySmall?.copyWith(
-                          color: colors.onBackground,
+                          color: colors.background ,
                           fontWeight: FontWeight.w600,
-                          fontSize: labelFontSize.toDouble(),
+                          fontSize: 11.sp, // ديناميكي مع الشاشة
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -97,19 +93,21 @@ class CategoriesBar extends StatelessWidget {
 
   Widget _buildCategoryImage(String? imageUrl, bool isNetworkImage) {
     if (imageUrl == null || imageUrl.isEmpty) {
-      return const Icon(Icons.category);
+      return Icon(Icons.category, size: 24.sp);
     }
 
     return isNetworkImage
         ? Image.network(
             imageUrl,
             fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) => const Icon(Icons.category),
+            errorBuilder: (context, error, stackTrace) =>
+                Icon(Icons.category, size: 24.sp),
           )
         : Image.asset(
             imageUrl,
             fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) => const Icon(Icons.category),
+            errorBuilder: (context, error, stackTrace) =>
+                Icon(Icons.category, size: 24.sp),
           );
   }
 }

@@ -1,25 +1,30 @@
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FavoriteRestaurantsList extends StatelessWidget {
   final List<RestaurantModel> restaurants;
   final Function(String, int) onRestaurantTap;
 
-  const FavoriteRestaurantsList({super.key, required this.restaurants, required this.onRestaurantTap});
+  const FavoriteRestaurantsList({
+    super.key,
+    required this.restaurants,
+    required this.onRestaurantTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
     if (restaurants.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    return Container(
-      height: screenHeight * 0.18,
+    return SizedBox(
+      height: 150.h, // بدل MediaQuery بـ .h
+      
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16), // Added horizontal padding
+        // padding: EdgeInsets.symmetric(horizontal: 16.w),
         itemCount: restaurants.length,
         itemBuilder: (context, index) {
           final RestaurantModel r = restaurants[index];
@@ -49,20 +54,19 @@ class FavoriteRestaurantsList extends StatelessWidget {
   ) {
     final colors = context.colors;
     final textStyles = context.textStyles;
-    final screenWidth = MediaQuery.of(context).size.width;
 
     return GestureDetector(
       onTap: () => onRestaurantTap(name, index),
       child: Hero(
         tag: 'restaurant_$index',
         child: Container(
-          width: screenWidth * 0.32,
-          margin: const EdgeInsets.only(right: 16), // Added margin to separate cards
+          width: 150.w,
+          // margin: EdgeInsets.only(right: 16.w),
           child: Card(
             elevation: 6,
             shadowColor: colors.shadow.withOpacity(0.2),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16.r),
             ),
             clipBehavior: Clip.antiAlias,
             child: Column(
@@ -104,23 +108,23 @@ class FavoriteRestaurantsList extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        top: 8,
-                        right: 8,
+                        top: 8.h,
+                        right: 8.w,
                         child: Container(
-                          padding: const EdgeInsets.all(4),
+                          padding: EdgeInsets.all(4.w),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFF6B6B),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
-                                blurRadius: 4,
+                                blurRadius: 4.r,
                               ),
                             ],
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.favorite,
-                            size: 14,
+                            size: 14.sp,
                             color: Colors.white,
                           ),
                         ),
@@ -131,7 +135,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(8.w),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -139,38 +143,38 @@ class FavoriteRestaurantsList extends StatelessWidget {
                           name,
                           style: textStyles.bodyMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            fontSize: screenWidth * 0.032,
+                            fontSize: 12.sp,
                             color: colors.onSurface,
                           ),
                           textAlign: TextAlign.center,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4.h),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 2.h,
                           ),
                           decoration: BoxDecoration(
                             color: colors.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10.r),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.star,
                                 color: Colors.amber,
-                                size: 12,
+                                size: 12.sp,
                               ),
-                              const SizedBox(width: 2),
+                              SizedBox(width: 2.w),
                               Text(
                                 ratingStr,
                                 style: textStyles.bodySmall?.copyWith(
                                   color: colors.onSurface,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 10,
+                                  fontSize: 10.sp,
                                 ),
                               ),
                             ],
