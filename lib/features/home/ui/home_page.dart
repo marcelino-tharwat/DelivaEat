@@ -294,6 +294,24 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                                   ? state.favoriteRestaurants
                                   : const [],
                               onRestaurantTap: _handleRestaurantTap,
+                              onToggleFavorite: (id) => _handleToggleFavorite(id),
+                            ),
+                            SizedBox(height: 8.h),
+                            // Favorite Foods (derived from bestSellingFoods for now)
+                            SectionHeader(
+                              title: 'المفضلة - أكلات',
+                              icon: Icons.favorite,
+                              iconColor: const Color(0xFFFF6B6B),
+                              onSeeAllTap: _handleSeeAll,
+                            ),
+                            FoodCardList(
+                              foods: state is HomeSuccess
+                                  ? state.bestSellingFoods
+                                      .where((f) => (f.isFavorite ?? false))
+                                      .toList()
+                                  : const [],
+                              onFoodCardTap: _handleFoodCardTap,
+                              onToggleFavorite: (id) => _handleToggleFoodFavorite(id),
                             ),
                             SizedBox(height: 8.h),
                             SectionHeader(
@@ -306,6 +324,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                                   : const [],
                               onRestaurantDetailTap: _handleRestaurantDetailTap,
                               onViewMenuTap: _handleViewMenu,
+                              onToggleFavorite: (id) => _handleToggleFavorite(id),
                             ),
                             SizedBox(height: 8.h),
                             SectionHeader(
@@ -317,6 +336,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                                   ? state.bestSellingFoods
                                   : const [],
                               onFoodCardTap: _handleFoodCardTap,
+                              onToggleFavorite: (id) => _handleToggleFoodFavorite(id),
                             ),
                             SizedBox(height: 8.h),
                           ],
@@ -385,6 +405,22 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
         margin: const EdgeInsets.all(16),
       ),
     );
+  }
+
+  void _handleToggleFavorite(String restaurantId) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    context.read<HomeCubit>().toggleFavorite(
+          restaurantId: restaurantId,
+          lang: isArabic ? 'ar' : 'en',
+        );
+  }
+
+  void _handleToggleFoodFavorite(String foodId) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    context.read<HomeCubit>().toggleFoodFavorite(
+          foodId: foodId,
+          lang: isArabic ? 'ar' : 'en',
+        );
   }
 
   void _handleRestaurantDetailTap(Map<String, dynamic> restaurant, int index) {

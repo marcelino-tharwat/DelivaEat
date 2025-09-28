@@ -17,6 +17,8 @@ class ApiConstant {
   static const String restaurantsByCategoryUrl = 'home/restaurants/by-category';
   static const String bestSellingFoodsUrl = 'home/foods/best-selling';
   static const String foodsByRestaurantUrl = 'home/foods/by-restaurant';
+  static const String toggleFavoriteUrl = 'home/restaurants/favorite';
+  static const String toggleFoodFavoriteUrl = 'home/foods/favorite';
   
   // Search endpoints
   static const String searchUrl = 'search';

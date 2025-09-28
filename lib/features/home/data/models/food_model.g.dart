@@ -21,6 +21,7 @@ FoodModel _$FoodModelFromJson(Map<String, dynamic> json) => FoodModel(
   isAvailable: json['isAvailable'] as bool? ?? true,
   isPopular: json['isPopular'] as bool? ?? false,
   isBestSelling: json['isBestSelling'] as bool? ?? false,
+  isFavorite: json['isFavorite'] as bool? ?? false,
   restaurant: json['restaurant'] == null
       ? null
       : RestaurantModel.fromJson(json['restaurant'] as Map<String, dynamic>),
@@ -48,6 +49,7 @@ Map<String, dynamic> _$FoodModelToJson(FoodModel instance) => <String, dynamic>{
   'isAvailable': instance.isAvailable,
   'isPopular': instance.isPopular,
   'isBestSelling': instance.isBestSelling,
+  'isFavorite': instance.isFavorite,
   'restaurant': instance.restaurant,
   'ingredients': instance.ingredients,
   'allergens': instance.allergens,
