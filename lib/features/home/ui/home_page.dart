@@ -189,14 +189,6 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                                 // CHANGED: Added toggle favorite handler
                                 onToggleFavorite: _handleToggleFavorite,
                               ),
-                              SizedBox(height: 8.h),
-                              // ADDED: Favorite Foods Section
-                              SectionHeader(
-                                title: 'المأكولات المفضلة', // يمكنك إضافتها للترجمة
-                                icon: Icons.fastfood_rounded,
-                                iconColor: const Color(0xFFFF6B6B),
-                                onSeeAllTap: _handleSeeAll,
-                              ),
                               FoodCardList(
                                 foods: state.bestSellingFoods
                                     .where((f) => f.isFavorite ?? false)
