@@ -58,6 +58,10 @@ const foodSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  isFavorite: {
+    type: Boolean,
+    default: false
+  },
   restaurant: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Restaurant',

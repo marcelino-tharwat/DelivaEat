@@ -22,6 +22,8 @@ class FoodModel {
   final bool isPopular;
   @JsonKey(defaultValue: false)
   final bool isBestSelling;
+  @JsonKey(defaultValue: false)
+  final bool? isFavorite;
   final RestaurantModel? restaurant;
   final List<String>? ingredients;
   final List<String>? allergens;
@@ -42,6 +44,7 @@ class FoodModel {
     required this.isAvailable,
     required this.isPopular,
     required this.isBestSelling,
+    this.isFavorite,
     this.restaurant,
     this.ingredients,
     this.allergens,

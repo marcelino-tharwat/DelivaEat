@@ -6,7 +6,8 @@ const {
   getRestaurants,
   getBestSellingFoods,
   getRestaurantsByCategory,
-  getFoodsByRestaurant
+  getFoodsByRestaurant,
+  toggleFavoriteRestaurant,
 } = require('../controllers/homeController');
 
 const router = express.Router();
@@ -45,5 +46,15 @@ router.get('/foods/best-selling', getBestSellingFoods);
 // @desc    Get foods for a specific restaurant (query: restaurantId, limit, lang)
 // @access  Public
 router.get('/foods/by-restaurant', getFoodsByRestaurant);
+
+// @route   POST /api/home/restaurants/favorite
+// @desc    Toggle restaurant favorite flag (demo/global)
+// @access  Public (attach auth for per-user favorite)
+router.post('/restaurants/favorite', toggleFavoriteRestaurant);
+
+// @route   POST /api/home/foods/favorite
+// @desc    Toggle food favorite flag (demo/global)
+// @access  Public
+router.post('/foods/favorite', require('../controllers/homeController').toggleFavoriteFood);
 
 module.exports = router;

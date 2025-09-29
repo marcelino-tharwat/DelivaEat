@@ -7,11 +7,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class FoodCardList extends StatelessWidget {
   final List<FoodModel> foods;
   final Function(String, int) onFoodCardTap;
+  final void Function(String foodId)? onToggleFavorite;
 
   const FoodCardList({
     super.key,
     required this.foods,
     required this.onFoodCardTap,
+    this.onToggleFavorite,
   });
 
   @override
@@ -44,6 +46,8 @@ class FoodCardList extends StatelessWidget {
             rating,
             priceStr,
             emoji,
+            f.id,
+            f.isFavorite ?? false,
             index,
           );
         },
@@ -58,6 +62,8 @@ class FoodCardList extends StatelessWidget {
     double rating,
     String price,
     String emojiFallback,
+    String foodId,
+    bool isFavorite,
     int index,
   ) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
@@ -110,22 +116,25 @@ class FoodCardList extends StatelessWidget {
                       Positioned(
                         top: 8.h,
                         right: 8.w,
-                        child: Container(
-                          padding: EdgeInsets.all(6.r),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 4.r,
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.favorite_border,
-                            size: 18.sp,
-                            color: colors.primary,
+                        child: InkWell(
+                          onTap: () => onToggleFavorite?.call(foodId),
+                          child: Container(
+                            padding: EdgeInsets.all(6.r),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4.r,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              isFavorite ? Icons.favorite : Icons.favorite_border,
+                              size: 18.sp,
+                              color: isFavorite ? Colors.red : colors.primary,
+                            ),
                           ),
                         ),
                       ),

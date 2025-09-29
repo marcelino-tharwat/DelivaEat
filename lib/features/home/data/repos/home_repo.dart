@@ -9,6 +9,7 @@ import 'package:deliva_eat/features/home/data/models/category_model.dart';
 import 'package:deliva_eat/features/home/data/models/offer_model.dart';
 import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/data/models/food_model.dart';
+import 'package:deliva_eat/core/network/api_constant.dart';
 import 'package:dio/dio.dart'; // ستحتاج هذا للتعامل مع DioException
 
 class HomeRepo {
@@ -117,6 +118,76 @@ class HomeRepo {
       }
     } catch (error) {
       // ... نفس الـ catch block
+      if (error is DioException) {
+        return Left(ServerError.fromDioError(error));
+      } else {
+        return Left(ServerError(error.toString()));
+      }
+    }
+  }
+
+  // Toggle restaurant favorite (global demo flag on Restaurant)
+  Future<Either<ApiErrorHandler, RestaurantModel>> toggleRestaurantFavorite(
+    String restaurantId,
+    String lang,
+  ) async {
+    try {
+      final dio = Dio();
+      final res = await dio.post(
+        ApiConstant.baseUrl + ApiConstant.toggleFavoriteUrl,
+        data: { 'restaurantId': restaurantId },
+        queryParameters: { 'lang': lang },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+      if (res.data is Map<String, dynamic>) {
+        final map = res.data as Map<String, dynamic>;
+        if (map['success'] == true && map['data'] != null) {
+          final updated = RestaurantModel.fromJson(map['data'] as Map<String, dynamic>);
+          return Right(updated);
+        }
+        return Left(ServerError((map['error']?['message'] ?? 'Failed to toggle favorite').toString()));
+      }
+      return Left(ServerError('Unexpected response'));
+    } catch (error) {
+      if (error is DioException) {
+        return Left(ServerError.fromDioError(error));
+      } else {
+        return Left(ServerError(error.toString()));
+      }
+    }
+  }
+
+  // Toggle food favorite (global demo flag on Food)
+  Future<Either<ApiErrorHandler, FoodModel>> toggleFoodFavorite(
+    String foodId,
+    String lang,
+  ) async {
+    try {
+      final dio = Dio();
+      final res = await dio.post(
+        ApiConstant.baseUrl + ApiConstant.toggleFoodFavoriteUrl,
+        data: { 'foodId': foodId },
+        queryParameters: { 'lang': lang },
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }),
+      );
+      if (res.data is Map<String, dynamic>) {
+        final map = res.data as Map<String, dynamic>;
+        if (map['success'] == true && map['data'] != null) {
+          final updated = FoodModel.fromJson(map['data'] as Map<String, dynamic>);
+          return Right(updated);
+        }
+        return Left(ServerError((map['error']?['message'] ?? 'Failed to toggle food favorite').toString()));
+      }
+      return Left(ServerError('Unexpected response'));
+    } catch (error) {
       if (error is DioException) {
         return Left(ServerError.fromDioError(error));
       } else {

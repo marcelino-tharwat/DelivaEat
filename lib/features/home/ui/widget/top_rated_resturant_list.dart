@@ -8,12 +8,14 @@ class TopRatedRestaurantsList extends StatelessWidget {
   final List<RestaurantModel> restaurants;
   final Function(Map<String, dynamic>, int) onRestaurantDetailTap;
   final Function(Map<String, dynamic>) onViewMenuTap;
+  final void Function(String restaurantId)? onToggleFavorite;
 
   const TopRatedRestaurantsList({
     super.key,
     required this.restaurants,
     required this.onRestaurantDetailTap,
     required this.onViewMenuTap,
+    this.onToggleFavorite,
   });
 
   @override
@@ -40,6 +42,7 @@ class TopRatedRestaurantsList extends StatelessWidget {
             'image': r.image,
             'deliveryTime': r.deliveryTime,
             'specialty': '',
+            'isFavorite': r.isFavorite ?? false,
           };
           return _buildRestaurantCard(context, item, index);
         },
@@ -160,6 +163,35 @@ class TopRatedRestaurantsList extends StatelessWidget {
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 12.h,
+                        right: 12.w,
+                        child: InkWell(
+                          onTap: () => onToggleFavorite?.call((restaurant['id'] ?? '').toString()),
+                          child: Container(
+                            padding: EdgeInsets.all(6.r),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4.r,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              (restaurant['isFavorite'] == true)
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              size: 18.sp,
+                              color: (restaurant['isFavorite'] == true)
+                                  ? Colors.red
+                                  : colors.primary,
+                            ),
                           ),
                         ),
                       ),

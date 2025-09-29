@@ -186,6 +186,23 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                               FavoriteRestaurantsList(
                                 restaurants: state.favoriteRestaurants,
                                 onRestaurantTap: _handleRestaurantTap,
+                                // CHANGED: Added toggle favorite handler
+                                onToggleFavorite: _handleToggleFavorite,
+                              ),
+                              SizedBox(height: 8.h),
+                              // ADDED: Favorite Foods Section
+                              SectionHeader(
+                                title: 'المأكولات المفضلة', // يمكنك إضافتها للترجمة
+                                icon: Icons.fastfood_rounded,
+                                iconColor: const Color(0xFFFF6B6B),
+                                onSeeAllTap: _handleSeeAll,
+                              ),
+                              FoodCardList(
+                                foods: state.bestSellingFoods
+                                    .where((f) => f.isFavorite ?? false)
+                                    .toList(),
+                                onFoodCardTap: _handleFoodCardTap,
+                                onToggleFavorite: _handleToggleFoodFavorite,
                               ),
                               SizedBox(height: 8.h),
                               SectionHeader(
@@ -196,6 +213,8 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                                 restaurants: state.topRatedRestaurants,
                                 onRestaurantDetailTap: _handleRestaurantDetailTap,
                                 onViewMenuTap: _handleViewMenu,
+                                // CHANGED: Added toggle favorite handler
+                                onToggleFavorite: _handleToggleFavorite,
                               ),
                               SizedBox(height: 8.h),
                               SectionHeader(
@@ -205,6 +224,8 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                               FoodCardList(
                                 foods: state.bestSellingFoods,
                                 onFoodCardTap: _handleFoodCardTap,
+                                // CHANGED: Added toggle favorite handler
+                                onToggleFavorite: _handleToggleFoodFavorite,
                               ),
                               SizedBox(height: 8.h),
                             ],
@@ -215,7 +236,8 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                   ),
                 );
               }
-              return const SizedBox.shrink(); // حالة غير متوقعة
+              // This case should ideally not be reached if states are handled correctly
+              return const SizedBox.shrink(); 
             },
           ),
           bottomNavigationBar: CustomBottomNavigationBar(
@@ -295,6 +317,24 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم اختيار مطعم: $name')));
   }
 
+  // ADDED: Handler for toggling restaurant favorite status
+  void _handleToggleFavorite(String restaurantId) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    context.read<HomeCubit>().toggleFavorite(
+      restaurantId: restaurantId,
+      lang: isArabic ? 'ar' : 'en',
+    );
+  }
+
+  // ADDED: Handler for toggling food favorite status
+  void _handleToggleFoodFavorite(String foodId) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    context.read<HomeCubit>().toggleFoodFavorite(
+      foodId: foodId,
+      lang: isArabic ? 'ar' : 'en',
+    );
+  }
+
   void _handleRestaurantDetailTap(Map<String, dynamic> restaurant, int index) {
     _openRestaurantMenu(restaurant);
   }
@@ -309,8 +349,6 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
   }
 
   void _handleNavigation(int index) {
-    // يمكنك هنا استخدام GoRouter للتنقل إذا كان لديك ShellRoute
-    // مثال: context.go('/orders');
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     final pages = [appLocalizations.homePageTitle, appLocalizations.ordersTitle, appLocalizations.offersTitle, appLocalizations.accountTitle];
     if (index != _selectedNavIndex) {
@@ -340,7 +378,6 @@ extension _HomePageHelpers on FoodDeliveryHomePageState {
       return;
     }
     
-    // استخدام GoRouter مع تمرير البارامترات
     context.pushNamed(
       AppRoutes.restaurantMenuPage,
       pathParameters: {'restaurantId': id},

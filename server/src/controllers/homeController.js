@@ -11,6 +11,70 @@ const formatCategoryResponse = (categories) =>
       image: image ?? icon ?? '',
     };
   });
+// @desc    Toggle food favorite flag (demo/global)
+// @route   POST /api/home/foods/favorite
+// @access  Public (for demo)
+const toggleFavoriteFood = async (req, res) => {
+  try {
+    const { foodId } = req.body || {};
+    if (!foodId) {
+      return res.status(400).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'foodId is required' } });
+    }
+    const f = await Food.findById(foodId);
+    if (!f) {
+      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Food not found' } });
+    }
+    f.isFavorite = !Boolean(f.isFavorite);
+    await f.save();
+    const lang = req.query.lang || 'ar';
+    const fresh = await Food.findById(foodId)
+      .populate('restaurant', `name${lang === 'ar' ? 'Ar' : ''} name nameAr image rating`)
+      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image price originalPrice rating reviewCount preparationTime isAvailable isPopular isBestSelling isFavorite`)
+      .lean();
+    return res.json({ success: true, data: fresh });
+  } catch (error) {
+    console.error('Error toggling food favorite:', error);
+    return res.status(500).json({ success: false, error: { code: 'INTERNAL_ERROR', message: 'Failed to toggle favorite' } });
+  }
+};
+// @desc    Toggle restaurant favorite flag (demo/global)
+// @route   POST /api/home/restaurants/favorite
+// @access  Public (for demo). Attach auth if you want per-user control.
+const toggleFavoriteRestaurant = async (req, res) => {
+  try {
+    const { restaurantId } = req.body || {};
+    if (!restaurantId) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'restaurantId is required' },
+      });
+    }
+
+    const r = await Restaurant.findById(restaurantId);
+    if (!r) {
+      return res.status(404).json({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Restaurant not found' },
+      });
+    }
+    r.isFavorite = !Boolean(r.isFavorite);
+    await r.save();
+
+    // return minimal fields used by client
+    const lang = req.query.lang || 'ar';
+    const fresh = await Restaurant.findById(restaurantId)
+      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr image rating reviewCount deliveryTime deliveryFee minimumOrder isOpen isActive isFavorite isTopRated address phone`)
+      .lean();
+
+    return res.json({ success: true, data: fresh });
+  } catch (error) {
+    console.error('Error toggling favorite:', error);
+    return res.status(500).json({
+      success: false,
+      error: { code: 'INTERNAL_ERROR', message: 'Failed to toggle favorite' },
+    });
+  }
+};
 
 // @desc    Get all home page data
 // @route   GET /api/home
@@ -67,7 +131,7 @@ const getHomeData = async (req, res) => {
       .sort({ rating: -1 })
       .limit(15)
       .populate('restaurant', `name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image rating reviewCount deliveryTime deliveryFee minimumOrder isOpen isActive address phone`)
-      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image price originalPrice rating reviewCount preparationTime isAvailable isPopular isBestSelling ingredients allergens tags`)
+      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image price originalPrice rating reviewCount preparationTime isAvailable isPopular isBestSelling isFavorite ingredients allergens tags`)
       .lean();
 
     res.json({
@@ -346,5 +410,7 @@ module.exports = {
   getRestaurants,
   getBestSellingFoods,
   getRestaurantsByCategory,
-  getFoodsByRestaurant
+  getFoodsByRestaurant,
+  toggleFavoriteRestaurant,
+  toggleFavoriteFood
 };

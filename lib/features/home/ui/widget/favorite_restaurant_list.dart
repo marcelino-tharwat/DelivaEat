@@ -6,11 +6,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class FavoriteRestaurantsList extends StatelessWidget {
   final List<RestaurantModel> restaurants;
   final Function(String, int) onRestaurantTap;
+  final void Function(String restaurantId)? onToggleFavorite;
 
   const FavoriteRestaurantsList({
     super.key,
     required this.restaurants,
     required this.onRestaurantTap,
+    this.onToggleFavorite,
   });
 
   @override
@@ -38,6 +40,8 @@ class FavoriteRestaurantsList extends StatelessWidget {
             displayName,
             ratingStr,
             imageUrl,
+            r.id,
+            r.isFavorite ?? false,
             index,
           );
         },
@@ -50,6 +54,8 @@ class FavoriteRestaurantsList extends StatelessWidget {
     String name,
     String ratingStr,
     String imageUrl,
+    String restaurantId,
+    bool isFavorite,
     int index,
   ) {
     final colors = context.colors;
@@ -113,7 +119,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.all(4.w),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFF6B6B),
+                            color: isFavorite ? const Color(0xFFFF6B6B) : Colors.white,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
@@ -122,10 +128,13 @@ class FavoriteRestaurantsList extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: Icon(
-                            Icons.favorite,
-                            size: 14.sp,
-                            color: Colors.white,
+                          child: InkWell(
+                            onTap: () => onToggleFavorite?.call(restaurantId),
+                            child: Icon(
+                              isFavorite ? Icons.favorite : Icons.favorite_border,
+                              size: 14.sp,
+                              color: isFavorite ? Colors.white : colors.primary,
+                            ),
                           ),
                         ),
                       ),
