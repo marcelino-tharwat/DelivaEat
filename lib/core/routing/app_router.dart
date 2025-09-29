@@ -9,7 +9,9 @@ import 'package:deliva_eat/features/auth/otp/ui/otp_page.dart';
 import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
 import 'package:deliva_eat/features/category/ui/category_page.dart';
+import 'package:deliva_eat/features/category/ui/widget/food_category_page.dart';
 import 'package:deliva_eat/features/home/ui/home_page_wrapper.dart';
+import 'package:deliva_eat/features/restaurant/ui/restaurant_menu_page.dart';
 import 'package:deliva_eat/features/search/ui/search_page.dart';
 
 import 'package:flutter/material.dart';
@@ -74,18 +76,42 @@ final GoRouter router = GoRouter(
           },
         ),
         GoRoute(
-          path: AppRoutes.categoryPage,
+          // المسار يبقى كما هو
+          path: AppRoutes.categoryPage, // مثال: '/category'
+          // نستخدم builder لاستدعاء الصفحة الصحيحة وهي FoodCategoriesPage
           builder: (BuildContext context, GoRouterState state) {
-            final data = state.extra as Map<String, dynamic>;
-            final String title = data['title'] as String? ?? '';
+            // 1. استخراج البيانات (extra) بنفس الطريقة
+            // إذا لم يتم تمرير أي بيانات، استخدم خريطة فارغة لتجنب الأخطاء
+            final data = state.extra as Map<String, dynamic>? ?? {};
+
+            // هذا المعرف سيتم تمريره للصفحة لكي تعرف أي فئة يجب تحديدها مسبقاً
             final String categoryId = data['id'] as String? ?? '';
-            return CategoriesPage(title: title, categoryId: categoryId);
+
+            return FoodCategoriesPage(categoryId: categoryId);
           },
         ),
         GoRoute(
           path: AppRoutes.searchPage,
           builder: (BuildContext context, GoRouterState state) {
             return const SearchPage();
+          },
+        ),
+        GoRoute(
+          // ✅ استخدام الاسم الفريد من AppRoutes
+          name: AppRoutes.restaurantMenuPage,
+
+          // ✅ تعريف المسار الكامل هنا
+          path: '/restaurant-menu/:restaurantId',
+
+          builder: (BuildContext context, GoRouterState state) {
+            final String restaurantId =
+                state.pathParameters['restaurantId'] ?? '';
+            final String restaurantName = state.extra as String? ?? 'القائمة';
+
+            return RestaurantMenuPage(
+              restaurantId: restaurantId,
+              restaurantName: restaurantName,
+            );
           },
         ),
       ],
