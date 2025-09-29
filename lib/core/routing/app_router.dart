@@ -8,12 +8,13 @@ import 'package:deliva_eat/features/auth/otp/cubit/otp_cubit.dart';
 import 'package:deliva_eat/features/auth/otp/ui/otp_page.dart';
 import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
-import 'package:deliva_eat/features/category/ui/category_page.dart';
 import 'package:deliva_eat/features/category/ui/widget/food_category_page.dart';
+import 'package:deliva_eat/features/home/data/models/food_model.dart';
+import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
+import 'package:deliva_eat/features/home/ui/favorites_page.dart';
 import 'package:deliva_eat/features/home/ui/home_page_wrapper.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_menu_page.dart';
 import 'package:deliva_eat/features/search/ui/search_page.dart';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -111,6 +112,18 @@ final GoRouter router = GoRouter(
             return RestaurantMenuPage(
               restaurantId: restaurantId,
               restaurantName: restaurantName,
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.favoritesPage,
+          builder: (BuildContext context, GoRouterState state) {
+            final data = state.extra as Map<String, dynamic>? ?? {};
+            final favoriteRestaurants = (data['favoriteRestaurants'] as List<dynamic>?)?.cast<RestaurantModel>() ?? [];
+            final favoriteFoods = (data['favoriteFoods'] as List<dynamic>?)?.cast<FoodModel>() ?? [];
+            return FavoritesPage(
+              favoriteRestaurants: favoriteRestaurants,
+              favoriteFoods: favoriteFoods,
             );
           },
         ),

@@ -34,14 +34,13 @@ class OffersSlider extends StatelessWidget {
             controller: PageController(
               viewportFraction: 1,
             ), // ✅ كده ياخد الشاشة كلها
-
             // controller: pageController(viewportFraction: 1),
             onPageChanged: onPageChanged,
             itemCount: offers.length,
             itemBuilder: (context, index) {
               final offer = offers[index];
               return Hero(
-                tag: 'offer_$index',
+                tag: 'offer-${offer['title']}', // أو offer['id'] لو موجود
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 0.w),
                   child: ClipRRect(
