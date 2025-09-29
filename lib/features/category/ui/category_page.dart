@@ -190,7 +190,11 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
                                       height: 80,
                                       child: Container(
                                         color: theme.cardColor,
-                                        child: Image.asset(category.image, fit: BoxFit.fitWidth),
+                                        child: Icon(
+                                          category.id == 'restaurants' ? Icons.restaurant : Icons.fastfood,
+                                          size: 40,
+                                          color: theme.primaryColor,
+                                        ),
                                       ),
                                     ),
                                   ),

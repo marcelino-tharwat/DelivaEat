@@ -8,12 +8,14 @@ class FoodCardList extends StatelessWidget {
   final List<FoodModel> foods;
   final Function(String, int) onFoodCardTap;
   final void Function(String foodId)? onToggleFavorite;
+  final String heroTagPrefix;
 
   const FoodCardList({
     super.key,
     required this.foods,
     required this.onFoodCardTap,
     this.onToggleFavorite,
+    this.heroTagPrefix = 'food',
   });
 
   @override
@@ -74,7 +76,7 @@ class FoodCardList extends StatelessWidget {
     return GestureDetector(
       onTap: () => onFoodCardTap(name, index),
       child: Hero(
-        tag: 'food_$index',
+        tag: '${heroTagPrefix}_$foodId',
         child: Container(
           width: 0.48.sw, // 48% من عرض الشاشة
           margin: EdgeInsets.only(right: 16.w),

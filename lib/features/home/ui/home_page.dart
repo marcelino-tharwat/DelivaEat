@@ -203,6 +203,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                                     .toList(),
                                 onFoodCardTap: _handleFoodCardTap,
                                 onToggleFavorite: _handleToggleFoodFavorite,
+                                heroTagPrefix: 'favorite_food',
                               ),
                               SizedBox(height: 8.h),
                               SectionHeader(
@@ -345,7 +346,19 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
 
   void _handleSeeAll(String section) {
     HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('عرض المزيد من: $section')));
+    final appLocalizations = AppLocalizations.of(context)!;
+    if (section == appLocalizations.favorites) {
+      final homeState = context.read<HomeCubit>().state;
+      if (homeState is HomeSuccess) {
+        final favoriteFoods = homeState.bestSellingFoods.where((f) => f.isFavorite ?? false).toList();
+        context.push(AppRoutes.favoritesPage, extra: {
+          'favoriteRestaurants': homeState.favoriteRestaurants,
+          'favoriteFoods': favoriteFoods,
+        });
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('عرض المزيد من: $section')));
+    }
   }
 
   void _handleNavigation(int index) {

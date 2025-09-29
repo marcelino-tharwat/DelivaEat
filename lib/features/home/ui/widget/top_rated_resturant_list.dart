@@ -62,7 +62,7 @@ class TopRatedRestaurantsList extends StatelessWidget {
     return GestureDetector(
       onTap: () => onRestaurantDetailTap(restaurant, index),
       child: Hero(
-        tag: 'top_restaurant_$index',
+        tag: 'top_rated_restaurant_${restaurant['id']}',
         child: Container(
           width: 0.55.sw, // عرض متجاوب
           margin: EdgeInsets.only(right: 16.w),

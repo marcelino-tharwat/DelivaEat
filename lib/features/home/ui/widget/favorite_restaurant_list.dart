@@ -64,7 +64,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
     return GestureDetector(
       onTap: () => onRestaurantTap(name, index),
       child: Hero(
-        tag: 'restaurant_$index',
+        tag: 'favorite_restaurant_$restaurantId',
         child: Container(
           width: 150.w,
           // margin: EdgeInsets.only(right: 16.w),
