@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:deliva_eat/core/routing/routes.dart';
+import 'package:deliva_eat/features/home/ui/widget/home_skeleton_loader.dart';
 import 'package:deliva_eat/features/home/ui/widget/SectionHeader.dart';
 import 'package:deliva_eat/features/home/ui/widget/custom_botton_navigation_bar.dart';
 import 'package:deliva_eat/features/home/ui/widget/food_card_list.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
@@ -126,7 +126,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       body: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           if (state is HomeInitial || state is HomeLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const HomeSkeletonLoader();
           }
           if (state is HomeError) {
             return _buildErrorState(state, context);

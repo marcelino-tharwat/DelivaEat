@@ -1,2 +1,6 @@
 - [x] Add horizontal padding (16.w) to the ListView in categories_bar.dart
 - [x] Reduce item width from 120.w to 110.w in categories_bar.dart
+- [x] Replace CircularProgressIndicator with SkeletonLoader in search_results.dart, home_page.dart, and category_page.dart for full-screen loading states
+- [x] Replace CircularProgressIndicator with SkeletonLoader in restaurant_menu_page.dart for full-screen loading
+- [x] Update TODO.md with completed tasks and remaining items
+- [x] Test updated loading states across screens for smooth UX

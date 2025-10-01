@@ -1,4 +1,5 @@
 import 'package:deliva_eat/core/routing/routes.dart';
+import 'package:deliva_eat/core/widgets/skeleton_loader.dart';
 import 'package:deliva_eat/features/category/data/model/category_item.dart';
 import 'package:deliva_eat/features/home/ui/widget/offer_slider.dart';
 import 'package:flutter/material.dart';
@@ -324,7 +325,7 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
     if (widget.isLoading) {
       // SliverFillRemaining تضمن أن يملأ المؤشر باقي الشاشة
       return const SliverFillRemaining(
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: SkeletonLoader()),
       );
     }
     if (widget.errorMessage != null) {
