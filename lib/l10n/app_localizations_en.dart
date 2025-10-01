@@ -726,4 +726,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categorySandwich => 'Sandwich';
+
+  @override
+  String get from => 'From';
+
+  @override
+  String get riyal => 'Riyal';
+
+  @override
+  String get notSpecified => 'Not specified';
+
+  @override
+  String get deliveryFeeLabel => 'Delivery Fee: ';
 }

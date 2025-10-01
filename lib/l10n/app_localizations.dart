@@ -1477,6 +1477,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sandwich'**
   String get categorySandwich;
+
+  /// No description provided for @from.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get from;
+
+  /// No description provided for @riyal.
+  ///
+  /// In en, this message translates to:
+  /// **'Riyal'**
+  String get riyal;
+
+  /// No description provided for @notSpecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get notSpecified;
+
+  /// No description provided for @deliveryFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Fee: '**
+  String get deliveryFeeLabel;
 }
 
 class _AppLocalizationsDelegate

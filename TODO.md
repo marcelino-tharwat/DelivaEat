@@ -1,8 +1,4 @@
-# Localization for Category Pages
-
-## Tasks
-- [x] Add missing keys to intl_en.arb and intl_ar.arb
-- [x] Update category_page.dart to use AppLocalizations
-- [ ] Update food_category_page.dart to use AppLocalizations
-- [x] Run flutter gen-l10n
-- [ ] Test localization
+- [x] Add localization keys to intl_en.arb and intl_ar.arb for "riyal", "notSpecified", "deliveryFeeLabel"
+- [x] Update FoodCard to use AppLocalizations for hardcoded strings
+- [x] Update RestaurantCard to use AppLocalizations for hardcoded strings
+- [x] Run flutter gen-l10n to regenerate localization files

@@ -276,6 +276,10 @@
     "highestRated": "Highest Rated",
     "fastestDelivery": "Fastest Delivery",
     "freeDelivery": "Free Delivery",
-    "minutes": "minutes"
+    "minutes": "minutes",
+    "from": "From",
+    "riyal": "Riyal",
+    "notSpecified": "Not specified",
+    "deliveryFeeLabel": "Delivery Fee: "
 
   }

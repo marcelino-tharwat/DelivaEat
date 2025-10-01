@@ -722,4 +722,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get categorySandwich => 'ساندويتش';
+
+  @override
+  String get from => 'من';
+
+  @override
+  String get riyal => 'ريال';
+
+  @override
+  String get notSpecified => 'غير محدد';
+
+  @override
+  String get deliveryFeeLabel => 'رسوم التوصيل: ';
 }

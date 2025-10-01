@@ -277,6 +277,10 @@
     "highestRated": "الأعلى تقييماً",
     "fastestDelivery": "الأسرع توصيلاً",
     "freeDelivery": "توصيل مجاني",
-    "minutes": "دقيقة"
+    "minutes": "دقيقة",
+    "from": "من",
+    "riyal": "ريال",
+    "notSpecified": "غير محدد",
+    "deliveryFeeLabel": "رسوم التوصيل: "
 
 }
