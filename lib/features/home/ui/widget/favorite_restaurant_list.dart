@@ -22,8 +22,8 @@ class FavoriteRestaurantsList extends StatelessWidget {
     }
 
     return SizedBox(
-      height: 150.h, // بدل MediaQuery بـ .h
-      
+      height: 170.h, // بدل MediaQuery بـ .h
+
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         // padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -67,6 +67,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
         tag: 'favorite_restaurant_$restaurantId',
         child: Container(
           width: 150.w,
+          // height: 200.h,
           // margin: EdgeInsets.only(right: 16.w),
           child: Card(
             elevation: 6,
@@ -119,7 +120,9 @@ class FavoriteRestaurantsList extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.all(4.w),
                           decoration: BoxDecoration(
-                            color: isFavorite ? const Color(0xFFFF6B6B) : Colors.white,
+                            color: isFavorite
+                                ? const Color(0xFFFF6B6B)
+                                : Colors.white,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
@@ -131,7 +134,9 @@ class FavoriteRestaurantsList extends StatelessWidget {
                           child: InkWell(
                             onTap: () => onToggleFavorite?.call(restaurantId),
                             child: Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
                               size: 14.sp,
                               color: isFavorite ? Colors.white : colors.primary,
                             ),

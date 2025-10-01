@@ -1,8 +1,5 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:deliva_eat/core/widgets/app_drop_down.dart';
-import 'package:deliva_eat/generated/l10n.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
