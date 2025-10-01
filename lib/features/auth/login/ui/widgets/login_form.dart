@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:deliva_eat/core/widgets/app_button.dart';
 import 'package:deliva_eat/core/widgets/app_text_field.dart';

@@ -1,4 +1,2 @@
-- [x] Add localization keys to intl_en.arb and intl_ar.arb for "riyal", "notSpecified", "deliveryFeeLabel"
-- [x] Update FoodCard to use AppLocalizations for hardcoded strings
-- [x] Update RestaurantCard to use AppLocalizations for hardcoded strings
-- [x] Run flutter gen-l10n to regenerate localization files
+- [x] Add horizontal padding (16.w) to the ListView in categories_bar.dart
+- [x] Reduce item width from 120.w to 110.w in categories_bar.dart

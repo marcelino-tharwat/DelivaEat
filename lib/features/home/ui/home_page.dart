@@ -121,128 +121,121 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return ScreenUtilInit(
-      designSize: const Size(390, 844),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) {
-        return Scaffold(
-          backgroundColor: colors.background,
-          body: BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) {
-              if (state is HomeInitial || state is HomeLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is HomeError) {
-                return _buildErrorState(state, context);
-              }
+    return Scaffold(
+      backgroundColor: colors.background,
+      body: BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          if (state is HomeInitial || state is HomeLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is HomeError) {
+            return _buildErrorState(state, context);
+          }
 
-              if (state is HomeSuccess) {
-                final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-                final offers = state.offers.map((offer) => {
-                      'title': isArabic ? offer.titleAr : offer.title,
-                      'subtitle': isArabic ? offer.subtitleAr : offer.subtitle,
-                      'color': _parseHexColor(offer.color) ?? const Color(0xFFFF6B35),
-                      'icon': offer.icon.isNotEmpty ? offer.icon : '🍔',
-                      'image': offer.image,
-                      'discount': offer.discount,
-                    }).toList();
+          if (state is HomeSuccess) {
+            final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+            final offers = state.offers.map((offer) => {
+                  'title': isArabic ? offer.titleAr : offer.title,
+                  'subtitle': isArabic ? offer.subtitleAr : offer.subtitle,
+                  'color': _parseHexColor(offer.color) ?? const Color(0xFFFF6B35),
+                  'icon': offer.icon.isNotEmpty ? offer.icon : '🍔',
+                  'image': offer.image,
+                  'discount': offer.discount,
+                }).toList();
 
-                return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      HomeHeader(
-                        onNotificationTap: _showNotificationsBottomSheet,
-                        onSeeAllTap: _handleSeeAll,
-                        categories: _staticCategories,
-                        categoriesPageController: _categoriesPageController,
-                        onCategoryTap: _handleCategoryTap,
-                        offers: offers,
-                        offersPageController: pageController,
-                        currentOfferSlide: _currentSlide,
-                        onOfferPageChanged: (index) => setState(() => _currentSlide = index),
-                        onOfferTap: _handleOfferTap,
-                      ),
-                      Transform.translate(
-                        offset: Offset(0, -30.h),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: colors.background,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(30.r),
-                              topRight: Radius.circular(30.r),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              SizedBox(height: 16.h),
-                              SectionHeader(
-                                title: AppLocalizations.of(context)!.favorites,
-                                icon: Icons.favorite,
-                                iconColor: const Color(0xFFFFD93D),
-                                onSeeAllTap: _handleSeeAll,
-                              ),
-                              FavoriteRestaurantsList(
-                                restaurants: state.favoriteRestaurants,
-                                onRestaurantTap: _handleRestaurantTap,
-                                // CHANGED: Added toggle favorite handler
-                                onToggleFavorite: _handleToggleFavorite,
-                              ),
-                              FoodCardList(
-                                foods: state.bestSellingFoods
-                                    .where((f) => f.isFavorite ?? false)
-                                    .toList(),
-                                onFoodCardTap: _handleFoodCardTap,
-                                onToggleFavorite: _handleToggleFoodFavorite,
-                                heroTagPrefix: 'favorite_food',
-                              ),
-                              SizedBox(height: 8.h),
-                              SectionHeader(
-                                title: AppLocalizations.of(context)!.topRatedRestaurants,
-                                onSeeAllTap: _handleSeeAll,
-                              ),
-                              TopRatedRestaurantsList(
-                                restaurants: state.topRatedRestaurants,
-                                onRestaurantDetailTap: _handleRestaurantDetailTap,
-                                onViewMenuTap: _handleViewMenu,
-                                // CHANGED: Added toggle favorite handler
-                                onToggleFavorite: _handleToggleFavorite,
-                              ),
-                              SizedBox(height: 0.h),
-                              // SectionHeader(
-                              //   title: AppLocalizations.of(context)!.bestSelling,
-                              //   onSeeAllTap: _handleSeeAll,
-                              // ),
-                              // FoodCardList(
-                              //   foods: state.bestSellingFoods,
-                              //   onFoodCardTap: _handleFoodCardTap,
-                              //   // CHANGED: Added toggle favorite handler
-                              //   onToggleFavorite: _handleToggleFoodFavorite,
-                              // ),
-                              // SizedBox(height: 8.h),
-                            ],
-                          ),
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HomeHeader(
+                    onNotificationTap: _showNotificationsBottomSheet,
+                    onSeeAllTap: _handleSeeAll,
+                    categories: _staticCategories,
+                    categoriesPageController: _categoriesPageController,
+                    onCategoryTap: _handleCategoryTap,
+                    offers: offers,
+                    offersPageController: pageController,
+                    currentOfferSlide: _currentSlide,
+                    onOfferPageChanged: (index) => setState(() => _currentSlide = index),
+                    onOfferTap: _handleOfferTap,
+                  ),
+                  Transform.translate(
+                    offset: Offset(0, -30.h),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colors.background,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.r),
+                          topRight: Radius.circular(30.r),
                         ),
                       ),
-                    ],
+                      child: Column(
+                        children: [
+                          SizedBox(height: 16.h),
+                          SectionHeader(
+                            title: AppLocalizations.of(context)!.favorites,
+                            icon: Icons.favorite,
+                            iconColor: const Color(0xFFFFD93D),
+                            onSeeAllTap: _handleSeeAll,
+                          ),
+                          FavoriteRestaurantsList(
+                            restaurants: state.favoriteRestaurants,
+                            onRestaurantTap: _handleRestaurantTap,
+                            // CHANGED: Added toggle favorite handler
+                            onToggleFavorite: _handleToggleFavorite,
+                          ),
+                          FoodCardList(
+                            foods: state.bestSellingFoods
+                                .where((f) => f.isFavorite ?? false)
+                                .toList(),
+                            onFoodCardTap: _handleFoodCardTap,
+                            onToggleFavorite: _handleToggleFoodFavorite,
+                            heroTagPrefix: 'favorite_food',
+                          ),
+                          SizedBox(height: 8.h),
+                          SectionHeader(
+                            title: AppLocalizations.of(context)!.topRatedRestaurants,
+                            onSeeAllTap: _handleSeeAll,
+                          ),
+                          TopRatedRestaurantsList(
+                            restaurants: state.topRatedRestaurants,
+                            onRestaurantDetailTap: _handleRestaurantDetailTap,
+                            onViewMenuTap: _handleViewMenu,
+                            // CHANGED: Added toggle favorite handler
+                            onToggleFavorite: _handleToggleFavorite,
+                          ),
+                          SizedBox(height: 0.h),
+                          // SectionHeader(
+                          //   title: AppLocalizations.of(context)!.bestSelling,
+                          //   onSeeAllTap: _handleSeeAll,
+                          // ),
+                          // FoodCardList(
+                          //   foods: state.bestSellingFoods,
+                          //   onFoodCardTap: _handleFoodCardTap,
+                          //   // CHANGED: Added toggle favorite handler
+                          //   onToggleFavorite: _handleToggleFoodFavorite,
+                          // ),
+                          // SizedBox(height: 8.h),
+                        ],
+                      ),
+                    ),
                   ),
-                );
-              }
-              // This case should ideally not be reached if states are handled correctly
-              return const SizedBox.shrink(); 
-            },
-          ),
-          bottomNavigationBar: CustomBottomNavigationBar(
-            selectedIndex: _selectedNavIndex,
-            onItemSelected: (index) {
-              setState(() => _selectedNavIndex = index);
-              HapticFeedback.lightImpact();
-              _handleNavigation(index);
-            },
-          ),
-        );
-      },
+                ],
+              ),
+            );
+          }
+          // This case should ideally not be reached if states are handled correctly
+          return const SizedBox.shrink();
+        },
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedNavIndex,
+        onItemSelected: (index) {
+          setState(() => _selectedNavIndex = index);
+          HapticFeedback.lightImpact();
+          _handleNavigation(index);
+        },
+      ),
     );
   }
 

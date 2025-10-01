@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ReusableCategoryLayout extends StatefulWidget {
   final String pageTitle;
@@ -75,7 +76,7 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
               children: [
                 // العنوان وزر الرجوع
                 Padding(
-                  padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
+                  padding: EdgeInsets.only(top: 50.h, left: 16.w, right: 16.w),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -111,15 +112,15 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
                 ),
                 // شريط البحث
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                  padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
                   child: Container(
                     decoration: BoxDecoration(
                       color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.r),
                       boxShadow: [
                         BoxShadow(
                           color: theme.shadowColor.withOpacity(0.1),
-                          blurRadius: 12,
+                          blurRadius: 12.r,
                           offset: const Offset(0, 4),
                         ),
                       ],
@@ -136,42 +137,43 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
                           hintText: widget.searchHintText,
                           hintStyle: TextStyle(
                             color: theme.hintColor,
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w400,
                           ),
                           prefixIcon: Icon(
                             Icons.search_rounded,
                             color: theme.hintColor,
-                            size: 24,
+                            size: 24.sp,
                           ),
                           border: InputBorder.none,
                           disabledBorder: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 18,
-                            horizontal: 20,
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 18.h,
+                            horizontal: 20.w,
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 // السلايدر
                 OffersSlider(
                   offers: widget.offers,
                   pageController: _pageController,
-                  onPageChanged: (index) => setState(() => _currentPageIndex = index),
+                  onPageChanged: (index) =>
+                      setState(() => _currentPageIndex = index),
                   onOfferTap: (offer) {},
                   currentPageIndex: _currentPageIndex,
                 ),
                 // قسم الفئات الدائرية
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 0.w),
                         child: Text(
                           AppLocalizations.of(context)!.categories,
                           style: theme.textTheme.headlineSmall?.copyWith(
@@ -181,34 +183,38 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
                         ),
                       ),
                       SizedBox(
-                        height: 120,
+                        height: 135.h,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: widget.categories.length,
                           itemBuilder: (context, index) {
                             final category = widget.categories[index];
-                            final isSelected = widget.selectedCategoryId == category.id;
+                            final isSelected =
+                                widget.selectedCategoryId == category.id;
                             return GestureDetector(
                               onTap: () {
                                 HapticFeedback.mediumImpact();
                                 widget.onCategorySelected(category.id);
                               },
                               child: Container(
-                                width: 120,
+                                width: 120.w,
                                 alignment: Alignment.center,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     AnimatedContainer(
-                                      duration: const Duration(milliseconds: 300),
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
                                       curve: Curves.easeInOut,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         boxShadow: isSelected
                                             ? [
                                                 BoxShadow(
-                                                  color: Colors.amber.withOpacity(0.5),
-                                                  blurRadius: 2,
+                                                  color: Colors.amber
+                                                      .withOpacity(0.5),
+                                                  blurRadius: 2.r,
                                                   spreadRadius: 1,
                                                 ),
                                               ]
@@ -216,35 +222,40 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
                                       ),
                                       child: Card(
                                         elevation: isSelected ? 8 : 4,
-                                        shadowColor: theme.shadowColor.withOpacity(isSelected ? 0.25 : 0.15),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(60)),
+                                        shadowColor: theme.shadowColor
+                                            .withOpacity(
+                                              isSelected ? 0.25 : 0.15,
+                                            ),
+                                        shape: CircleBorder(),
                                         clipBehavior: Clip.antiAlias,
                                         child: SizedBox(
-                                          width: 80,
-                                          height: 80,
+                                          width: 80.w,
+                                          height: 80.h,
                                           child: Image.asset(
                                             category.image,
                                             fit: BoxFit.cover,
                                             errorBuilder: (_, __, ___) => Icon(
                                               Icons.fastfood,
                                               color: theme.primaryColor,
-                                              size: 40,
+                                              size: 40.sp,
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 5),
+                                    // SizedBox(height: 5.h),
                                     Text(
                                       category.name,
                                       textAlign: TextAlign.center,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: theme.colorScheme.onSurface,
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: theme.colorScheme.onSurface,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                    SizedBox(height: 5.h),
                                   ],
                                 ),
                               ),
@@ -257,7 +268,7 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
                 ),
                 // الفلاتر
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: widget.filters
@@ -265,7 +276,7 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
                         .toList(),
                   ),
                 ),
-                const SizedBox(height: 10), // مسافة قبل القائمة
+                // SizedBox(height: 10.h), // مسافة قبل القائمة
               ],
             ),
           ),

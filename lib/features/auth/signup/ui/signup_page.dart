@@ -5,7 +5,6 @@ import 'package:deliva_eat/features/auth/signup/ui/widgets/signup_button_link.da
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:deliva_eat/core/di/dependency_injection.dart';
-import 'package:deliva_eat/core/network/api_client.dart';
 import 'package:deliva_eat/core/widgets/app_button.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
 import 'package:deliva_eat/features/auth/signup/data/models/merchant_model.dart';

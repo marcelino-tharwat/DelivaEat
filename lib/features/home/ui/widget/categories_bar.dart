@@ -1,8 +1,6 @@
-import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 class CategoriesBar extends StatelessWidget {
   final List<Map<String, dynamic>> categories;
@@ -23,13 +21,13 @@ class CategoriesBar extends StatelessWidget {
 
     // استخدم ScreenUtil بدلاً من MediaQuery
     final double imageAreaHeight = 70.h;
-    final double barHeight = imageAreaHeight + 40.h;
+    final double barHeight = imageAreaHeight + 50.h;
 
     return SizedBox(
       height: barHeight,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        // padding: EdgeInsets.symmetric(horizontal: 6.w),
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
         itemCount: categories.length,
         separatorBuilder: (_, __) => SizedBox(width: 0.w),
         itemBuilder: (context, index) {
@@ -38,7 +36,8 @@ class CategoriesBar extends StatelessWidget {
           final isNetworkImage = imageUrl?.startsWith('http') ?? false;
 
           return SizedBox(
-            width: 120.w, // استعمل .w عشان يتناسب مع عرض الشاشة
+            width: 110.w, // استعمل .w عشان يتناسب مع عرض الشاشة
+            // height: 200.h,
             child: GestureDetector(
               onTap: () => onCategoryTap(category),
               child: Column(
@@ -64,7 +63,7 @@ class CategoriesBar extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   SizedBox(
-                    height: 18.h,
+                    height: 20.h,
                     child: Center(
                       child: Text(
                         category['name'] ?? '',
