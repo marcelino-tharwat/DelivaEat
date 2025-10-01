@@ -3,5 +3,5 @@ class CategoryItem {
   final String name;
   final String image;
 
-  CategoryItem({required this.id, required this.name, required this.image});
+  const CategoryItem({required this.id, required this.name, required this.image});
 }

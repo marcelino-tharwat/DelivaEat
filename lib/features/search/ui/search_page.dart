@@ -20,7 +20,9 @@ import 'widgets/popular_searches.dart';
 import 'widgets/search_results.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  const SearchPage({super.key, this.categoryId, this.type});
+  final String? categoryId; // optional backend category id to filter by
+  final String? type; // 'all' | 'restaurants' | 'foods'
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -35,12 +37,18 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   bool _isSearchFocused = false;
+  String? _categoryId;
+  String _type = 'all';
 
   @override
   void initState() {
     super.initState();
     _searchCubit = getIt<SearchCubit>();
     _scrollController.addListener(_onScroll);
+
+    // initialize optional filters
+    _categoryId = widget.categoryId;
+    _type = widget.type ?? 'all';
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -77,6 +85,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         _searchCubit.loadMore(
           query: currentState.query,
           nextPage: currentState.page + 1,
+          type: _type,
+          category: _categoryId,
         );
       }
     }
@@ -107,7 +117,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                   onChanged: (value) {
                     setState(() {});
                     if (value.isNotEmpty && value.length >= 2) {
-                      _searchCubit.searchRealTime(query: value);
+                      _searchCubit.searchRealTime(
+                        query: value,
+                        type: _type,
+                        category: _categoryId,
+                      );
                       _searchCubit.getSuggestionsRealTime(query: value);
                     } else if (value.isEmpty) {
                       _searchCubit.clearSearch();
@@ -115,7 +129,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                   },
                   onSubmitted: (value) {
                     if (value.isNotEmpty && value.length >= 2) {
-                      _searchCubit.search(query: value);
+                      _searchCubit.search(
+                        query: value,
+                        type: _type,
+                        category: _categoryId,
+                      );
                       _searchFocusNode.unfocus();
                     }
                   },
@@ -153,7 +171,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         message: state.message,
         onRetry: () {
           if (_searchController.text.isNotEmpty) {
-            _searchCubit.search(query: _searchController.text);
+            _searchCubit.search(
+              query: _searchController.text,
+              type: _type,
+              category: _categoryId,
+            );
           }
         },
       );
@@ -161,7 +183,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     if (state is SearchSuccess) {
       return SearchResults(
         state: state,
-        onRefresh: () => _searchCubit.search(query: state.query),
+        onRefresh: () => _searchCubit.search(
+          query: state.query,
+          type: _type,
+          category: _categoryId,
+        ),
       );
     }
     if (state is SearchSuggestionsSuccess &&
@@ -170,7 +196,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         state: state,
         onSuggestionTap: (name) {
           _searchController.text = name;
-          _searchCubit.search(query: name);
+          _searchCubit.search(
+            query: name,
+            type: _type,
+            category: _categoryId,
+          );
         },
       );
     }
@@ -179,7 +209,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         state: state,
         onSearchTap: (term) {
           _searchController.text = term;
-          _searchCubit.search(query: term);
+          _searchCubit.search(
+            query: term,
+            type: _type,
+            category: _categoryId,
+          );
         },
       );
     }

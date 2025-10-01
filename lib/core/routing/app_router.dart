@@ -103,7 +103,10 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.searchPage,
           builder: (BuildContext context, GoRouterState state) {
-            return const SearchPage();
+            final data = state.extra as Map<String, dynamic>?;
+            final String? categoryId = data != null ? data['categoryId'] as String? : null;
+            final String? type = data != null ? data['type'] as String? : null;
+            return SearchPage(categoryId: categoryId, type: type);
           },
         ),
         GoRoute(

@@ -1,6 +1,7 @@
 const Category = require('../models/Category');
 const Restaurant = require('../models/Restaurant');
 const Food = require('../models/Food');
+const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
 
 // @desc    Global search across restaurants and foods
@@ -75,7 +76,21 @@ const globalSearch = async (req, res) => {
       }
 
       if (category) {
-        restaurantQuery.categories = category;
+        let catVal = category;
+        // allow name or ObjectId
+        const isHex24 = typeof catVal === 'string' && /^[0-9a-fA-F]{24}$/.test(catVal);
+        if (!isHex24) {
+          const byName = await Category.findOne({
+            $or: [
+              { name: { $regex: `^${String(catVal).trim()}$`, $options: 'i' } },
+              { nameAr: { $regex: `^${String(catVal).trim()}$`, $options: 'i' } },
+            ],
+          }).select('_id').lean();
+          if (byName) catVal = String(byName._id);
+        }
+        restaurantQuery.categories = isHex24
+          ? new mongoose.Types.ObjectId(String(catVal))
+          : new mongoose.Types.ObjectId(String(catVal));
       }
 
       const restaurants = await Restaurant.find(restaurantQuery)
@@ -116,7 +131,33 @@ const globalSearch = async (req, res) => {
       }
 
       if (category) {
-        foodQuery.category = category;
+        let catVal = category;
+        const isHex24 = typeof catVal === 'string' && /^[0-9a-fA-F]{24}$/.test(catVal);
+        let pharmRoot = null;
+        if (isHex24) {
+          const c = await Category.findById(catVal).select('name nameAr').lean();
+          if (c && (c.name === 'Pharmacies' || c.nameAr === 'صيدليات')) pharmRoot = c;
+        } else {
+          const byName = await Category.findOne({
+            $or: [
+              { name: { $regex: `^${String(catVal).trim()}$`, $options: 'i' } },
+              { nameAr: { $regex: `^${String(catVal).trim()}$`, $options: 'i' } },
+            ],
+          }).select('_id name nameAr').lean();
+          if (byName) {
+            catVal = String(byName._id);
+            if (byName.name === 'Pharmacies' || byName.nameAr === 'صيدليات') pharmRoot = byName;
+          }
+        }
+
+        if (pharmRoot) {
+          // expand to pharmacy subcategories
+          const subcats = await Category.find({ name: { $in: ['Medicines','Supplements','Personal Care','Cosmetics','Mother & Baby Care','Medical Equipment'] } }).select('_id').lean();
+          const ids = subcats.map(s => s._id);
+          foodQuery.category = { $in: ids };
+        } else {
+          foodQuery.category = new mongoose.Types.ObjectId(String(catVal));
+        }
       }
 
       const foods = await Food.find(foodQuery)

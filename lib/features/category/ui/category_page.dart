@@ -23,6 +23,7 @@ class ReusableCategoryLayout extends StatefulWidget {
   final VoidCallback onRetry;
   final int itemCount;
   final Widget Function(BuildContext context, int index) itemBuilder;
+  final VoidCallback? onSearchTap;
 
   const ReusableCategoryLayout({
     super.key,
@@ -40,6 +41,7 @@ class ReusableCategoryLayout extends StatefulWidget {
     required this.onRetry,
     required this.itemCount,
     required this.itemBuilder,
+    this.onSearchTap,
   });
 
   @override
@@ -130,7 +132,11 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
                     child: GestureDetector(
                       onTap: () {
                         HapticFeedback.lightImpact();
-                        context.push(AppRoutes.searchPage);
+                        if (widget.onSearchTap != null) {
+                          widget.onSearchTap!();
+                        } else {
+                          context.push(AppRoutes.searchPage);
+                        }
                       },
                       child: TextField(
                         enabled: false,

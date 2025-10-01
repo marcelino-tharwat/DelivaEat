@@ -1,4 +1,5 @@
 const Category = require('../models/Category');
+const mongoose = require('mongoose');
 const Offer = require('../models/Offer');
 const Restaurant = require('../models/Restaurant');
 const Food = require('../models/Food');
@@ -86,7 +87,7 @@ const getHomeData = async (req, res) => {
     // Get categories
     const rawCategories = await Category.find({ isActive: true })
       .sort({ order: 1 })
-      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr icon color gradient order image`)
+      .select(`_id name${lang === 'ar' ? 'Ar' : ''} name nameAr icon color gradient order image`)
       .lean();
 
     const categories = formatCategoryResponse(rawCategories);
@@ -112,12 +113,43 @@ const getHomeData = async (req, res) => {
       .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image rating reviewCount deliveryTime deliveryFee minimumOrder isOpen isActive isFavorite isTopRated address phone`)
       .lean();
 
-    // Get top rated restaurants
-    const topRatedRestaurants = await Restaurant.find({
+    // Get top rated restaurants (excluding pharmacies)
+    // Build exclusion list for pharmacy categories (root + common subcategories in EN/AR)
+    const pharmacyCategoryIds = [];
+    try {
+      const pharmRoot = await Category.findOne({
+        $or: [
+          { name: 'Pharmacies' },
+          { nameAr: 'صيدليات' },
+        ],
+      }).select('_id').lean();
+      if (pharmRoot) pharmacyCategoryIds.push(pharmRoot._id);
+
+      const pharmSubNames = [
+        'Medicines', 'Supplements', 'Personal Care', 'Cosmetics', 'Mother & Baby Care', 'Medical Equipment',
+        'أدوية', 'مكملات', 'العناية الشخصية', 'مستحضرات تجميل', 'العناية بالأم والطفل', 'الأدوات الطبية',
+      ];
+      const pharmSubcats = await Category.find({
+        $or: [
+          { name: { $in: pharmSubNames } },
+          { nameAr: { $in: pharmSubNames } },
+        ],
+      }).select('_id').lean();
+      pharmacyCategoryIds.push(...pharmSubcats.map((s) => s._id));
+    } catch (_) {
+      // If anything fails, proceed without exclusions
+    }
+
+    const topRatedFilter = {
       isActive: true,
       isOpen: true,
-      isTopRated: true
-    })
+      isTopRated: true,
+    };
+    if (pharmacyCategoryIds.length > 0) {
+      topRatedFilter.categories = { $nin: pharmacyCategoryIds };
+    }
+
+    const topRatedRestaurants = await Restaurant.find(topRatedFilter)
       .sort({ rating: -1 })
       .limit(10)
       .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr description${lang === 'ar' ? 'Ar' : ''} description descriptionAr image rating reviewCount deliveryTime deliveryFee minimumOrder isOpen isActive isFavorite isTopRated address phone`)
@@ -207,7 +239,7 @@ const getCategories = async (req, res) => {
     
     const rawCategories = await Category.find({ isActive: true })
       .sort({ order: 1 })
-      .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr icon color gradient order`)
+      .select(`_id name${lang === 'ar' ? 'Ar' : ''} name nameAr icon color gradient order`)
       .lean();
 
     const categories = formatCategoryResponse(rawCategories);
@@ -267,7 +299,7 @@ const getOffers = async (req, res) => {
 // @access  Public
 const getRestaurants = async (req, res) => {
   try {
-    const { type = 'all', limit = 10, lang = 'ar' } = req.query;
+    const { type = 'all', limit = 10, lang = 'ar', categoryId } = req.query;
     
     let filter = {
       isActive: true,
@@ -278,6 +310,23 @@ const getRestaurants = async (req, res) => {
       filter.isFavorite = true;
     } else if (type === 'topRated') {
       filter.isTopRated = true;
+    }
+
+    // Optional: constrain by category (id or name)
+    if (categoryId) {
+      const val = String(categoryId).trim();
+      const isHex24 = /^[0-9a-fA-F]{24}$/.test(val);
+      let catId = val;
+      if (!isHex24) {
+        const byName = await Category.findOne({
+          $or: [
+            { name: { $regex: `^${val}$`, $options: 'i' } },
+            { nameAr: { $regex: `^${val}$`, $options: 'i' } },
+          ],
+        }).select('_id').lean();
+        if (byName) catId = String(byName._id);
+      }
+      filter.categories = isHex24 ? new mongoose.Types.ObjectId(val) : new mongoose.Types.ObjectId(catId);
     }
 
     const restaurants = await Restaurant.find(filter)
@@ -342,7 +391,7 @@ const getBestSellingFoods = async (req, res) => {
 // @access  Public
 const getRestaurantsByCategory = async (req, res) => {
   try {
-    const { categoryId, limit = 20, lang = 'ar', random = 'false', sort = 'rating' } = req.query;
+    let { categoryId, limit = 20, lang = 'ar', random = 'false', sort = 'rating' } = req.query;
 
     if (!categoryId) {
       return res.status(400).json({
@@ -354,10 +403,27 @@ const getRestaurantsByCategory = async (req, res) => {
       });
     }
 
+    // Normalize categoryId: allow passing name/slug and resolve to ObjectId
+    const isHex24 = typeof categoryId === 'string' && /^[0-9a-fA-F]{24}$/.test(categoryId);
+    if (!isHex24) {
+      const needle = String(categoryId || '').trim();
+      const byName = await Category.findOne({
+        $or: [
+          { name: { $regex: `^${needle}$`, $options: 'i' } },
+          { nameAr: { $regex: `^${needle}$`, $options: 'i' } },
+        ],
+      }).select('_id').lean();
+      if (byName) {
+        categoryId = String(byName._id);
+      }
+    }
+
     const filter = {
       isActive: true,
       isOpen: true,
-      categories: categoryId
+      categories: isHex24 || typeof categoryId === 'string'
+        ? new mongoose.Types.ObjectId(String(categoryId))
+        : categoryId,
     };
 
     let query = Restaurant.find(filter)

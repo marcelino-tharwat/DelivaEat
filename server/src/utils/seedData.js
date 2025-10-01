@@ -78,6 +78,18 @@ const seedCategories = async () => {
     for (const c of baseCategories) await ensureCategory(c);
     for (const c of cuisineCategories) await ensureCategory(c);
 
+    // Pharmacy subcategories (to filter pharmacies section)
+    const pharmacySubcategories = [
+      { name: 'Medicines', nameAr: 'أدوية', icon: 'local_pharmacy', color: '#1976D2', gradient: ['#1976D2', '#42A5F5'], order: 101 },
+      { name: 'Supplements', nameAr: 'مكملات غذائية', icon: 'emergency', color: '#2E7D32', gradient: ['#2E7D32', '#66BB6A'], order: 102 },
+      { name: 'Personal Care', nameAr: 'العناية الشخصية', icon: 'face_retouching_natural', color: '#6D4C41', gradient: ['#6D4C41', '#8D6E63'], order: 103 },
+      { name: 'Cosmetics', nameAr: 'مستحضرات تجميل', icon: 'brush', color: '#AD1457', gradient: ['#AD1457', '#EC407A'], order: 104 },
+      { name: 'Mother & Baby Care', nameAr: 'العناية بالأم والطفل', icon: 'child_care', color: '#F57C00', gradient: ['#F57C00', '#FFB74D'], order: 105 },
+      { name: 'Medical Equipment', nameAr: 'الأدوات الطبية', icon: 'health_and_safety', color: '#00796B', gradient: ['#00796B', '#26A69A'], order: 106 },
+    ];
+
+    for (const c of pharmacySubcategories) await ensureCategory(c);
+
     console.log('Categories ensured successfully');
   } catch (error) {
     console.error('Error seeding categories:', error);
@@ -157,6 +169,14 @@ const seedRestaurants = async () => {
     const friedCat = categories.find(cat => cat.name === 'Fried Chicken');
     const dessertsCat = categories.find(cat => cat.name === 'Desserts');
     const grillsCat = categories.find(cat => cat.name === 'Grills');
+    // Pharmacies and its subcategories
+    const pharmaciesCat = categories.find(cat => cat.name === 'Pharmacies');
+    const medCat = categories.find(cat => cat.name === 'Medicines');
+    const suppCat = categories.find(cat => cat.name === 'Supplements');
+    const personalCareCat = categories.find(cat => cat.name === 'Personal Care');
+    const cosmeticsCat = categories.find(cat => cat.name === 'Cosmetics');
+    const motherBabyCat = categories.find(cat => cat.name === 'Mother & Baby Care');
+    const equipmentCat = categories.find(cat => cat.name === 'Medical Equipment');
 
     const baseRestaurants = [
       {
@@ -279,7 +299,51 @@ const seedRestaurants = async () => {
       mk({ name: 'Charcoal House', nameAr: 'بيت الفحم', image: 'https://images.unsplash.com/photo-1550547660-7a9b6c0f6f3d?w=400', categories: [grillsCat?._id].filter(Boolean) }),
     ];
 
-    const allLists = [pizzaList, burgerList, shawarmaList, friedList, dessertsList, grillsList];
+    // Pharmacies list seeded similar to restaurants but tagged with Pharmacies + subcategory
+    const mkPharmacy = (overrides = {}) => mk({
+      description: 'صيدلية تقدم خدمات طبية وتوصيل سريع',
+      descriptionAr: 'صيدلية تقدم خدمات طبية وتوصيل سريع',
+      image: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=400',
+      ...overrides,
+    });
+
+    const pharmaciesMedicines = [
+      mkPharmacy({ name: 'Al Amal Pharmacy', nameAr: 'صيدلية الأمل', categories: [pharmaciesCat?._id, medCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Health Plus Pharmacy', nameAr: 'صيدلية الصحة بلس', categories: [pharmaciesCat?._id, medCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'City Care Pharmacy', nameAr: 'صيدلية سيتي كير', categories: [pharmaciesCat?._id, medCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Green Cross Pharmacy', nameAr: 'الصليب الأخضر', categories: [pharmaciesCat?._id, medCat?._id].filter(Boolean) }),
+    ];
+    const pharmaciesSupplements = [
+      mkPharmacy({ name: 'Vita Care Pharmacy', nameAr: 'صيدلية فيتا كير', categories: [pharmaciesCat?._id, suppCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Nutri Pharma', nameAr: 'نيوتري فارما', categories: [pharmaciesCat?._id, suppCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Power Nutrition', nameAr: 'باور نيوترشن', categories: [pharmaciesCat?._id, suppCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Muscle Labs', nameAr: 'ماسكل لابس', categories: [pharmaciesCat?._id, suppCat?._id].filter(Boolean) }),
+    ];
+    const pharmaciesPersonalCare = [
+      mkPharmacy({ name: 'Pure Care Pharmacy', nameAr: 'صيدلية بيور كير', categories: [pharmaciesCat?._id, personalCareCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Soft Touch Pharmacy', nameAr: 'صيدلية سوفت تتش', categories: [pharmaciesCat?._id, personalCareCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Gentle Care', nameAr: 'جنتل كير', categories: [pharmaciesCat?._id, personalCareCat?._id].filter(Boolean) }),
+    ];
+    const pharmaciesCosmetics = [
+      mkPharmacy({ name: 'Beauty Pharma', nameAr: 'بيوتي فارما', categories: [pharmaciesCat?._id, cosmeticsCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Glam Store', nameAr: 'غلام ستور', categories: [pharmaciesCat?._id, cosmeticsCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Aura Beauty', nameAr: 'أورا بيوتي', categories: [pharmaciesCat?._id, cosmeticsCat?._id].filter(Boolean) }),
+    ];
+    const pharmaciesMotherBaby = [
+      mkPharmacy({ name: 'Family Care Pharmacy', nameAr: 'صيدلية عناية العائلة', categories: [pharmaciesCat?._id, motherBabyCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Mama & Me', nameAr: 'ماما آند مي', categories: [pharmaciesCat?._id, motherBabyCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Baby First', nameAr: 'بيبي فيرست', categories: [pharmaciesCat?._id, motherBabyCat?._id].filter(Boolean) }),
+    ];
+    const pharmaciesEquipment = [
+      mkPharmacy({ name: 'MedEquip Pharmacy', nameAr: 'صيدلية ميد إكويب', categories: [pharmaciesCat?._id, equipmentCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'Care Devices', nameAr: 'كير ديفايسز', categories: [pharmaciesCat?._id, equipmentCat?._id].filter(Boolean) }),
+      mkPharmacy({ name: 'HealthTech Supplies', nameAr: 'هيلث تك سبلايز', categories: [pharmaciesCat?._id, equipmentCat?._id].filter(Boolean) }),
+    ];
+
+    const allLists = [
+      pizzaList, burgerList, shawarmaList, friedList, dessertsList, grillsList,
+      pharmaciesMedicines, pharmaciesSupplements, pharmaciesPersonalCare, pharmaciesCosmetics, pharmaciesMotherBaby, pharmaciesEquipment
+    ];
     for (const list of allLists) {
       for (const r of list) {
         await ensureRestaurant(r);
@@ -306,6 +370,13 @@ const seedFoods = async () => {
     const restaurants = await Restaurant.find();
     const categories = await Category.find();
     const foodCategory = categories.find(cat => cat.name === 'Food');
+    const pharmaciesCat = categories.find(cat => cat.name === 'Pharmacies');
+    const medCat = categories.find(cat => cat.name === 'Medicines');
+    const suppCat = categories.find(cat => cat.name === 'Supplements');
+    const personalCareCat = categories.find(cat => cat.name === 'Personal Care');
+    const cosmeticsCat = categories.find(cat => cat.name === 'Cosmetics');
+    const motherBabyCat = categories.find(cat => cat.name === 'Mother & Baby Care');
+    const equipmentCat = categories.find(cat => cat.name === 'Medical Equipment');
 
     const foods = [
       {
@@ -393,15 +464,31 @@ const seedFoods = async () => {
     for (const r of restaurants) {
       const baseName = r.name;
       const rId = r._id;
-      const common = { restaurant: rId, category: foodCategory?._id };
-      const items = [
-        makeFood({ name: `${baseName} Special 1`, nameAr: `${r.nameAr ?? baseName} خاص 1`, image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400', ...common }),
-        makeFood({ name: `${baseName} Special 2`, nameAr: `${r.nameAr ?? baseName} خاص 2`, image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400', ...common }),
-        makeFood({ name: `${baseName} Combo`, nameAr: `${r.nameAr ?? baseName} كومبو`, image: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400', ...common }),
-        makeFood({ name: `${baseName} Classic`, nameAr: `${r.nameAr ?? baseName} كلاسيك`, image: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=400', ...common }),
-      ];
-      for (const f of items) {
-        await ensureFood(f);
+      const isPharmacy = Array.isArray(r.categories) && pharmaciesCat && r.categories.some(c => String(c) === String(pharmaciesCat._id));
+
+      if (isPharmacy) {
+        // Pharmacy products: assign category to one of pharmacy subcategories that the pharmacy belongs to
+        const pharmaSubcats = [medCat, suppCat, personalCareCat, cosmeticsCat, motherBabyCat, equipmentCat].filter(Boolean);
+        const ownedSubcats = pharmaSubcats.filter(cat => r.categories.some(c => String(c) === String(cat._id)));
+        const pickCat = (ownedSubcats[0] || medCat || suppCat || personalCareCat || cosmeticsCat || motherBabyCat || equipmentCat)?._id;
+        const common = { restaurant: rId, category: pickCat };
+        const items = [
+          makeFood({ name: `${baseName} Paracetamol 500mg`, nameAr: `${r.nameAr ?? baseName} باراسيتامول 500mg`, image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', price: 15, ...common, tags: ['medicines'] }),
+          makeFood({ name: `${baseName} Vitamin C`, nameAr: `${r.nameAr ?? baseName} فيتامين C`, image: 'https://images.unsplash.com/photo-1618354691373-d851c5c3cf49?w=400', price: 30, ...common, tags: ['supplements'] }),
+          makeFood({ name: `${baseName} Baby Diapers`, nameAr: `${r.nameAr ?? baseName} حفاضات أطفال`, image: 'https://images.unsplash.com/photo-1624843092051-8cc6a3be8af0?w=400', price: 50, ...common, tags: ['mother-baby'] }),
+          makeFood({ name: `${baseName} Skin Cleanser`, nameAr: `${r.nameAr ?? baseName} منظف بشرة`, image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400', price: 45, ...common, tags: ['personal-care'] }),
+        ];
+        for (const f of items) await ensureFood(f);
+      } else {
+        // Regular restaurant foods
+        const common = { restaurant: rId, category: foodCategory?._id };
+        const items = [
+          makeFood({ name: `${baseName} Special 1`, nameAr: `${r.nameAr ?? baseName} خاص 1`, image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400', ...common }),
+          makeFood({ name: `${baseName} Special 2`, nameAr: `${r.nameAr ?? baseName} خاص 2`, image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400', ...common }),
+          makeFood({ name: `${baseName} Combo`, nameAr: `${r.nameAr ?? baseName} كومبو`, image: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400', ...common }),
+          makeFood({ name: `${baseName} Classic`, nameAr: `${r.nameAr ?? baseName} كلاسيك`, image: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=400', ...common }),
+        ];
+        for (const f of items) await ensureFood(f);
       }
     }
     // Ensure best-selling flags on a few foods by name in case docs pre-exist

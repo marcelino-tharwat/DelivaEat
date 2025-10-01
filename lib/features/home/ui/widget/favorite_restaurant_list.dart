@@ -22,7 +22,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
     }
 
     return SizedBox(
-      height: 170.h, // بدل MediaQuery بـ .h
+      height: 180.h, // give a bit more height to avoid overflow on small screens
 
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -79,7 +79,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 3, // more room for image
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
@@ -151,7 +151,8 @@ class FavoriteRestaurantsList extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(8.w),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           name,
@@ -164,11 +165,11 @@ class FavoriteRestaurantsList extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 2.h),
                         Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 6.w,
-                            vertical: 2.h,
+                            vertical: 1.5.h,
                           ),
                           decoration: BoxDecoration(
                             color: colors.primary.withOpacity(0.1),
@@ -180,7 +181,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
                               Icon(
                                 Icons.star,
                                 color: Colors.amber,
-                                size: 12.sp,
+                                size: 11.sp,
                               ),
                               SizedBox(width: 2.w),
                               Text(
@@ -188,7 +189,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
                                 style: textStyles.bodySmall?.copyWith(
                                   color: colors.onSurface,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 10.sp,
+                                  fontSize: 9.5.sp,
                                 ),
                               ),
                             ],
