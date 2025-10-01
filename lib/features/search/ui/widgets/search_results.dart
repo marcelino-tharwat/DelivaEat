@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:deliva_eat/core/widgets/skeleton_loader.dart';
 import 'package:deliva_eat/features/search/cubit/search_state.dart';
 import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
@@ -73,9 +74,7 @@ class SearchResults extends StatelessWidget {
               if (state.page < state.totalPages)
                 Container(
                   padding: EdgeInsets.all(24.w),
-                  child: const Center(
-                    child: CircularProgressIndicator(strokeWidth: 3),
-                  ),
+                  child: const SkeletonLoader(),
                 ),
             ],
           ),

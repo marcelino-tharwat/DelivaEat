@@ -61,6 +61,8 @@ dependencies:
   retrofit: ^4.7.2
   retrofit_generator: ^10.0.5
   shared_preferences: ^2.5.3
+  shimmer_animation: ^2.2.2
+  shimmer_flutter: ^1.0.1
   wave_progress_indicator: ^0.0.1
 
 dev_dependencies:
