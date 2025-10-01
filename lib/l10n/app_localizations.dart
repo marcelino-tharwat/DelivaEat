@@ -1141,6 +1141,366 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Selected category: {categoryName}'**
   String categoryTappedSnackbar(String categoryName);
+
+  /// No description provided for @pharmaciesSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacies Section'**
+  String get pharmaciesSectionTitle;
+
+  /// No description provided for @searchPharmaciesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for pharmacies, medicines...'**
+  String get searchPharmaciesHint;
+
+  /// No description provided for @highestRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Rated'**
+  String get highestRated;
+
+  /// No description provided for @fastestDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Fastest Delivery'**
+  String get fastestDelivery;
+
+  /// No description provided for @freeDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Delivery'**
+  String get freeDelivery;
+
+  /// No description provided for @discount20OnMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'20% Discount on Medicines'**
+  String get discount20OnMedicines;
+
+  /// No description provided for @useCodePharma20.
+  ///
+  /// In en, this message translates to:
+  /// **'Use code: PHARMA20'**
+  String get useCodePharma20;
+
+  /// No description provided for @freeDeliveryOnMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Delivery on Medicines'**
+  String get freeDeliveryOnMedicines;
+
+  /// No description provided for @forAllParticipatingPharmacies.
+  ///
+  /// In en, this message translates to:
+  /// **'For all participating pharmacies'**
+  String get forAllParticipatingPharmacies;
+
+  /// No description provided for @offersOnCosmetics.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers on Cosmetics'**
+  String get offersOnCosmetics;
+
+  /// No description provided for @discoverOurNewOffers.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover our new offers'**
+  String get discoverOurNewOffers;
+
+  /// No description provided for @medicines.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicines'**
+  String get medicines;
+
+  /// No description provided for @nutritionalSupplements.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutritional Supplements'**
+  String get nutritionalSupplements;
+
+  /// No description provided for @personalCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Care'**
+  String get personalCare;
+
+  /// No description provided for @cosmetics.
+  ///
+  /// In en, this message translates to:
+  /// **'Cosmetics'**
+  String get cosmetics;
+
+  /// No description provided for @motherAndBabyCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Mother and Baby Care'**
+  String get motherAndBabyCare;
+
+  /// No description provided for @medicalEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Equipment'**
+  String get medicalEquipment;
+
+  /// No description provided for @minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'minutes'**
+  String get minutes;
+
+  /// Delivery fee text with amount
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Fee: {fee} Riyal'**
+  String deliveryFee(String fee);
+
+  /// No description provided for @foodSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Food Section'**
+  String get foodSectionTitle;
+
+  /// No description provided for @searchRestaurantsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for restaurants, foods...'**
+  String get searchRestaurantsHint;
+
+  /// No description provided for @discount50OnFirstOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'50% Discount on First Order'**
+  String get discount50OnFirstOrder;
+
+  /// No description provided for @useCodeNew50.
+  ///
+  /// In en, this message translates to:
+  /// **'Use code: NEW50'**
+  String get useCodeNew50;
+
+  /// No description provided for @freeDeliveryThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Delivery This Week'**
+  String get freeDeliveryThisWeek;
+
+  /// No description provided for @familyMealsAtSpecialPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Meals at Special Prices'**
+  String get familyMealsAtSpecialPrices;
+
+  /// No description provided for @failedToLoadRestaurants.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load restaurants, try later'**
+  String get failedToLoadRestaurants;
+
+  /// No description provided for @failedToLoadCategoryRestaurants.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load category restaurants, try later'**
+  String get failedToLoadCategoryRestaurants;
+
+  /// No description provided for @thisCategoryNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This category is not available currently'**
+  String get thisCategoryNotAvailable;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @noItemsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No items found'**
+  String get noItemsFound;
+
+  /// No description provided for @forAllParticipatingRestaurants.
+  ///
+  /// In en, this message translates to:
+  /// **'For all participating restaurants'**
+  String get forAllParticipatingRestaurants;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search...'**
+  String get searchHint;
+
+  /// No description provided for @searchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchTitle;
+
+  /// No description provided for @searchRestaurantsFoodsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for restaurants or foods...'**
+  String get searchRestaurantsFoodsHint;
+
+  /// No description provided for @searching.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching...'**
+  String get searching;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get errorOccurred;
+
+  /// No description provided for @restaurants.
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurants'**
+  String get restaurants;
+
+  /// No description provided for @otherProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Products'**
+  String get otherProducts;
+
+  /// Products section title for a specific restaurant
+  ///
+  /// In en, this message translates to:
+  /// **'Products of {restaurantName}'**
+  String restaurantProducts(String restaurantName);
+
+  /// No description provided for @discount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get discount;
+
+  /// No description provided for @noSearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No search results'**
+  String get noSearchResults;
+
+  /// No description provided for @noResultsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'We didn\'t find any results for '**
+  String get noResultsFor;
+
+  /// No description provided for @tryDifferentWords.
+  ///
+  /// In en, this message translates to:
+  /// **'Try different words or check spelling'**
+  String get tryDifferentWords;
+
+  /// No description provided for @popularSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular Search'**
+  String get popularSearch;
+
+  /// No description provided for @startSearching.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Searching'**
+  String get startSearching;
+
+  /// No description provided for @searchFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for your favorite restaurants and foods'**
+  String get searchFavorites;
+
+  /// No description provided for @categoryPizza.
+  ///
+  /// In en, this message translates to:
+  /// **'Pizza'**
+  String get categoryPizza;
+
+  /// No description provided for @categoryBurger.
+  ///
+  /// In en, this message translates to:
+  /// **'Burger'**
+  String get categoryBurger;
+
+  /// No description provided for @categoryCrepes.
+  ///
+  /// In en, this message translates to:
+  /// **'Crepes'**
+  String get categoryCrepes;
+
+  /// No description provided for @categoryDesserts.
+  ///
+  /// In en, this message translates to:
+  /// **'Desserts'**
+  String get categoryDesserts;
+
+  /// No description provided for @categoryGrills.
+  ///
+  /// In en, this message translates to:
+  /// **'Grills'**
+  String get categoryGrills;
+
+  /// No description provided for @categoryFriedChicken.
+  ///
+  /// In en, this message translates to:
+  /// **'Fried Chicken'**
+  String get categoryFriedChicken;
+
+  /// No description provided for @categoryKoshary.
+  ///
+  /// In en, this message translates to:
+  /// **'Koshary'**
+  String get categoryKoshary;
+
+  /// No description provided for @categoryBreakfast.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakfast'**
+  String get categoryBreakfast;
+
+  /// No description provided for @categoryPies.
+  ///
+  /// In en, this message translates to:
+  /// **'Pies'**
+  String get categoryPies;
+
+  /// No description provided for @categorySandwich.
+  ///
+  /// In en, this message translates to:
+  /// **'Sandwich'**
+  String get categorySandwich;
+
+  /// No description provided for @from.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get from;
+
+  /// No description provided for @riyal.
+  ///
+  /// In en, this message translates to:
+  /// **'Riyal'**
+  String get riyal;
+
+  /// No description provided for @notSpecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get notSpecified;
+
+  /// No description provided for @deliveryFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Fee: '**
+  String get deliveryFeeLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -70,7 +70,7 @@ class CategoriesBar extends StatelessWidget {
                         category['name'] ?? '',
                         textAlign: TextAlign.center,
                         style: textStyles.bodySmall?.copyWith(
-                          color: colors.background ,
+                          color: colors.background,
                           fontWeight: FontWeight.w600,
                           fontSize: 11.sp, // ديناميكي مع الشاشة
                         ),

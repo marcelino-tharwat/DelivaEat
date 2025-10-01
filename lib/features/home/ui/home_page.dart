@@ -209,18 +209,18 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                                 // CHANGED: Added toggle favorite handler
                                 onToggleFavorite: _handleToggleFavorite,
                               ),
-                              SizedBox(height: 8.h),
-                              SectionHeader(
-                                title: AppLocalizations.of(context)!.bestSelling,
-                                onSeeAllTap: _handleSeeAll,
-                              ),
-                              FoodCardList(
-                                foods: state.bestSellingFoods,
-                                onFoodCardTap: _handleFoodCardTap,
-                                // CHANGED: Added toggle favorite handler
-                                onToggleFavorite: _handleToggleFoodFavorite,
-                              ),
-                              SizedBox(height: 8.h),
+                              SizedBox(height: 0.h),
+                              // SectionHeader(
+                              //   title: AppLocalizations.of(context)!.bestSelling,
+                              //   onSeeAllTap: _handleSeeAll,
+                              // ),
+                              // FoodCardList(
+                              //   foods: state.bestSellingFoods,
+                              //   onFoodCardTap: _handleFoodCardTap,
+                              //   // CHANGED: Added toggle favorite handler
+                              //   onToggleFavorite: _handleToggleFoodFavorite,
+                              // ),
+                              // SizedBox(height: 8.h),
                             ],
                           ),
                         ),
@@ -291,9 +291,11 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       case 'food':
         context.push(AppRoutes.categoryPage);
         break;
+      case 'pharmacies':
+        context.push(AppRoutes.pharmaciesPage, extra: {'id': categoryId});
+        break;
       case 'grocery':
       case 'markets':
-      case 'pharmacies':
       case 'gifts':
       case 'stores':
         ScaffoldMessenger.of(context).showSnackBar(

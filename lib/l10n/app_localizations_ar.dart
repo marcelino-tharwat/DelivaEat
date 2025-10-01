@@ -549,4 +549,189 @@ class AppLocalizationsAr extends AppLocalizations {
   String categoryTappedSnackbar(String categoryName) {
     return 'تم اختيار فئة: $categoryName';
   }
+
+  @override
+  String get pharmaciesSectionTitle => 'قسم الصيدليات';
+
+  @override
+  String get searchPharmaciesHint => 'ابحث عن صيدليات، أدوية...';
+
+  @override
+  String get highestRated => 'الأعلى تقييماً';
+
+  @override
+  String get fastestDelivery => 'الأسرع توصيلاً';
+
+  @override
+  String get freeDelivery => 'توصيل مجاني';
+
+  @override
+  String get discount20OnMedicines => 'خصم 20% على الأدوية';
+
+  @override
+  String get useCodePharma20 => 'استخدم كود: PHARMA20';
+
+  @override
+  String get freeDeliveryOnMedicines => 'توصيل مجاني للأدوية';
+
+  @override
+  String get forAllParticipatingPharmacies => 'لجميع الصيدليات المشاركة';
+
+  @override
+  String get offersOnCosmetics => 'عروض على مستحضرات التجميل';
+
+  @override
+  String get discoverOurNewOffers => 'اكتشف عروضنا الجديدة';
+
+  @override
+  String get medicines => 'أدوية';
+
+  @override
+  String get nutritionalSupplements => 'مكملات غذائية';
+
+  @override
+  String get personalCare => 'العناية الشخصية';
+
+  @override
+  String get cosmetics => 'مستحضرات تجميل';
+
+  @override
+  String get motherAndBabyCare => 'العناية بالأم والطفل';
+
+  @override
+  String get medicalEquipment => 'الأدوات الطبية';
+
+  @override
+  String get minutes => 'دقيقة';
+
+  @override
+  String deliveryFee(String fee) {
+    return 'رسوم التوصيل: $fee جنيه';
+  }
+
+  @override
+  String get foodSectionTitle => 'قسم الطعام';
+
+  @override
+  String get searchRestaurantsHint => 'ابحث عن مطاعم، مأكولات...';
+
+  @override
+  String get discount50OnFirstOrder => 'خصم 50% على أول طلب';
+
+  @override
+  String get useCodeNew50 => 'استخدم كود: NEW50';
+
+  @override
+  String get freeDeliveryThisWeek => 'توصيل مجاني هذا الأسبوع';
+
+  @override
+  String get familyMealsAtSpecialPrices => 'وجبات عائلية بأسعار خاصة';
+
+  @override
+  String get failedToLoadRestaurants => 'فشل في تحميل المطاعم، حاول لاحقاً';
+
+  @override
+  String get failedToLoadCategoryRestaurants =>
+      'فشل في تحميل مطاعم الفئة، حاول لاحقاً';
+
+  @override
+  String get thisCategoryNotAvailable => 'هذه الفئة غير متاحة حالياً';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get noItemsFound => 'لم يتم العثور على عناصر';
+
+  @override
+  String get forAllParticipatingRestaurants => 'لجميع المطاعم المشاركة';
+
+  @override
+  String get searchHint => 'ابحث...';
+
+  @override
+  String get searchTitle => 'البحث';
+
+  @override
+  String get searchRestaurantsFoodsHint => 'ابحث عن مطاعم أو أطعمة...';
+
+  @override
+  String get searching => 'جاري البحث...';
+
+  @override
+  String get errorOccurred => 'حدث خطأ';
+
+  @override
+  String get restaurants => 'المطاعم';
+
+  @override
+  String get otherProducts => 'منتجات أخرى';
+
+  @override
+  String restaurantProducts(String restaurantName) {
+    return 'منتجات $restaurantName';
+  }
+
+  @override
+  String get discount => 'خصم';
+
+  @override
+  String get noSearchResults => 'لا توجد نتائج للبحث';
+
+  @override
+  String get noResultsFor => 'لم نجد أي نتائج لـ ';
+
+  @override
+  String get tryDifferentWords => 'جرب كلمات مختلفة أو تحقق من الإملاء';
+
+  @override
+  String get popularSearch => 'البحث الشائع';
+
+  @override
+  String get startSearching => 'ابدأ البحث';
+
+  @override
+  String get searchFavorites => 'ابحث عن مطاعمك المفضلة وأطعمتك المفضلة';
+
+  @override
+  String get categoryPizza => 'بيتزا';
+
+  @override
+  String get categoryBurger => 'برجر';
+
+  @override
+  String get categoryCrepes => 'كريب';
+
+  @override
+  String get categoryDesserts => 'حلويات';
+
+  @override
+  String get categoryGrills => 'شواء';
+
+  @override
+  String get categoryFriedChicken => 'دجاج مقلي';
+
+  @override
+  String get categoryKoshary => 'كشري';
+
+  @override
+  String get categoryBreakfast => 'فطور';
+
+  @override
+  String get categoryPies => 'فطائر';
+
+  @override
+  String get categorySandwich => 'ساندويتش';
+
+  @override
+  String get from => 'من';
+
+  @override
+  String get riyal => 'ريال';
+
+  @override
+  String get notSpecified => 'غير محدد';
+
+  @override
+  String get deliveryFeeLabel => 'رسوم التوصيل: ';
 }

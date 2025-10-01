@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:deliva_eat/core/network/api_constant.dart';
 import 'package:deliva_eat/features/category/data/model/category_item.dart';
 import 'package:deliva_eat/features/category/data/model/restaurant.dart';
@@ -5,6 +6,7 @@ import 'package:deliva_eat/features/category/ui/category_page.dart';
 // ✅ استيراد القالب من ملفه الجديد
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:deliva_eat/l10n/app_localizations.dart';
 
 // هذا الملف يحتوي فقط على الصفحة الذكية الخاصة بالطعام
 class FoodCategoriesPage extends StatefulWidget {
@@ -19,10 +21,11 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
   // لقد قمت بنسخه كما هو لأنه صحيح
   String _selectedLocalCategoryId = '';
   String _selectedBackendCategoryId = '';
-  String _selectedFilter = 'الأعلى تقييماً';
+  String _selectedFilter = '';
   bool _loading = true;
   String? _error;
   final Map<String, String> _categoryNameToId = {};
+  List<Restaurant> _filteredRestaurants = [];
 
   final Dio _dio = Dio(
     BaseOptions(
@@ -32,84 +35,68 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
     ),
   );
 
-  final List<Map<String, dynamic>> _offersData = [
-    {
-      'title': 'خصم 50% على أول طلب',
-      'subtitle': 'استخدم كود: NEW50',
-      'image':
-          'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
-      'color': Colors.red,
-    },
-    {
-      'title': 'توصيل مجاني هذا الأسبوع',
-      'subtitle': 'لجميع المطاعم المشاركة',
-      'image':
-          'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1974&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
-      'color': Colors.blue,
-    },
-    {
-      'title': 'وجبات عائلية بأسعار خاصة',
-      'subtitle': 'اكتشف عروضنا الجديدة',
-      'image':
-          'https://images.unsplash.com/photo-1626074353765-517a681e40be?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
-      'color': Colors.green,
-    },
-  ];
+  List<Map<String, dynamic>> get _offersData {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      {
+        'title': l10n.discount50OnFirstOrder,
+        'subtitle': l10n.useCodeNew50,
+        'image':
+            'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
+        'color': Colors.red,
+      },
+      {
+        'title': l10n.freeDeliveryThisWeek,
+        'subtitle': l10n.forAllParticipatingRestaurants,
+        'image':
+            'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1974&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
+        'color': Colors.blue,
+      },
+      {
+        'title': l10n.familyMealsAtSpecialPrices,
+        'subtitle': l10n.discoverOurNewOffers,
+        'image':
+            'https://images.unsplash.com/photo-1626074353765-517a681e40be?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
+        'color': Colors.green,
+      },
+    ];
+  }
 
-  final List<CategoryItem> _categories = [
-    CategoryItem(id: '1', name: 'Pizza', image: "assets/images/Pizza.png"),
-    CategoryItem(id: '2', name: 'Burger', image: "assets/images/Burger.png"),
-    CategoryItem(id: '3', name: 'Crepes', image: "assets/images/Crepes.png"),
-    CategoryItem(
-      id: '4',
-      name: 'Desserts',
-      image: "assets/images/Desserts.png",
-    ),
-    CategoryItem(id: '5', name: 'Grills', image: "assets/images/Grills.png"),
-    CategoryItem(
-      id: '6',
-      name: 'Fried Chicken',
-      image: "assets/images/Fried.png",
-    ),
-    CategoryItem(id: '7', name: 'Koshary', image: "assets/images/Koshary.png"),
-    CategoryItem(
-      id: '8',
-      name: 'Breakfast',
-      image: "assets/images/Breakfast.png",
-    ),
-    CategoryItem(id: '9', name: 'Pies', image: "assets/images/Pies.png"),
-    CategoryItem(
-      id: '10',
-      name: 'Sandwich',
-      image: "assets/images/Sandwich.png",
-    ),
-  ];
+  List<CategoryItem> _categories = [];
+  bool _filterInitialized = false;
 
   final Map<String, List<Restaurant>> _restaurantsByCategory = {};
-
-  List<Restaurant> get _filteredRestaurants {
-    List<Restaurant> restaurants;
+  void _updateAndFilterRestaurants(AppLocalizations l10n) {
+    List<Restaurant> sourceList;
     if (_selectedBackendCategoryId.isNotEmpty) {
-      restaurants = _restaurantsByCategory[_selectedBackendCategoryId] ?? [];
+      sourceList = _restaurantsByCategory[_selectedBackendCategoryId] ?? [];
     } else {
-      restaurants = _restaurantsByCategory['__top__'] ?? [];
+      sourceList = _restaurantsByCategory['__top__'] ?? [];
     }
-    final restaurantsCopy = List<Restaurant>.from(restaurants);
+
+    final restaurantsCopy = List<Restaurant>.from(sourceList);
     switch (_selectedFilter) {
       case 'الأعلى تقييماً':
+      case var filter when filter == l10n.highestRated:
         restaurantsCopy.sort((a, b) => b.rating.compareTo(a.rating));
         break;
       case 'الأسرع توصيلاً':
+      case var filter when filter == l10n.fastestDelivery:
         restaurantsCopy.sort((a, b) {
-          int timeA = int.parse(a.deliveryTime.split('-')[0]);
-          int timeB = int.parse(b.deliveryTime.split('-')[0]);
+          int timeA = int.tryParse(a.deliveryTime.split('-')[0].trim()) ?? 99;
+          int timeB = int.tryParse(b.deliveryTime.split('-')[0].trim()) ?? 99;
           return timeA.compareTo(timeB);
         });
         break;
       case 'توصيل مجاني':
-        return restaurantsCopy.where((r) => r.deliveryFee == 0).toList();
+      case var filter when filter == l10n.freeDelivery:
+        // نستخدم where لإنشاء قائمة جديدة مفلترة
+        _filteredRestaurants = restaurantsCopy
+            .where((r) => r.deliveryFee == 0)
+            .toList();
+        return; // الخروج مبكراً لتجنب إعادة الكتابة على القائمة
     }
-    return restaurantsCopy;
+    _filteredRestaurants = restaurantsCopy;
   }
 
   @override
@@ -149,8 +136,10 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
       list.shuffle();
       _restaurantsByCategory['__top__'] = list;
     } catch (e) {
-      _error = 'فشل في تحميل المطاعم، حاول لاحقاً';
+      _error = AppLocalizations.of(context)!.failedToLoadRestaurants;
     } finally {
+      _updateAndFilterRestaurants(AppLocalizations.of(context)!); // ✅ استدعاء الدالة بعد جلب البيانات
+
       if (mounted) setState(() => _loading = false);
     }
   }
@@ -177,7 +166,7 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
           .toList();
       _restaurantsByCategory[categoryId] = list;
     } catch (e) {
-      String message = 'فشل في تحميل مطاعم الفئة، حاول لاحقاً';
+      String message = AppLocalizations.of(context)!.failedToLoadCategoryRestaurants;
       if (e is DioException) {
         final data = e.response?.data;
         final serverMsg = (data is Map)
@@ -188,7 +177,10 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
       _error = message;
       await _fetchTopRatedRandom();
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) {
+        _updateAndFilterRestaurants(AppLocalizations.of(context)!); // ✅ استدعاء الدالة بعد جلب البيانات
+        setState(() => _loading = false);
+      }
     }
   }
 
@@ -241,72 +233,81 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
   }
 
   // In _FoodCategoriesPageState
+
   void _handleCategoryTap(String tappedLocalId) async {
+    final l10n = AppLocalizations.of(context)!;
     final isCurrentlySelected = _selectedLocalCategoryId == tappedLocalId;
 
-    // Temporarily store the new state to apply it after potential async calls
-    String newLocalCategoryId = '';
-    String newBackendCategoryId = '';
-    String newFilter = 'الأعلى تقييماً';
-
     if (isCurrentlySelected) {
-      // If already selected, deselect it and fetch top rated
-      newLocalCategoryId = '';
-      newBackendCategoryId = '';
-      newFilter = 'الأعلى تقييماً';
-      // No need to await here, setState will trigger a rebuild and new fetch
+      // إلغاء التحديد والعودة للأعلى تقييماً
+      setState(() {
+        _selectedLocalCategoryId = '';
+        _selectedBackendCategoryId = '';
+        _selectedFilter = l10n.highestRated;
+      });
       _fetchTopRatedRandom();
     } else {
-      // If a new category is selected
+      // تحديد فئة جديدة
       final category = _categories.firstWhere((cat) => cat.id == tappedLocalId);
       if (_categoryNameToId.isEmpty) {
-        await _loadBackendCategoryMap(); // Ensure map is loaded before resolving
+        await _loadBackendCategoryMap();
       }
       final resolvedBackendId = _resolveBackendCategoryId(category.name);
 
       if (resolvedBackendId != null && resolvedBackendId.isNotEmpty) {
-        newLocalCategoryId = tappedLocalId;
-        newBackendCategoryId = resolvedBackendId;
-        newFilter = 'الأعلى تقييماً';
-        // No need to await here, setState will trigger a rebuild and new fetch
+        setState(() {
+          _selectedLocalCategoryId = tappedLocalId;
+          _selectedBackendCategoryId = resolvedBackendId;
+          _selectedFilter = l10n.highestRated;
+        });
         _fetchByCategory(resolvedBackendId);
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('هذه الفئة غير متاحة حالياً')),
+            SnackBar(content: Text(l10n.thisCategoryNotAvailable)),
           );
         }
-        // If category not available, keep current selection or deselect
-        newLocalCategoryId = _selectedLocalCategoryId; // Keep current
-        newBackendCategoryId = _selectedBackendCategoryId; // Keep current
       }
-    }
-
-    // Update all state variables at once to ensure consistency
-    if (mounted) {
-      setState(() {
-        _selectedLocalCategoryId = newLocalCategoryId;
-        _selectedBackendCategoryId = newBackendCategoryId;
-        _selectedFilter = newFilter;
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (_categories.isEmpty) {
+      _categories = [
+        CategoryItem(id: '1', name: l10n.categoryPizza, image: "assets/images/Pizza.png"),
+        CategoryItem(id: '2', name: l10n.categoryBurger, image: "assets/images/Burger.png"),
+        CategoryItem(id: '3', name: l10n.categoryCrepes, image: "assets/images/Crepes.png"),
+        CategoryItem(id: '4', name: l10n.categoryDesserts, image: "assets/images/Desserts.png"),
+        CategoryItem(id: '5', name: l10n.categoryGrills, image: "assets/images/Grills.png"),
+        CategoryItem(id: '6', name: l10n.categoryFriedChicken, image: "assets/images/Fried.png"),
+        CategoryItem(id: '7', name: l10n.categoryKoshary, image: "assets/images/Koshary.png"),
+        CategoryItem(id: '8', name: l10n.categoryBreakfast, image: "assets/images/Breakfast.png"),
+        CategoryItem(id: '9', name: l10n.categoryPies, image: "assets/images/Pies.png"),
+        CategoryItem(id: '10', name: l10n.categorySandwich, image: "assets/images/Sandwich.png"),
+      ];
+    }
+    if (!_filterInitialized) {
+      _selectedFilter = l10n.highestRated;
+      _filterInitialized = true;
+    }
     return ReusableCategoryLayout(
-      pageTitle: 'قسم الطعام',
-      searchHintText: 'ابحث عن مطاعم، مأكولات...',
+      pageTitle: l10n.foodSectionTitle,
+      searchHintText: l10n.searchRestaurantsHint,
       offers: _offersData,
       categories: _categories,
       selectedCategoryId: _selectedLocalCategoryId,
-      filters: const ['الأعلى تقييماً', 'الأسرع توصيلاً', 'توصيل مجاني'],
+      filters: [l10n.highestRated, l10n.fastestDelivery, l10n.freeDelivery],
       selectedFilter: _selectedFilter,
       isLoading: _loading,
       errorMessage: _error,
       onCategorySelected: _handleCategoryTap, // ✅ الربط الصحيح موجود هنا
       onFilterSelected: (filter) {
-        setState(() => _selectedFilter = filter);
+        setState(() {
+          _selectedFilter = filter;
+          _updateAndFilterRestaurants(l10n); // ✅ استدعاء الدالة عند تغيير الفلتر
+        });
       },
       onRetry: () {
         if (_selectedBackendCategoryId.isNotEmpty) {
@@ -315,9 +316,10 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
           _fetchTopRatedRandom();
         }
       },
-      itemCount: _filteredRestaurants.length,
+      itemCount: _filteredRestaurants.length, // ✅ استخدام القائمة المفلترة
       itemBuilder: (context, index) {
-        return _buildRestaurantCard(context, _filteredRestaurants[index]);
+        // بناء الويدجت الجديدة بدلاً من الدالة
+        return _FoodCard(restaurant: _filteredRestaurants[index], l10n: l10n);
       },
     );
   }
@@ -344,12 +346,20 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
       tags: const [],
     );
   }
+}
 
-  Widget _buildRestaurantCard(BuildContext context, Restaurant restaurant) {
-    // ... الكود الخاص ببناء كارت المطعم يبقى كما هو
+// --- تم فصل كارت الطعام في ويدجت خاصة بها ---
+class _FoodCard extends StatelessWidget {
+  const _FoodCard({required this.restaurant, required this.l10n});
+
+  final Restaurant restaurant;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Card(
         elevation: 2,
         shadowColor: theme.shadowColor.withOpacity(0.1),
@@ -357,15 +367,14 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            // context.push('${AppRoutes.restaurantDetails}/${restaurant.id}');
+            // Navigate to restaurant details if needed
           },
           child: Padding(
-            padding: const EdgeInsets.all(0),
+            padding: const EdgeInsets.all(12.0),
             child: Row(
               children: [
                 Hero(
-                  tag:
-                      'restaurant-card-${restaurant.id}', // أضفت كلمة card عشان يبقى فريد
+                  tag: 'restaurant-card-${restaurant.id}',
                   child: Container(
                     width: 70,
                     height: 70,
@@ -381,10 +390,12 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        restaurant.image,
+                      child: CachedNetworkImage(
+                        imageUrl: restaurant.image,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+                        placeholder: (context, url) =>
+                            Container(color: Colors.grey[200]),
+                        errorWidget: (context, url, error) => Container(
                           color: Colors.grey[300],
                           child: Icon(
                             Icons.restaurant,
@@ -426,7 +437,7 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${restaurant.deliveryTime} دقيقة',
+                            '${restaurant.deliveryTime} ${l10n.minutes}',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 12,
@@ -446,8 +457,8 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
                         ),
                         child: Text(
                           restaurant.deliveryFee == 0
-                              ? "توصيل مجاني"
-                              : "رسوم التوصيل: ${restaurant.deliveryFee} جنيه",
+                              ? l10n.freeDelivery
+                              : l10n.deliveryFee(restaurant.deliveryFee.toString()),
                           style: TextStyle(
                             color: theme.primaryColor,
                             fontSize: 12,

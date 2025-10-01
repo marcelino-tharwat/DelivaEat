@@ -549,4 +549,193 @@ class AppLocalizationsEn extends AppLocalizations {
   String categoryTappedSnackbar(String categoryName) {
     return 'Selected category: $categoryName';
   }
+
+  @override
+  String get pharmaciesSectionTitle => 'Pharmacies Section';
+
+  @override
+  String get searchPharmaciesHint => 'Search for pharmacies, medicines...';
+
+  @override
+  String get highestRated => 'Highest Rated';
+
+  @override
+  String get fastestDelivery => 'Fastest Delivery';
+
+  @override
+  String get freeDelivery => 'Free Delivery';
+
+  @override
+  String get discount20OnMedicines => '20% Discount on Medicines';
+
+  @override
+  String get useCodePharma20 => 'Use code: PHARMA20';
+
+  @override
+  String get freeDeliveryOnMedicines => 'Free Delivery on Medicines';
+
+  @override
+  String get forAllParticipatingPharmacies =>
+      'For all participating pharmacies';
+
+  @override
+  String get offersOnCosmetics => 'Offers on Cosmetics';
+
+  @override
+  String get discoverOurNewOffers => 'Discover our new offers';
+
+  @override
+  String get medicines => 'Medicines';
+
+  @override
+  String get nutritionalSupplements => 'Nutritional Supplements';
+
+  @override
+  String get personalCare => 'Personal Care';
+
+  @override
+  String get cosmetics => 'Cosmetics';
+
+  @override
+  String get motherAndBabyCare => 'Mother and Baby Care';
+
+  @override
+  String get medicalEquipment => 'Medical Equipment';
+
+  @override
+  String get minutes => 'minutes';
+
+  @override
+  String deliveryFee(String fee) {
+    return 'Delivery Fee: $fee Riyal';
+  }
+
+  @override
+  String get foodSectionTitle => 'Food Section';
+
+  @override
+  String get searchRestaurantsHint => 'Search for restaurants, foods...';
+
+  @override
+  String get discount50OnFirstOrder => '50% Discount on First Order';
+
+  @override
+  String get useCodeNew50 => 'Use code: NEW50';
+
+  @override
+  String get freeDeliveryThisWeek => 'Free Delivery This Week';
+
+  @override
+  String get familyMealsAtSpecialPrices => 'Family Meals at Special Prices';
+
+  @override
+  String get failedToLoadRestaurants => 'Failed to load restaurants, try later';
+
+  @override
+  String get failedToLoadCategoryRestaurants =>
+      'Failed to load category restaurants, try later';
+
+  @override
+  String get thisCategoryNotAvailable =>
+      'This category is not available currently';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get noItemsFound => 'No items found';
+
+  @override
+  String get forAllParticipatingRestaurants =>
+      'For all participating restaurants';
+
+  @override
+  String get searchHint => 'Search...';
+
+  @override
+  String get searchTitle => 'Search';
+
+  @override
+  String get searchRestaurantsFoodsHint => 'Search for restaurants or foods...';
+
+  @override
+  String get searching => 'Searching...';
+
+  @override
+  String get errorOccurred => 'An error occurred';
+
+  @override
+  String get restaurants => 'Restaurants';
+
+  @override
+  String get otherProducts => 'Other Products';
+
+  @override
+  String restaurantProducts(String restaurantName) {
+    return 'Products of $restaurantName';
+  }
+
+  @override
+  String get discount => 'Discount';
+
+  @override
+  String get noSearchResults => 'No search results';
+
+  @override
+  String get noResultsFor => 'We didn\'t find any results for ';
+
+  @override
+  String get tryDifferentWords => 'Try different words or check spelling';
+
+  @override
+  String get popularSearch => 'Popular Search';
+
+  @override
+  String get startSearching => 'Start Searching';
+
+  @override
+  String get searchFavorites =>
+      'Search for your favorite restaurants and foods';
+
+  @override
+  String get categoryPizza => 'Pizza';
+
+  @override
+  String get categoryBurger => 'Burger';
+
+  @override
+  String get categoryCrepes => 'Crepes';
+
+  @override
+  String get categoryDesserts => 'Desserts';
+
+  @override
+  String get categoryGrills => 'Grills';
+
+  @override
+  String get categoryFriedChicken => 'Fried Chicken';
+
+  @override
+  String get categoryKoshary => 'Koshary';
+
+  @override
+  String get categoryBreakfast => 'Breakfast';
+
+  @override
+  String get categoryPies => 'Pies';
+
+  @override
+  String get categorySandwich => 'Sandwich';
+
+  @override
+  String get from => 'From';
+
+  @override
+  String get riyal => 'Riyal';
+
+  @override
+  String get notSpecified => 'Not specified';
+
+  @override
+  String get deliveryFeeLabel => 'Delivery Fee: ';
 }
