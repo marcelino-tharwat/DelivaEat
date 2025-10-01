@@ -8,6 +8,7 @@ import 'package:deliva_eat/core/di/dependency_injection.dart';
 import 'package:deliva_eat/features/search/cubit/search_cubit.dart';
 import 'package:deliva_eat/features/search/cubit/search_state.dart';
 import 'package:go_router/go_router.dart';
+import 'package:deliva_eat/l10n/app_localizations.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -112,7 +113,12 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   ) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, _isSearchFocused ? 8.h : 16.h),
+      padding: EdgeInsets.fromLTRB(
+        16.w,
+        8.h,
+        16.w,
+        _isSearchFocused ? 8.h : 16.h,
+      ),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
         boxShadow: _isSearchFocused
@@ -145,7 +151,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                     opacity: _isSearchFocused ? 0.0 : 1.0,
                     duration: const Duration(milliseconds: 200),
                     child: Text(
-                      "البحث",
+                      AppLocalizations.of(context)!.searchTitle,
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontSize: 22.sp,
                         fontWeight: FontWeight.bold,
@@ -182,7 +188,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         focusNode: _searchFocusNode,
         style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16.sp),
         decoration: InputDecoration(
-          hintText: "ابحث عن مطاعم أو أطعمة...",
+          hintText: AppLocalizations.of(context)!.searchRestaurantsFoodsHint,
           hintStyle: TextStyle(color: theme.hintColor, fontSize: 14.sp),
           prefixIcon: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
@@ -197,7 +203,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                   scale: 1.0,
                   duration: const Duration(milliseconds: 200),
                   child: IconButton(
-                    icon: Icon(Icons.clear, color: theme.hintColor, size: 20.sp),
+                    icon: Icon(
+                      Icons.clear,
+                      color: theme.hintColor,
+                      size: 20.sp,
+                    ),
                     onPressed: () {
                       _searchController.clear();
                       _searchCubit.clearSearch();
@@ -220,7 +230,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
           ),
           filled: true,
           fillColor: isDark ? Colors.grey[800] : Colors.white,
-          contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 20.w,
+            vertical: 16.h,
+          ),
         ),
         onChanged: (value) {
           setState(() {});
@@ -251,7 +264,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     if (state is SearchSuccess) {
       return _buildSearchResults(context, state);
     }
-    if (state is SearchSuggestionsSuccess && _searchController.text.isNotEmpty) {
+    if (state is SearchSuggestionsSuccess &&
+        _searchController.text.isNotEmpty) {
       return _buildSuggestions(context, state);
     }
     if (state is PopularSearchesSuccess) {
@@ -273,7 +287,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
           ),
           SizedBox(height: 16.h),
           Text(
-            "جاري البحث...",
+            AppLocalizations.of(context)!.searching,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontSize: 16.sp,
               color: Theme.of(context).hintColor,
@@ -305,10 +319,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
             ),
             SizedBox(height: 24.h),
             Text(
-              "حدث خطأ",
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              AppLocalizations.of(context)!.errorOccurred,
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.h),
             Text(
@@ -326,7 +340,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                 }
               },
               icon: Icon(Icons.refresh, size: 18.sp),
-              label: const Text("إعادة المحاولة"),
+              label: Text(AppLocalizations.of(context)!.retry),
               style: FilledButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
               ),
@@ -351,24 +365,34 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
             children: [
               // عرض المطاعم مع منتجاتها
               if (state.restaurants.isNotEmpty) ...[
-                _buildSectionHeader("المطاعم", state.restaurants.length),
+                _buildSectionHeader(AppLocalizations.of(context)!.restaurants, state.restaurants.length),
                 SizedBox(height: 16.h),
-                ...state.restaurants.map((restaurant) => 
-                  _buildRestaurantWithProducts(restaurant, state.foods)),
+                ...state.restaurants.map(
+                  (restaurant) =>
+                      _buildRestaurantWithProducts(restaurant, state.foods),
+                ),
                 SizedBox(height: 24.h),
               ],
-              
+
               // عرض المنتجات المنفصلة (التي لا تنتمي لمطاعم في النتائج)
-              if (_getIndependentFoods(state.foods, state.restaurants).isNotEmpty) ...[
-                _buildSectionHeader("منتجات أخرى", _getIndependentFoods(state.foods, state.restaurants).length),
+              if (_getIndependentFoods(
+                state.foods,
+                state.restaurants,
+              ).isNotEmpty) ...[
+                _buildSectionHeader(
+                  AppLocalizations.of(context)!.otherProducts,
+                  _getIndependentFoods(state.foods, state.restaurants).length,
+                ),
                 SizedBox(height: 16.h),
-                _buildFoodHorizontalList(_getIndependentFoods(state.foods, state.restaurants)),
+                _buildFoodHorizontalList(
+                  _getIndependentFoods(state.foods, state.restaurants),
+                ),
                 SizedBox(height: 24.h),
               ],
 
               if (state.restaurants.isEmpty && state.foods.isEmpty)
                 _buildEmptySearchResult(state.query),
-                
+
               if (state.page < state.totalPages)
                 Container(
                   padding: EdgeInsets.all(24.w),
@@ -383,29 +407,41 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     );
   }
 
-  List<FoodModel> _getIndependentFoods(List<FoodModel> allFoods, List<RestaurantModel> restaurants) {
+  List<FoodModel> _getIndependentFoods(
+    List<FoodModel> allFoods,
+    List<RestaurantModel> restaurants,
+  ) {
     final restaurantIds = restaurants.map((r) => r.id).toSet();
-    return allFoods.where((food) => 
-      food.restaurant == null || !restaurantIds.contains(food.restaurant!.id)).toList();
+    return allFoods
+        .where(
+          (food) =>
+              food.restaurant == null ||
+              !restaurantIds.contains(food.restaurant!.id),
+        )
+        .toList();
   }
 
-  Widget _buildRestaurantWithProducts(RestaurantModel restaurant, List<FoodModel> allFoods) {
-    final restaurantFoods = allFoods.where((food) => 
-      food.restaurant?.id == restaurant.id).toList();
+  Widget _buildRestaurantWithProducts(
+    RestaurantModel restaurant,
+    List<FoodModel> allFoods,
+  ) {
+    final restaurantFoods = allFoods
+        .where((food) => food.restaurant?.id == restaurant.id)
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // بطاقة المطعم
         _buildRestaurantCard(restaurant),
-        
+
         // منتجات المطعم إذا وُجدت
         if (restaurantFoods.isNotEmpty) ...[
           SizedBox(height: 12.h),
           Padding(
             padding: EdgeInsets.only(right: 16.w),
             child: Text(
-              "منتجات ${restaurant.nameAr}",
+              AppLocalizations.of(context)!.restaurantProducts(restaurant.nameAr),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).primaryColor,
@@ -580,7 +616,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     final textStyles = context.textStyles;
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final displayName = isArabic ? food.nameAr : food.name;
-    final hasDiscount = food.originalPrice != null && food.originalPrice! > food.price!.toInt();
+    final hasDiscount =
+        food.originalPrice != null && food.originalPrice! > food.price!.toInt();
 
     return Container(
       width: 150.w,
@@ -801,14 +838,18 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                 color: Colors.grey[100],
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.search_off, size: 64.sp, color: Colors.grey[400]),
+              child: Icon(
+                Icons.search_off,
+                size: 64.sp,
+                color: Colors.grey[400],
+              ),
             ),
             SizedBox(height: 24.h),
             Text(
               'لا توجد نتائج للبحث',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.h),
             RichText(
@@ -848,7 +889,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     return ListView.separated(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       itemCount: state.suggestions.length,
-      separatorBuilder: (_, __) => Divider(height: 1.h, color: Colors.grey[200]),
+      separatorBuilder: (_, __) =>
+          Divider(height: 1.h, color: Colors.grey[200]),
       itemBuilder: (context, index) {
         final suggestion = state.suggestions[index];
         return ListTile(
@@ -871,9 +913,16 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.sp),
           ),
           subtitle: suggestion.restaurant != null
-              ? Text("من: ${suggestion.restaurant}", style: TextStyle(fontSize: 14.sp))
+              ? Text(
+                  "من: ${suggestion.restaurant}",
+                  style: TextStyle(fontSize: 14.sp),
+                )
               : null,
-          trailing: Icon(Icons.north_west, color: Colors.grey[400], size: 16.sp),
+          trailing: Icon(
+            Icons.north_west,
+            color: Colors.grey[400],
+            size: 16.sp,
+          ),
           onTap: () {
             _searchController.text = suggestion.name;
             _searchCubit.search(query: suggestion.name);

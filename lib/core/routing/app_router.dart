@@ -9,6 +9,7 @@ import 'package:deliva_eat/features/auth/otp/ui/otp_page.dart';
 import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
 import 'package:deliva_eat/features/category/ui/widget/food_category_page.dart';
+import 'package:deliva_eat/features/category/ui/widget/pharmacies_category_page.dart';
 import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/ui/favorites_page.dart';
@@ -89,6 +90,14 @@ final GoRouter router = GoRouter(
             final String categoryId = data['id'] as String? ?? '';
 
             return FoodCategoriesPage(categoryId: categoryId);
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.pharmaciesPage,
+          builder: (BuildContext context, GoRouterState state) {
+            final data = state.extra as Map<String, dynamic>? ?? {};
+            final String categoryId = data['id'] as String? ?? '';
+            return PharmaciesCategoriesPage(categoryId: categoryId);
           },
         ),
         GoRoute(

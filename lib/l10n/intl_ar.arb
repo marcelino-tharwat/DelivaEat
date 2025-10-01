@@ -196,6 +196,87 @@
                 "example": "أكل"
             }
         }
-    }
-  
+    },
+
+    "pharmaciesSectionTitle": "قسم الصيدليات",
+    "searchPharmaciesHint": "ابحث عن صيدليات، أدوية...",
+    "highestRated": "الأعلى تقييماً",
+    "fastestDelivery": "الأسرع توصيلاً",
+    "freeDelivery": "توصيل مجاني",
+    "discount20OnMedicines": "خصم 20% على الأدوية",
+    "useCodePharma20": "استخدم كود: PHARMA20",
+    "freeDeliveryOnMedicines": "توصيل مجاني للأدوية",
+    "forAllParticipatingPharmacies": "لجميع الصيدليات المشاركة",
+    "offersOnCosmetics": "عروض على مستحضرات التجميل",
+    "discoverOurNewOffers": "اكتشف عروضنا الجديدة",
+    "medicines": "أدوية",
+    "nutritionalSupplements": "مكملات غذائية",
+    "personalCare": "العناية الشخصية",
+    "cosmetics": "مستحضرات تجميل",
+    "motherAndBabyCare": "العناية بالأم والطفل",
+    "medicalEquipment": "الأدوات الطبية",
+    "minutes": "دقيقة",
+    "deliveryFee": "رسوم التوصيل: {fee} جنيه",
+    "@deliveryFee": {
+        "description": "Delivery fee text with amount",
+        "placeholders": {
+            "fee": {
+                "type": "String",
+                "example": "10"
+            }
+        }
+    },
+
+    "foodSectionTitle": "قسم الطعام",
+    "searchRestaurantsHint": "ابحث عن مطاعم، مأكولات...",
+    "discount50OnFirstOrder": "خصم 50% على أول طلب",
+    "useCodeNew50": "استخدم كود: NEW50",
+    "freeDeliveryThisWeek": "توصيل مجاني هذا الأسبوع",
+    "familyMealsAtSpecialPrices": "وجبات عائلية بأسعار خاصة",
+    "failedToLoadRestaurants": "فشل في تحميل المطاعم، حاول لاحقاً",
+    "failedToLoadCategoryRestaurants": "فشل في تحميل مطاعم الفئة، حاول لاحقاً",
+    "thisCategoryNotAvailable": "هذه الفئة غير متاحة حالياً",
+
+    "retry": "إعادة المحاولة",
+    "noItemsFound": "لم يتم العثور على عناصر",
+    "forAllParticipatingRestaurants": "لجميع المطاعم المشاركة",
+    "searchHint": "ابحث...",
+    "searchTitle": "البحث",
+    "searchRestaurantsFoodsHint": "ابحث عن مطاعم أو أطعمة...",
+    "searching": "جاري البحث...",
+    "errorOccurred": "حدث خطأ",
+    "restaurants": "المطاعم",
+    "otherProducts": "منتجات أخرى",
+    "restaurantProducts": "منتجات {restaurantName}",
+    "@restaurantProducts": {
+        "description": "Products section title for a specific restaurant",
+        "placeholders": {
+            "restaurantName": {
+                "type": "String",
+                "example": "اسم المطعم"
+            }
+        }
+    },
+    "discount": "خصم",
+    "noSearchResults": "لا توجد نتائج للبحث",
+    "noResultsFor": "لم نجد أي نتائج لـ ",
+    "tryDifferentWords": "جرب كلمات مختلفة أو تحقق من الإملاء",
+    "popularSearch": "البحث الشائع",
+    "startSearching": "ابدأ البحث",
+    "searchFavorites": "ابحث عن مطاعمك المفضلة وأطعمتك المفضلة",
+    "categoryPizza": "بيتزا",
+    "categoryBurger": "برجر",
+    "categoryCrepes": "كريب",
+    "categoryDesserts": "حلويات",
+    "categoryGrills": "شواء",
+    "categoryFriedChicken": "دجاج مقلي",
+    "categoryKoshary": "كشري",
+    "categoryBreakfast": "فطور",
+    "categoryPies": "فطائر",
+    "categorySandwich": "ساندويتش",
+    "highestRated": "الأعلى تقييماً",
+    "fastestDelivery": "الأسرع توصيلاً",
+    "freeDelivery": "توصيل مجاني",
+    "minutes": "دقيقة"
+
 }

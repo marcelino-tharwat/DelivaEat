@@ -6,6 +6,7 @@ class AppRoutes {
   static const String newPasswordPage = '/newPasswordPage';
   static const String homePage = '/homePage';
   static const String categoryPage = '/categoryPage';
+  static const String pharmaciesPage = '/pharmaciesPage';
   static const String searchPage = '/productPage';
   static const String productDetailsPage = '/productDetailsPage';
   static const String cartPage = '/cartPage';

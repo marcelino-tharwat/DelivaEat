@@ -45,10 +45,10 @@ class HomeHeader extends StatelessWidget {
         children: [
           Padding(
             padding: EdgeInsets.only(
-              top: 40.h,
+              top: 45.h,
               left: 20.w,
               right: 20.w,
-              bottom: 10.h,
+              bottom: 0.h,
             ),
             child: Row(
               children: [
