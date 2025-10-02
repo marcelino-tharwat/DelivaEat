@@ -119,7 +119,7 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(16.r),
+                      // borderRadius: BorderRadius.circular(16.r),
                       boxShadow: [
                         BoxShadow(
                           color: theme.shadowColor.withOpacity(0.1),
@@ -180,7 +180,7 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 0.w),
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
                         child: Text(
                           AppLocalizations.of(context)!.categories,
                           style: theme.textTheme.headlineSmall?.copyWith(
@@ -330,9 +330,7 @@ class _ReusableCategoryLayoutState extends State<ReusableCategoryLayout> {
   Widget _buildContentSliver(ThemeData theme) {
     if (widget.isLoading) {
       // SliverFillRemaining تضمن أن يملأ المؤشر باقي الشاشة
-      return const SliverFillRemaining(
-        child: Center(child: SkeletonLoader()),
-      );
+      return const SliverFillRemaining(child: Center(child: SkeletonLoader()));
     }
     if (widget.errorMessage != null) {
       return SliverFillRemaining(
