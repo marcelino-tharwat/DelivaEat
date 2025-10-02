@@ -56,7 +56,7 @@ class CategoriesBar extends StatelessWidget {
                       height: imageAreaHeight,
                       child: Container(
                         color: colors.surface,
-                        padding: EdgeInsets.all(6.0.w),
+                        // padding: EdgeInsets.all(6.0.w),
                         child: _buildCategoryImage(imageUrl, isNetworkImage),
                       ),
                     ),
@@ -101,7 +101,7 @@ class CategoriesBar extends StatelessWidget {
           )
         : Image.asset(
             imageUrl,
-            fit: BoxFit.contain,
+            fit: BoxFit.fill,
             errorBuilder: (context, error, stackTrace) =>
                 Icon(Icons.category, size: 24.sp),
           );
