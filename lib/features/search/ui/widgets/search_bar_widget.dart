@@ -10,6 +10,7 @@ class SearchBarWidget extends StatelessWidget {
   final Function(String) onChanged;
   final Function(String) onSubmitted;
   final VoidCallback onClear;
+  final String? hintText;
 
   const SearchBarWidget({
     super.key,
@@ -19,6 +20,7 @@ class SearchBarWidget extends StatelessWidget {
     required this.onChanged,
     required this.onSubmitted,
     required this.onClear,
+    this.hintText,
   });
 
   @override
@@ -42,7 +44,7 @@ class SearchBarWidget extends StatelessWidget {
         focusNode: focusNode,
         style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16.sp),
         decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.searchRestaurantsFoodsHint,
+          hintText: hintText ?? AppLocalizations.of(context)!.searchRestaurantsFoodsHint,
           hintStyle: TextStyle(color: theme.hintColor, fontSize: 14.sp),
           prefixIcon: AnimatedContainer(
             duration: const Duration(milliseconds: 200),

@@ -419,9 +419,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalid_or_expired_code => 'Invalid or expired code.';
 
   @override
-  String get unknown_error => 'An unknown error occurred.';
-
-  @override
   String get invalid_code => 'Invalid code.';
 
   @override
@@ -738,4 +735,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deliveryFeeLabel => 'Delivery Fee: ';
+
+  @override
+  String get grocerySectionTitle => 'Grocery Section';
+
+  @override
+  String get searchGroceriesHint => 'Search for groceries, stores...';
+
+  @override
+  String get marketsSectionTitle => 'Markets Section';
+
+  @override
+  String get searchMarketsHint => 'Search for markets, stores...';
+
+  @override
+  String get pharmacies => 'Pharmacies';
 }

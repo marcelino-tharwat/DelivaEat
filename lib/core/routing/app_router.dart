@@ -10,12 +10,15 @@ import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
 import 'package:deliva_eat/features/category/ui/widget/food_category_page.dart';
 import 'package:deliva_eat/features/category/ui/widget/pharmacies_category_page.dart';
+import 'package:deliva_eat/features/category/ui/widget/grocery_category_page.dart';
+import 'package:deliva_eat/features/category/ui/widget/markets_category_page.dart';
 import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/ui/favorites_page.dart';
 import 'package:deliva_eat/features/home/ui/home_page_wrapper.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_menu_page.dart';
 import 'package:deliva_eat/features/search/ui/search_page.dart';
+import 'package:deliva_eat/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -101,12 +104,29 @@ final GoRouter router = GoRouter(
           },
         ),
         GoRoute(
+          path: AppRoutes.groceryPage,
+          builder: (BuildContext context, GoRouterState state) {
+            final data = state.extra as Map<String, dynamic>? ?? {};
+            final String categoryId = data['id'] as String? ?? '';
+            return GroceryCategoriesPage(categoryId: categoryId);
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.marketsCategoryPage,
+          builder: (BuildContext context, GoRouterState state) {
+            final data = state.extra as Map<String, dynamic>? ?? {};
+            final String categoryId = data['categoryId'] as String? ?? '';
+            return MarketsCategoriesPage(categoryId: categoryId);
+          },
+        ),
+        GoRoute(
           path: AppRoutes.searchPage,
           builder: (BuildContext context, GoRouterState state) {
             final data = state.extra as Map<String, dynamic>?;
             final String? categoryId = data != null ? data['categoryId'] as String? : null;
             final String? type = data != null ? data['type'] as String? : null;
-            return SearchPage(categoryId: categoryId, type: type);
+            final String? categoryType = data != null ? data['categoryType'] as String? : null;
+            return SearchPage(categoryId: categoryId, type: type, categoryType: categoryType);
           },
         ),
         GoRoute(

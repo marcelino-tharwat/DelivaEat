@@ -890,12 +890,6 @@ abstract class AppLocalizations {
   /// **'Invalid or expired code.'**
   String get invalid_or_expired_code;
 
-  /// No description provided for @unknown_error.
-  ///
-  /// In en, this message translates to:
-  /// **'An unknown error occurred.'**
-  String get unknown_error;
-
   /// No description provided for @invalid_code.
   ///
   /// In en, this message translates to:
@@ -1501,6 +1495,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delivery Fee: '**
   String get deliveryFeeLabel;
+
+  /// No description provided for @grocerySectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grocery Section'**
+  String get grocerySectionTitle;
+
+  /// No description provided for @searchGroceriesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for groceries, stores...'**
+  String get searchGroceriesHint;
+
+  /// No description provided for @marketsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Markets Section'**
+  String get marketsSectionTitle;
+
+  /// No description provided for @searchMarketsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for markets, stores...'**
+  String get searchMarketsHint;
+
+  /// No description provided for @pharmacies.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacies'**
+  String get pharmacies;
 }
 
 class _AppLocalizationsDelegate
