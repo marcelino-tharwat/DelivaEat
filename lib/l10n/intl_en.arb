@@ -131,155 +131,149 @@
   "enter_code_sent_to_email": "Enter the code sent to your email",
   "code_verified_successfully": "Code verified successfully!",
   "invalid_or_expired_code": "Invalid or expired code.",
-  "unknown_error": "An unknown error occurred.",
   "invalid_code": "Invalid code.",
   "new_code_sent": "A new code has been sent to",
   "or_continue_with": "Or continue with",
-   "deliveryTo": "Deliver to",
-    "homePageTitle": "Home",
-    "ordersTitle": "Orders",
-    "offersTitle": "Offers",
-    "accountTitle": "Account",
-    "categories": "Categories",
-    "offersAndBrands": "Offers & Brands",
-    "favorites": "Favorites",
-    "topRatedRestaurants": "Top Rated Restaurants",
-    "bestSelling": "Best Selling",
-    "seeAll": "See All",
-    "orderNow": "Order Now",
-    "availableForDelivery": "Available for delivery",
-    "viewMenu": "View Menu",
-    "notifications": "Notifications",
-    "readAll": "Read All",
-
-    "offerTodayTitle": "Today's Deals",
-    "offerTodaySubtitle": "29% Discount",
-    "offerFreeDeliveryTitle": "Free Delivery",
-    "offerFreeDeliverySubtitle": "For the first order",
-    "offerPizzaTitle": "50% Off",
-    "offerPizzaSubtitle": "On Pizza",
-    "offerFreeDiscount": "Free",
-
-    "categoryFood": "Food",
-    "categoryGrocery": "Grocery",
-    "categoryMarkets": "Markets",
-    "categoryPharmacies": "Pharmacies",
-    "categoryGifts": "Gifts & Donate",
-    "categoryStores": "Stores",
-
-    "tagDiscounts": "Discounts",
-    "tagNew": "New",
-    "tagFreeDelivery": "Free Delivery",
-    "tagFast": "Fast",
-    "tagHealthy": "Healthy",
-    "tagDrinks": "Drinks",
-    "tagSweets": "Sweets",
-
-    "offerTappedSnackbar": "Tapped on offer: {offerTitle}",
-    "@offerTappedSnackbar": {
-        "description": "Snackbar message when an offer is tapped",
-        "placeholders": {
-            "offerTitle": {
-                "type": "String",
-                "example": "50% Off"
-            }
-        }
-    },
-    
-    "categoryTappedSnackbar": "Selected category: {categoryName}",
-    "@categoryTappedSnackbar": {
-        "description": "Snackbar message when a category is tapped",
-        "placeholders": {
-            "categoryName": {
-                "type": "String",
-                "example": "Food"
-            }
-        }
-    },
-
-    "pharmaciesSectionTitle": "Pharmacies Section",
-    "searchPharmaciesHint": "Search for pharmacies, medicines...",
-    "highestRated": "Highest Rated",
-    "fastestDelivery": "Fastest Delivery",
-    "freeDelivery": "Free Delivery",
-    "discount20OnMedicines": "20% Discount on Medicines",
-    "useCodePharma20": "Use code: PHARMA20",
-    "freeDeliveryOnMedicines": "Free Delivery on Medicines",
-    "forAllParticipatingPharmacies": "For all participating pharmacies",
-    "offersOnCosmetics": "Offers on Cosmetics",
-    "discoverOurNewOffers": "Discover our new offers",
-    "medicines": "Medicines",
-    "nutritionalSupplements": "Nutritional Supplements",
-    "personalCare": "Personal Care",
-    "cosmetics": "Cosmetics",
-    "motherAndBabyCare": "Mother and Baby Care",
-    "medicalEquipment": "Medical Equipment",
-    "minutes": "minutes",
-    "deliveryFee": "Delivery Fee: {fee} Riyal",
-    "@deliveryFee": {
-        "description": "Delivery fee text with amount",
-        "placeholders": {
-            "fee": {
-                "type": "String",
-                "example": "10"
-            }
-        }
-    },
-
-    "foodSectionTitle": "Food Section",
-    "searchRestaurantsHint": "Search for restaurants, foods...",
-    "discount50OnFirstOrder": "50% Discount on First Order",
-    "useCodeNew50": "Use code: NEW50",
-    "freeDeliveryThisWeek": "Free Delivery This Week",
-    "familyMealsAtSpecialPrices": "Family Meals at Special Prices",
-    "failedToLoadRestaurants": "Failed to load restaurants, try later",
-    "failedToLoadCategoryRestaurants": "Failed to load category restaurants, try later",
-    "thisCategoryNotAvailable": "This category is not available currently",
-
-    "retry": "Retry",
-    "noItemsFound": "No items found",
-    "forAllParticipatingRestaurants": "For all participating restaurants",
-    "searchHint": "Search...",
-    "searchTitle": "Search",
-    "searchRestaurantsFoodsHint": "Search for restaurants or foods...",
-    "searching": "Searching...",
-    "errorOccurred": "An error occurred",
-    "restaurants": "Restaurants",
-    "otherProducts": "Other Products",
-    "restaurantProducts": "Products of {restaurantName}",
-    "@restaurantProducts": {
-        "description": "Products section title for a specific restaurant",
-        "placeholders": {
-            "restaurantName": {
-                "type": "String",
-                "example": "Restaurant Name"
-            }
-        }
-    },
-    "discount": "Discount",
-    "noSearchResults": "No search results",
-    "noResultsFor": "We didn't find any results for ",
-    "tryDifferentWords": "Try different words or check spelling",
-    "popularSearch": "Popular Search",
-    "startSearching": "Start Searching",
-    "searchFavorites": "Search for your favorite restaurants and foods",
-    "categoryPizza": "Pizza",
-    "categoryBurger": "Burger",
-    "categoryCrepes": "Crepes",
-    "categoryDesserts": "Desserts",
-    "categoryGrills": "Grills",
-    "categoryFriedChicken": "Fried Chicken",
-    "categoryKoshary": "Koshary",
-    "categoryBreakfast": "Breakfast",
-    "categoryPies": "Pies",
-    "categorySandwich": "Sandwich",
-    "highestRated": "Highest Rated",
-    "fastestDelivery": "Fastest Delivery",
-    "freeDelivery": "Free Delivery",
-    "minutes": "minutes",
-    "from": "From",
-    "riyal": "Riyal",
-    "notSpecified": "Not specified",
-    "deliveryFeeLabel": "Delivery Fee: "
-
-  }
+  "deliveryTo": "Deliver to",
+  "homePageTitle": "Home",
+  "ordersTitle": "Orders",
+  "offersTitle": "Offers",
+  "accountTitle": "Account",
+  "categories": "Categories",
+  "offersAndBrands": "Offers & Brands",
+  "favorites": "Favorites",
+  "topRatedRestaurants": "Top Rated Restaurants",
+  "bestSelling": "Best Selling",
+  "seeAll": "See All",
+  "orderNow": "Order Now",
+  "availableForDelivery": "Available for delivery",
+  "viewMenu": "View Menu",
+  "notifications": "Notifications",
+  "readAll": "Read All",
+  "offerTodayTitle": "Today's Deals",
+  "offerTodaySubtitle": "29% Discount",
+  "offerFreeDeliveryTitle": "Free Delivery",
+  "offerFreeDeliverySubtitle": "For the first order",
+  "offerPizzaTitle": "50% Off",
+  "offerPizzaSubtitle": "On Pizza",
+  "offerFreeDiscount": "Free",
+  "categoryFood": "Food",
+  "categoryGrocery": "Grocery",
+  "categoryMarkets": "Markets",
+  "categoryPharmacies": "Pharmacies",
+  "categoryGifts": "Gifts & Donate",
+  "categoryStores": "Stores",
+  "tagDiscounts": "Discounts",
+  "tagNew": "New",
+  "tagFreeDelivery": "Free Delivery",
+  "tagFast": "Fast",
+  "tagHealthy": "Healthy",
+  "tagDrinks": "Drinks",
+  "tagSweets": "Sweets",
+  "offerTappedSnackbar": "Tapped on offer: {offerTitle}",
+  "@offerTappedSnackbar": {
+    "description": "Snackbar message when an offer is tapped",
+    "placeholders": {
+      "offerTitle": {
+        "type": "String",
+        "example": "50% Off"
+      }
+    }
+  },
+  "categoryTappedSnackbar": "Selected category: {categoryName}",
+  "@categoryTappedSnackbar": {
+    "description": "Snackbar message when a category is tapped",
+    "placeholders": {
+      "categoryName": {
+        "type": "String",
+        "example": "Food"
+      }
+    }
+  },
+  "pharmaciesSectionTitle": "Pharmacies Section",
+  "searchPharmaciesHint": "Search for pharmacies, medicines...",
+  "highestRated": "Highest Rated",
+  "fastestDelivery": "Fastest Delivery",
+  "freeDelivery": "Free Delivery",
+  "discount20OnMedicines": "20% Discount on Medicines",
+  "useCodePharma20": "Use code: PHARMA20",
+  "freeDeliveryOnMedicines": "Free Delivery on Medicines",
+  "forAllParticipatingPharmacies": "For all participating pharmacies",
+  "offersOnCosmetics": "Offers on Cosmetics",
+  "discoverOurNewOffers": "Discover our new offers",
+  "medicines": "Medicines",
+  "nutritionalSupplements": "Nutritional Supplements",
+  "personalCare": "Personal Care",
+  "cosmetics": "Cosmetics",
+  "motherAndBabyCare": "Mother and Baby Care",
+  "medicalEquipment": "Medical Equipment",
+  "minutes": "minutes",
+  "deliveryFee": "Delivery Fee: {fee} Riyal",
+  "@deliveryFee": {
+    "description": "Delivery fee text with amount",
+    "placeholders": {
+      "fee": {
+        "type": "String",
+        "example": "10"
+      }
+    }
+  },
+  "foodSectionTitle": "Food Section",
+  "searchRestaurantsHint": "Search for restaurants, foods...",
+  "discount50OnFirstOrder": "50% Discount on First Order",
+  "useCodeNew50": "Use code: NEW50",
+  "freeDeliveryThisWeek": "Free Delivery This Week",
+  "familyMealsAtSpecialPrices": "Family Meals at Special Prices",
+  "failedToLoadRestaurants": "Failed to load restaurants, try later",
+  "failedToLoadCategoryRestaurants": "Failed to load category restaurants, try later",
+  "thisCategoryNotAvailable": "This category is not available currently",
+  "retry": "Retry",
+  "noItemsFound": "No items found",
+  "forAllParticipatingRestaurants": "For all participating restaurants",
+  "searchHint": "Search...",
+  "searchTitle": "Search",
+  "searchRestaurantsFoodsHint": "Search for restaurants or foods...",
+  "searching": "Searching...",
+  "errorOccurred": "An error occurred",
+  "restaurants": "Restaurants",
+  "otherProducts": "Other Products",
+  "restaurantProducts": "Products of {restaurantName}",
+  "@restaurantProducts": {
+    "description": "Products section title for a specific restaurant",
+    "placeholders": {
+      "restaurantName": {
+        "type": "String",
+        "example": "Restaurant Name"
+      }
+    }
+  },
+  "discount": "Discount",
+  "noSearchResults": "No search results",
+  "noResultsFor": "We didn't find any results for ",
+  "tryDifferentWords": "Try different words or check spelling",
+  "popularSearch": "Popular Search",
+  "startSearching": "Start Searching",
+  "searchFavorites": "Search for your favorite restaurants and foods",
+  "categoryPizza": "Pizza",
+  "categoryBurger": "Burger",
+  "categoryCrepes": "Crepes",
+  "categoryDesserts": "Desserts",
+  "categoryGrills": "Grills",
+  "categoryFriedChicken": "Fried Chicken",
+  "categoryKoshary": "Koshary",
+  "categoryBreakfast": "Breakfast",
+  "categoryPies": "Pies",
+  "categorySandwich": "Sandwich",
+  "highestRated": "Highest Rated",
+  "fastestDelivery": "Fastest Delivery",
+  "freeDelivery": "Free Delivery",
+  "from": "From",
+  "riyal": "Riyal",
+  "notSpecified": "Not specified",
+  "deliveryFeeLabel": "Delivery Fee: ",
+  "grocerySectionTitle": "Grocery Section",
+  "searchGroceriesHint": "Search for groceries, stores...",
+  "marketsSectionTitle": "Markets Section",
+  "searchMarketsHint": "Search for markets, stores...",
+  "pharmacies": "Pharmacies"
+}

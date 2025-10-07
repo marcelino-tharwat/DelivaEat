@@ -12,11 +12,13 @@ import 'package:deliva_eat/features/search/ui/widgets/food_card.dart';
 class SearchResults extends StatelessWidget {
   final SearchSuccess state;
   final Function() onRefresh;
+  final String? categoryType;
 
   const SearchResults({
     super.key,
     required this.state,
     required this.onRefresh,
+    this.categoryType,
   });
 
   @override
@@ -32,7 +34,9 @@ class SearchResults extends StatelessWidget {
               // عرض المطاعم مع منتجاتها
               if (state.restaurants.isNotEmpty) ...[
                 SectionHeader(
-                  title: AppLocalizations.of(context)!.restaurants,
+                  title: categoryType == 'pharmacies'
+                      ? AppLocalizations.of(context)!.pharmacies
+                      : AppLocalizations.of(context)!.restaurants,
                   count: state.restaurants.length,
                 ),
                 SizedBox(height: 16.h),

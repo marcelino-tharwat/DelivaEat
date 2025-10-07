@@ -398,6 +398,7 @@ class _PharmaciesCategoriesPageState extends State<PharmaciesCategoriesPage> {
         context.push(AppRoutes.searchPage, extra: {
           'categoryId': pharmCategoryParam,
           'type': 'foods',
+          'categoryType': 'pharmacies',
         });
       },
       onFilterSelected: (filter) {

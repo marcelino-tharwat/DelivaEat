@@ -419,9 +419,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invalid_or_expired_code => 'الرمز غير صالح أو منتهي الصلاحية.';
 
   @override
-  String get unknown_error => 'حدث خطأ غير متوقع.';
-
-  @override
   String get invalid_code => 'رمز غير صالح.';
 
   @override
@@ -734,4 +731,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get deliveryFeeLabel => 'رسوم التوصيل: ';
+
+  @override
+  String get grocerySectionTitle => 'قسم البقالة';
+
+  @override
+  String get searchGroceriesHint => 'ابحث عن بقالة...';
+
+  @override
+  String get marketsSectionTitle => 'Markets Section';
+
+  @override
+  String get searchMarketsHint => 'ابحث عن متاجر...';
+
+  @override
+  String get pharmacies => 'صيدليات';
 }

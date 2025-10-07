@@ -123,7 +123,7 @@ class OtpVerifyCodeRepository {
           final responseData = e.response!.data;
           String errorMessage = AppLocalizations.of(
             context,
-          )!.unknown_error; // default msg
+          )!.error_unknown; // default msg
 
           if (responseData is Map<String, dynamic>) {
             if (responseData['error'] is Map<String, dynamic>) {
@@ -141,7 +141,7 @@ class OtpVerifyCodeRepository {
           return Left(ServerError.fromDioError(e));
         }
       } else {
-        return Left(ServerError(AppLocalizations.of(context)!.unknown_error));
+        return Left(ServerError(AppLocalizations.of(context)!.error_unknown));
       }
     }
   }
