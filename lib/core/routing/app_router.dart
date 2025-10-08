@@ -17,6 +17,7 @@ import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/ui/favorites_page.dart';
 import 'package:deliva_eat/features/home/ui/home_page_wrapper.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_menu_page.dart';
+import 'package:deliva_eat/features/restaurant/ui/restaurant_page.dart';
 import 'package:deliva_eat/features/search/ui/search_page.dart';
 import 'package:deliva_eat/setting.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const HomePageWrapper();
+        return const RestaurantHomePage();
         //  BlocProvider(
         //   create: (context) => getIt<LoginCubit>(),
         //   child: LoginPage(),
@@ -123,10 +124,18 @@ final GoRouter router = GoRouter(
           path: AppRoutes.searchPage,
           builder: (BuildContext context, GoRouterState state) {
             final data = state.extra as Map<String, dynamic>?;
-            final String? categoryId = data != null ? data['categoryId'] as String? : null;
+            final String? categoryId = data != null
+                ? data['categoryId'] as String?
+                : null;
             final String? type = data != null ? data['type'] as String? : null;
-            final String? categoryType = data != null ? data['categoryType'] as String? : null;
-            return SearchPage(categoryId: categoryId, type: type, categoryType: categoryType);
+            final String? categoryType = data != null
+                ? data['categoryType'] as String?
+                : null;
+            return SearchPage(
+              categoryId: categoryId,
+              type: type,
+              categoryType: categoryType,
+            );
           },
         ),
         GoRoute(
@@ -151,8 +160,13 @@ final GoRouter router = GoRouter(
           path: AppRoutes.favoritesPage,
           builder: (BuildContext context, GoRouterState state) {
             final data = state.extra as Map<String, dynamic>? ?? {};
-            final favoriteRestaurants = (data['favoriteRestaurants'] as List<dynamic>?)?.cast<RestaurantModel>() ?? [];
-            final favoriteFoods = (data['favoriteFoods'] as List<dynamic>?)?.cast<FoodModel>() ?? [];
+            final favoriteRestaurants =
+                (data['favoriteRestaurants'] as List<dynamic>?)
+                    ?.cast<RestaurantModel>() ??
+                [];
+            final favoriteFoods =
+                (data['favoriteFoods'] as List<dynamic>?)?.cast<FoodModel>() ??
+                [];
             return FavoritesPage(
               favoriteRestaurants: favoriteRestaurants,
               favoriteFoods: favoriteFoods,

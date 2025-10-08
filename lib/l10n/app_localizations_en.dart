@@ -554,15 +554,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchPharmaciesHint => 'Search for pharmacies, medicines...';
 
   @override
-  String get highestRated => 'Highest Rated';
-
-  @override
-  String get fastestDelivery => 'Fastest Delivery';
-
-  @override
-  String get freeDelivery => 'Free Delivery';
-
-  @override
   String get discount20OnMedicines => '20% Discount on Medicines';
 
   @override
@@ -723,6 +714,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categorySandwich => 'Sandwich';
+
+  @override
+  String get highestRated => 'Highest Rated';
+
+  @override
+  String get fastestDelivery => 'Fastest Delivery';
+
+  @override
+  String get freeDelivery => 'Free Delivery';
 
   @override
   String get from => 'From';

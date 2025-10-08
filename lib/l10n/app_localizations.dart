@@ -1148,24 +1148,6 @@ abstract class AppLocalizations {
   /// **'Search for pharmacies, medicines...'**
   String get searchPharmaciesHint;
 
-  /// No description provided for @highestRated.
-  ///
-  /// In en, this message translates to:
-  /// **'Highest Rated'**
-  String get highestRated;
-
-  /// No description provided for @fastestDelivery.
-  ///
-  /// In en, this message translates to:
-  /// **'Fastest Delivery'**
-  String get fastestDelivery;
-
-  /// No description provided for @freeDelivery.
-  ///
-  /// In en, this message translates to:
-  /// **'Free Delivery'**
-  String get freeDelivery;
-
   /// No description provided for @discount20OnMedicines.
   ///
   /// In en, this message translates to:
@@ -1471,6 +1453,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sandwich'**
   String get categorySandwich;
+
+  /// No description provided for @highestRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Rated'**
+  String get highestRated;
+
+  /// No description provided for @fastestDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Fastest Delivery'**
+  String get fastestDelivery;
+
+  /// No description provided for @freeDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Delivery'**
+  String get freeDelivery;
 
   /// No description provided for @from.
   ///
