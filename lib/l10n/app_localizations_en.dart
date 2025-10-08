@@ -750,4 +750,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pharmacies => 'Pharmacies';
+
+  @override
+  String get restaurantName => 'MANDARIN\nOAK';
+
+  @override
+  String get restaurantTagline => 'TALES FROM THE WOK';
+
+  @override
+  String get offerDiscount15 => '15% off full menu, Min spend 49';
+
+  @override
+  String get offerFreeDelivery99 => 'Free delivery on orders above 99';
+
+  @override
+  String get categoryTrending => 'Trending';
+
+  @override
+  String get categoryFree => 'free';
+
+  @override
+  String get categorySoup => 'Soup';
+
+  @override
+  String get categoryAppetizers => 'Appetizers';
+
+  @override
+  String get categoryPasta => 'Pasta';
+
+  @override
+  String get categoryDrinks => 'Drinks';
+
+  @override
+  String get foodChickenSchezwanFriedRice => 'Chicken Schezwan Fried Rice';
+
+  @override
+  String get foodChickenSchezwanFriedRiceDesc =>
+      'Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green';
+
+  @override
+  String get foodChickenSchezwanFriedRicePrice => 'EGP 30';
 }

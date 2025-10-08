@@ -1,6 +1,9 @@
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
+import 'package:deliva_eat/core/widgets/mobile_only_layout.dart';
 import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:deliva_eat/l10n/app_localizations.dart';
 
 class RestaurantHomePage extends StatefulWidget {
   const RestaurantHomePage({super.key});
@@ -33,284 +36,305 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
     phone: '+1234567890',
   );
 
-  String selectedCategory = 'Trending';
+  late final ScrollController _scrollController;
+  late List<String> _categories;
+  final Map<String, GlobalKey> _categoryKeys = {};
+  late String selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context)!;
+    _categories = [
+      l10n.categoryTrending,
+      l10n.categoryFree,
+      l10n.categorySoup,
+      l10n.categoryAppetizers,
+      l10n.categoryPasta,
+      l10n.categoryDrinks,
+    ];
+    selectedCategory = _categories.first;
+    for (final category in _categories) {
+      _categoryKeys[category] = GlobalKey();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       // غيرنا لون خلفية السكافولد ليتناسب مع لون الصورة العلوي
       backgroundColor: const Color(0xff1c1c1c),
-      body: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          // --- الجزء الأول: الهيدر (صورة + لوجو) ---
-          // هذا الـ Stack يحتوي على الصورة واللوجو والعروض
-          Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.center,
-            children: [
-              // الخلفية
-              Container(
-                height: 280,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800',
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-
-              // اللوجو
-              Positioned(
-                top: 100,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: const [
-                      Text(
-                        '木',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'MANDARIN\nOAK',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          height: 1.2,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'TALES FROM THE WOK',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // ✅ العروض (نص فوق الصورة ونص فوق الكونتينر)
-              Positioned(
-                top: 260, // يخلي الكونتينر يبدأ بعد الصورة
-                left: 0,
-                right: 0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24.0),
-                      topRight: Radius.circular(24.0),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Tabs + قائمة الأكل زي ما هي
-                      const SizedBox(height: 60), // 👈 مساحة للعروض فوق
-                    ],
-                  ),
-                ),
-              ),
-
-              // ✅ العروض (فوق الصورة وجزء منها فوق الكونتينر)
-              Positioned(
-                top: 230, // بين الصورة والكونتينر الأبيض
-                left: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.pink.shade50,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.local_offer,
-                                color: Colors.pink,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  '15% off full menu, Min spend 49',
-                                  style: TextStyle(
-                                    color: Colors.pink.shade700,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.shade100,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.local_offer,
-                                color: Colors.amber,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Free delivery on orders above 99',
-                                  style: TextStyle(
-                                    color: Colors.amber.shade900,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          Container(
-            margin: const EdgeInsets.only(top: 20),
-
-            // **هذا هو التغيير الرئيسي**
-            decoration: BoxDecoration(
-              color: Colors.white, // لون خلفية المحتوى
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade400,
-                  blurRadius: 8,
-                  spreadRadius: 1,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: MobileOnlyLayout(
+        child: ListView(
+          controller: _scrollController,
+          padding: EdgeInsets.zero,
+          children: [
+            // --- الجزء الأول: الهيدر (صورة + لوجو) ---
+            Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
               children: [
-                // شريط التصنيفات (Category Tabs)
+                // الخلفية
                 Container(
-                  // padding: const EdgeInsets.symmetric(vertical: 8),
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade200,
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
+                  height: 280.h,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800',
                       ),
-                    ],
-                    // border: BorderRadius.all(radiusius: Radius.circular(8))
+                      fit: BoxFit.fill,
+                    ),
                   ),
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      const Icon(Icons.menu, size: 24),
-                      const SizedBox(width: 20),
-                      _buildCategoryTab('Trending'),
-                      _buildCategoryTab('free'),
-                      _buildCategoryTab('Soup'),
-                      _buildCategoryTab('Appetizers'),
-                      _buildCategoryTab('Pasta'),
-                      _buildCategoryTab('Drinks'),
-                    ],
+                ),
+                // اللوجو
+                Positioned(
+                  top: 90.h,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 12.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.error,
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '木',
+                          style: Theme.of(context).textTheme.headlineLarge
+                              ?.copyWith(color: Colors.white, fontSize: 20.sp),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          l10n.restaurantName,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(color: Colors.white, height: 1.2),
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          l10n.restaurantTagline,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Colors.white,
+                                letterSpacing: 1.2,
+                              ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
-                // قائمة الطعام (Food Items)
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        selectedCategory,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                // ✅ العروض (نص فوق الصورة ونص فوق الكونتينر)
+                Positioned(
+                  top: 260.h, // يخلي الكونتينر يبدأ بعد الصورة
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24.r),
+                        topRight: Radius.circular(24.r),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Tabs + قائمة الأكل زي ما هي
+                        SizedBox(height: 60.h), // 👈 مساحة للعروض فوق
+                      ],
+                    ),
+                  ),
+                ),
+
+                // ✅ العروض (فوق الصورة وجزء منها فوق الكونتينر)
+                Positioned(
+                  top: 230.h, // بين الصورة والكونتينر الأبيض
+                  left: 0,
+                  right: 0,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(12.w),
+                            decoration: BoxDecoration(
+                              color: Color(0xffFEF5F8),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.local_offer,
+                                  color: Colors.pink,
+                                  size: 20.sp,
+                                ),
+                                SizedBox(width: 8.w),
+                                Expanded(
+                                  child: Text(
+                                    l10n.offerDiscount15,
+                                    style: TextStyle(
+                                      color: Colors.pink,
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildFoodItem(
-                        'Chicken Schezwan Fried Rice',
-                        'Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green',
-                        'EGP 30',
-                        'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
-                      ),
-                      const SizedBox(height: 16),
-                      _buildFoodItem(
-                        'Chicken Schezwan Fried Rice',
-                        'Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green',
-                        'EGP 30',
-                        'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
-                      ),
-                      const SizedBox(height: 16),
-                      _buildFoodItem(
-                        'Chicken Schezwan Fried Rice',
-                        'Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green',
-                        'EGP 30',
-                        'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
-                      ),
-                      const SizedBox(height: 16),
-                      _buildFoodItem(
-                        'Chicken Schezwan Fried Rice',
-                        'Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green',
-                        'EGP 30',
-                        'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
-                      ),
-                      const SizedBox(height: 16),
-                      _buildFoodItem(
-                        'Chicken Schezwan Fried Rice',
-                        'Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green',
-                        'EGP 30',
-                        'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
-                      ),
-                    ],
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(12.w),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryYellow,
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.local_offer,
+                                  color: Colors.pink,
+                                  size: 20.sp,
+                                ),
+                                SizedBox(width: 8.w),
+                                Expanded(
+                                  child: Text(
+                                    l10n.offerFreeDelivery99,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+
+            Container(
+              margin: EdgeInsets.only(top: 20.h),
+
+              // **هذا هو التغيير الرئيسي**
+              decoration: BoxDecoration(
+                color: Colors.white, // لون خلفية المحتوى
+                boxShadow: [],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // شريط التصنيفات (Category Tabs)
+                  Padding(
+                    padding: EdgeInsets.all(8.w),
+                    child: Container(
+                      height: 50.h,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 4.r,
+                            offset: Offset(0, 2.h),
+                          ),
+                        ],
+                      ),
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
+                        children: [
+                          Icon(Icons.menu, size: 24.sp),
+                          ..._categories
+                              .map((category) => _buildCategoryTab(category))
+                              .toList(),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // قائمة الطعام (Food Items) - Sections for each category
+                  Column(
+                    children: _categories.map((category) {
+                      return Container(
+                        key: _categoryKeys[category],
+                        padding: EdgeInsets.all(16.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              category,
+                              style: Theme.of(context).textTheme.headlineSmall,
+                            ),
+                            SizedBox(height: 16.h),
+                            _buildFoodItem(
+                              l10n.foodChickenSchezwanFriedRice,
+                              l10n.foodChickenSchezwanFriedRiceDesc,
+                              l10n.foodChickenSchezwanFriedRicePrice,
+                              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
+                            ),
+                            SizedBox(height: 16.h),
+                            _buildFoodItem(
+                              l10n.foodChickenSchezwanFriedRice,
+                              l10n.foodChickenSchezwanFriedRiceDesc,
+                              l10n.foodChickenSchezwanFriedRicePrice,
+                              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
+                            ),
+                            SizedBox(height: 16.h),
+                            _buildFoodItem(
+                              l10n.foodChickenSchezwanFriedRice,
+                              l10n.foodChickenSchezwanFriedRiceDesc,
+                              l10n.foodChickenSchezwanFriedRicePrice,
+                              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
+                            ),
+                            SizedBox(height: 16.h),
+                            _buildFoodItem(
+                              l10n.foodChickenSchezwanFriedRice,
+                              l10n.foodChickenSchezwanFriedRiceDesc,
+                              l10n.foodChickenSchezwanFriedRicePrice,
+                              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
+                            ),
+                            SizedBox(height: 16.h),
+                            _buildFoodItem(
+                              l10n.foodChickenSchezwanFriedRice,
+                              l10n.foodChickenSchezwanFriedRiceDesc,
+                              l10n.foodChickenSchezwanFriedRicePrice,
+                              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -323,16 +347,32 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
         setState(() {
           selectedCategory = title;
         });
+        Scrollable.ensureVisible(
+          _categoryKeys[title]!.currentContext!,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.transparent,
+              width: 2.w,
+            ),
+          ),
+        ),
         child: Center(
           child: Text(
             title,
-            style: TextStyle(
-              fontSize: 15,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              color: isSelected ? Colors.orange.shade800 : Colors.black87,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.black87,
             ),
           ),
         ),
@@ -349,17 +389,17 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade200,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: 8.r,
+            offset: Offset(0, 2.h),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: EdgeInsets.all(12.w),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -367,38 +407,32 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+                  SizedBox(height: 8.h),
                   Text(
                     description,
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 13.sp,
                       color: Colors.grey.shade600,
                       height: 1.4,
                     ),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.amber.shade100,
-                      borderRadius: BorderRadius.circular(6),
+                      color: AppColors.primaryYellow.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(6.r),
                     ),
                     child: Text(
                       price,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey.shade800,
                       ),
@@ -407,18 +441,18 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
                 ],
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               child: Image.network(
                 imageUrl,
-                width: 110,
-                height: 110,
+                width: 110.w,
+                height: 110.h,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    width: 110,
-                    height: 110,
+                    width: 110.w,
+                    height: 110.h,
                     color: Colors.grey.shade300,
                     child: const Icon(Icons.restaurant),
                   );

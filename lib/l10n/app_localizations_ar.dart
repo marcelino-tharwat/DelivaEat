@@ -746,4 +746,45 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pharmacies => 'صيدليات';
+
+  @override
+  String get restaurantName => 'MANDARIN\nOAK';
+
+  @override
+  String get restaurantTagline => 'قصص من المقلاة';
+
+  @override
+  String get offerDiscount15 =>
+      'خصم 15% على القائمة الكاملة، الحد الأدنى للإنفاق 49';
+
+  @override
+  String get offerFreeDelivery99 => 'توصيل مجاني على الطلبات فوق 99';
+
+  @override
+  String get categoryTrending => 'الرائج';
+
+  @override
+  String get categoryFree => 'مجاني';
+
+  @override
+  String get categorySoup => 'شوربة';
+
+  @override
+  String get categoryAppetizers => 'مقبلات';
+
+  @override
+  String get categoryPasta => 'باستا';
+
+  @override
+  String get categoryDrinks => 'مشروبات';
+
+  @override
+  String get foodChickenSchezwanFriedRice => 'أرز شيزن الدجاج المقلي';
+
+  @override
+  String get foodChickenSchezwanFriedRiceDesc =>
+      'قطع دجاج مقلية ذهبية مقلية في المقلاة مع أرز شيزن حار وحار مع الخضروات مثل الأخضر';
+
+  @override
+  String get foodChickenSchezwanFriedRicePrice => '30 جنيه مصري';
 }

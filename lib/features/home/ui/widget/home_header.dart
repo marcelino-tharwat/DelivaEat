@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
+import 'package:deliva_eat/core/theme/provider.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'categories_bar.dart';
 import 'offer_slider.dart';
 
@@ -58,7 +60,11 @@ class HomeHeader extends StatelessWidget {
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
-                  child: Icon(Icons.location_on, color: Colors.white, size: 24.sp),
+                  child: Icon(
+                    Icons.location_on,
+                    color: Colors.white,
+                    size: 24.sp,
+                  ),
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
@@ -96,7 +102,11 @@ class HomeHeader extends StatelessWidget {
                     icon: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        Icon(Icons.notifications_none_rounded, color: Colors.white, size: 24.sp),
+                        Icon(
+                          Icons.notifications_none_rounded,
+                          color: Colors.white,
+                          size: 24.sp,
+                        ),
                         Positioned(
                           top: 2.h,
                           right: 2.w,
@@ -113,6 +123,29 @@ class HomeHeader extends StatelessWidget {
                     ),
                     onPressed: onNotificationTap,
                   ),
+                ),
+                SizedBox(width: 12.w),
+                Consumer<ThemeProvider>(
+                  builder: (context, themeProvider, child) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          themeProvider.isDarkMode
+                              ? Icons.light_mode
+                              : Icons.dark_mode,
+                          color: Colors.white,
+                          size: 24.sp,
+                        ),
+                        onPressed: () {
+                          context.read<ThemeProvider>().toggleTheme();
+                        },
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
