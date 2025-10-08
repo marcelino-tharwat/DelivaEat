@@ -273,5 +273,18 @@
   "searchGroceriesHint": "Search for groceries, stores...",
   "marketsSectionTitle": "Markets Section",
   "searchMarketsHint": "Search for markets, stores...",
-  "pharmacies": "Pharmacies"
+  "pharmacies": "Pharmacies",
+  "restaurantName": "MANDARIN\nOAK",
+  "restaurantTagline": "TALES FROM THE WOK",
+  "offerDiscount15": "15% off full menu, Min spend 49",
+  "offerFreeDelivery99": "Free delivery on orders above 99",
+  "categoryTrending": "Trending",
+  "categoryFree": "free",
+  "categorySoup": "Soup",
+  "categoryAppetizers": "Appetizers",
+  "categoryPasta": "Pasta",
+  "categoryDrinks": "Drinks",
+  "foodChickenSchezwanFriedRice": "Chicken Schezwan Fried Rice",
+  "foodChickenSchezwanFriedRiceDesc": "Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green",
+  "foodChickenSchezwanFriedRicePrice": "EGP 30"
 }

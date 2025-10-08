@@ -273,5 +273,18 @@
   "grocerySectionTitle": "قسم البقالة",
   "searchGroceriesHint": "ابحث عن بقالة...",
   "pharmacies": "صيدليات",
-  "searchMarketsHint": "ابحث عن متاجر..."
+  "searchMarketsHint": "ابحث عن متاجر...",
+  "restaurantName": "MANDARIN\nOAK",
+  "restaurantTagline": "قصص من المقلاة",
+  "offerDiscount15": "خصم 15% على القائمة الكاملة، الحد الأدنى للإنفاق 49",
+  "offerFreeDelivery99": "توصيل مجاني على الطلبات فوق 99",
+  "categoryTrending": "الرائج",
+  "categoryFree": "مجاني",
+  "categorySoup": "شوربة",
+  "categoryAppetizers": "مقبلات",
+  "categoryPasta": "باستا",
+  "categoryDrinks": "مشروبات",
+  "foodChickenSchezwanFriedRice": "أرز شيزن الدجاج المقلي",
+  "foodChickenSchezwanFriedRiceDesc": "قطع دجاج مقلية ذهبية مقلية في المقلاة مع أرز شيزن حار وحار مع الخضروات مثل الأخضر",
+  "foodChickenSchezwanFriedRicePrice": "30 جنيه مصري"
 }

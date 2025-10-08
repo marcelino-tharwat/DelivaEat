@@ -1525,6 +1525,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pharmacies'**
   String get pharmacies;
+
+  /// No description provided for @restaurantName.
+  ///
+  /// In en, this message translates to:
+  /// **'MANDARIN\nOAK'**
+  String get restaurantName;
+
+  /// No description provided for @restaurantTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'TALES FROM THE WOK'**
+  String get restaurantTagline;
+
+  /// No description provided for @offerDiscount15.
+  ///
+  /// In en, this message translates to:
+  /// **'15% off full menu, Min spend 49'**
+  String get offerDiscount15;
+
+  /// No description provided for @offerFreeDelivery99.
+  ///
+  /// In en, this message translates to:
+  /// **'Free delivery on orders above 99'**
+  String get offerFreeDelivery99;
+
+  /// No description provided for @categoryTrending.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending'**
+  String get categoryTrending;
+
+  /// No description provided for @categoryFree.
+  ///
+  /// In en, this message translates to:
+  /// **'free'**
+  String get categoryFree;
+
+  /// No description provided for @categorySoup.
+  ///
+  /// In en, this message translates to:
+  /// **'Soup'**
+  String get categorySoup;
+
+  /// No description provided for @categoryAppetizers.
+  ///
+  /// In en, this message translates to:
+  /// **'Appetizers'**
+  String get categoryAppetizers;
+
+  /// No description provided for @categoryPasta.
+  ///
+  /// In en, this message translates to:
+  /// **'Pasta'**
+  String get categoryPasta;
+
+  /// No description provided for @categoryDrinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Drinks'**
+  String get categoryDrinks;
+
+  /// No description provided for @foodChickenSchezwanFriedRice.
+  ///
+  /// In en, this message translates to:
+  /// **'Chicken Schezwan Fried Rice'**
+  String get foodChickenSchezwanFriedRice;
+
+  /// No description provided for @foodChickenSchezwanFriedRiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green'**
+  String get foodChickenSchezwanFriedRiceDesc;
+
+  /// No description provided for @foodChickenSchezwanFriedRicePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'EGP 30'**
+  String get foodChickenSchezwanFriedRicePrice;
 }
 
 class _AppLocalizationsDelegate

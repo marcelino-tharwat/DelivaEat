@@ -6,11 +6,11 @@ class AppTheme {
   static const Color primaryYellow = Color(0xFFFFC107);
   static const Color primaryYellowDark = Color(0xFFF57F17);
   static const Color primaryYellowLight = Color(0xFFFFF9C4);
-  
+
   static const Color secondaryGray = Color(0xFF6C757D);
   static const Color lightGray = Color(0xFFF8F9FA);
   static const Color darkGray = Color(0xFF343A40);
-  
+
   static const Color successGreen = Color(0xFF28A745);
   static const Color errorRed = Color(0xFFDC3545);
   static const Color warningOrange = Color(0xFFFD7E14);
@@ -20,7 +20,7 @@ class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    
+
     // الألوان الأساسية
     colorScheme: const ColorScheme.light(
       primary: primaryYellow,
@@ -38,9 +38,9 @@ class AppTheme {
       onError: Colors.white,
       outline: Color(0xFFE0E0E0),
     ),
-    
-    scaffoldBackgroundColor:  Colors.white,
-    
+
+    scaffoldBackgroundColor: Colors.white,
+
     // AppBar Theme
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
@@ -55,7 +55,7 @@ class AppTheme {
       ),
       iconTheme: IconThemeData(color: Colors.white),
     ),
-    
+
     // Button Themes
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -63,38 +63,28 @@ class AppTheme {
         foregroundColor: Colors.white,
         elevation: 2,
         shadowColor: primaryYellow.withOpacity(0.3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       ),
     ),
-    
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: primaryYellowDark,
-        textStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
       ),
     ),
-    
+
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: primaryYellow,
         side: const BorderSide(color: primaryYellow),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
     ),
-    
+
     // Input Field Theme
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -125,28 +115,24 @@ class AppTheme {
       prefixIconColor: Colors.grey[500],
       suffixIconColor: Colors.grey[500],
     ),
-    
+
     // Card Theme
     cardTheme: CardThemeData(
       color: Colors.white,
       shadowColor: Colors.black.withOpacity(0.1),
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     ),
-    
+
     // Snackbar Theme
     snackBarTheme: SnackBarThemeData(
       backgroundColor: darkGray,
       contentTextStyle: const TextStyle(color: Colors.white),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       behavior: SnackBarBehavior.floating,
     ),
-    
+
     // Bottom Navigation Theme
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
@@ -155,16 +141,14 @@ class AppTheme {
       type: BottomNavigationBarType.fixed,
       elevation: 8,
     ),
-    
+
     // Dialog Theme
     dialogTheme: DialogThemeData(
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 8,
     ),
-    
+
     // Typography
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
@@ -192,26 +176,14 @@ class AppTheme {
         fontWeight: FontWeight.w500,
         color: darkGray,
       ),
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        color: darkGray,
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        color: secondaryGray,
-      ),
-      bodySmall: TextStyle(
-        fontSize: 12,
-        color: secondaryGray,
-      ),
+      bodyLarge: TextStyle(fontSize: 16, color: darkGray),
+      bodyMedium: TextStyle(fontSize: 14, color: secondaryGray),
+      bodySmall: TextStyle(fontSize: 12, color: secondaryGray),
     ),
-    
+
     // Icon Theme
-    iconTheme: const IconThemeData(
-      color: secondaryGray,
-      size: 24,
-    ),
-    
+    iconTheme: const IconThemeData(color: secondaryGray, size: 24),
+
     // Divider Theme
     dividerTheme: DividerThemeData(
       color: Colors.grey[300],
@@ -224,7 +196,7 @@ class AppTheme {
   static final ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
-    
+
     colorScheme: const ColorScheme.dark(
       primary: primaryYellow,
       primaryContainer: primaryYellowDark,
@@ -240,9 +212,9 @@ class AppTheme {
       onError: Colors.white,
       outline: Color(0xFF48484A),
     ),
-    
+
     scaffoldBackgroundColor: const Color(0xFF181923),
-    
+
     // AppBar Theme
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF1C1C1E),
@@ -257,7 +229,7 @@ class AppTheme {
       ),
       iconTheme: IconThemeData(color: Colors.white),
     ),
-    
+
     // Button Themes
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -265,27 +237,19 @@ class AppTheme {
         foregroundColor: Colors.black,
         elevation: 2,
         shadowColor: primaryYellow.withOpacity(0.3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       ),
     ),
-    
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: primaryYellow,
-        textStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
       ),
     ),
-    
+
     // Input Field Theme
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -316,28 +280,24 @@ class AppTheme {
       prefixIconColor: const Color(0xFF8E8E93),
       suffixIconColor: const Color(0xFF8E8E93),
     ),
-    
+
     // Card Theme
     cardTheme: CardThemeData(
       color: const Color(0xFF1C1C1E),
       shadowColor: Colors.black.withOpacity(0.3),
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     ),
-    
+
     // Snackbar Theme
     snackBarTheme: SnackBarThemeData(
       backgroundColor: const Color(0xFF2C2C2E),
       contentTextStyle: const TextStyle(color: Colors.white),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       behavior: SnackBarBehavior.floating,
     ),
-    
+
     // Bottom Navigation Theme
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Color(0xFF1C1C1E),
@@ -346,16 +306,14 @@ class AppTheme {
       type: BottomNavigationBarType.fixed,
       elevation: 8,
     ),
-    
+
     // Dialog Theme
     dialogTheme: DialogThemeData(
       backgroundColor: const Color(0xFF1C1C1E),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 8,
     ),
-    
+
     // Typography
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
@@ -383,26 +341,14 @@ class AppTheme {
         fontWeight: FontWeight.w500,
         color: Colors.white,
       ),
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        color: Colors.white,
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        color: Color(0xFF8E8E93),
-      ),
-      bodySmall: TextStyle(
-        fontSize: 12,
-        color: Color(0xFF8E8E93),
-      ),
+      bodyLarge: TextStyle(fontSize: 16, color: Colors.white),
+      bodyMedium: TextStyle(fontSize: 14, color: Color(0xFF8E8E93)),
+      bodySmall: TextStyle(fontSize: 12, color: Color(0xFF8E8E93)),
     ),
-    
+
     // Icon Theme
-    iconTheme: const IconThemeData(
-      color: Color(0xFF8E8E93),
-      size: 24,
-    ),
-    
+    iconTheme: const IconThemeData(color: Color(0xFF8E8E93), size: 24),
+
     // Divider Theme
     dividerTheme: const DividerThemeData(
       color: Color(0xFF48484A),
@@ -417,16 +363,16 @@ class AppColors {
   static const Color primaryYellow = Color(0xFFFFC107);
   static const Color primaryYellowDark = Color(0xFFF57F17);
   static const Color primaryYellowLight = Color(0xFFFFF9C4);
-  
+
   static const Color secondaryGray = Color(0xFF6C757D);
   static const Color lightGray = Color(0xFFF8F9FA);
   static const Color darkGray = Color(0xFF343A40);
-  
+
   static const Color successGreen = Color(0xFF28A745);
   static const Color errorRed = Color(0xFFDC3545);
   static const Color warningOrange = Color(0xFFFD7E14);
   static const Color infoBlue = Color(0xFF17A2B8);
-  
+
   // Dark theme colors
   static const Color darkBackground = Color(0xFF181923);
   static const Color darkSurface = Color(0xFF1C1C1E);
