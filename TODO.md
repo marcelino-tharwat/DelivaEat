@@ -1,10 +1,4 @@
-# TODO List for Restaurant Page UI Improvements
-
-- [x] Update offer texts to use theme text styles (bodySmall).
-- [x] Update category titles to use theme text styles (headlineSmall).
-- [x] Update category tab titles to use theme text styles (bodyMedium).
-- [x] Update food item titles to use theme text styles (titleMedium).
-- [ ] Update all hardcoded colors to use theme colors (e.g., Colors.pink.shade50 -> Theme.of(context).colorScheme.surfaceVariant).
-- [ ] Review and test UI for consistent styling and appearance.
-- [ ] Run Flutter app and verify changes visually.
-- [ ] Fix any UI issues or inconsistencies found during testing.
+- [x] Add bool _isFavorite = false; in _RestaurantHomePageState
+- [x] Add void _toggleFavorite() { setState(() => _isFavorite = !_isFavorite); }
+- [x] Add appBar to Scaffold with transparent background, leading back button, and actions favorite button
+- [ ] Test the functionality
