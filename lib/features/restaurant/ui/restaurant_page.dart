@@ -13,6 +13,14 @@ class RestaurantHomePage extends StatefulWidget {
 }
 
 class _RestaurantHomePageState extends State<RestaurantHomePage> {
+  bool _isFavorite = false;
+
+  void _toggleFavorite() {
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+  }
+
   // هذا الموديل لا يؤثر على التصميم
   final RestaurantModel restaurant = RestaurantModel(
     id: 'static_id',
@@ -74,6 +82,7 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Scaffold(
       // غيرنا لون خلفية السكافولد ليتناسب مع لون الصورة العلوي
       backgroundColor: const Color(0xff1c1c1c),
@@ -99,12 +108,47 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
                     ),
                   ),
                 ),
+                // Back button
+                Positioned(
+                  top: 50.h,
+                  left: 16.w,
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).pop(),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: theme.dividerColor),
+                      ),
+                      child: Icon(
+                        Icons.arrow_back_ios_new,
+                        size: 20,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                // Favorite button
+                Positioned(
+                  top: 50.h,
+                  right: 16.w,
+                  child: IconButton(
+                    icon: Icon(
+                      _isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: _isFavorite ? Colors.red : Colors.white,
+                    ),
+                    onPressed: _toggleFavorite,
+                  ),
+                ),
                 // اللوجو
                 Positioned(
                   top: 90.h,
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
+                      horizontal: 10.w,
                       vertical: 12.h,
                     ),
                     decoration: BoxDecoration(
@@ -116,23 +160,20 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
                         Text(
                           '木',
                           style: Theme.of(context).textTheme.headlineLarge
-                              ?.copyWith(color: Colors.white, fontSize: 20.sp),
+                              ?.copyWith(color: Colors.white, fontSize: 16.sp),
                         ),
                         SizedBox(height: 4.h),
                         Text(
                           l10n.restaurantName,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(color: Colors.white, height: 1.2),
+                              ?.copyWith(color: Colors.white, height: 1),
                         ),
-                        SizedBox(height: 2.h),
+                        // SizedBox(height: 2.h),
                         Text(
                           l10n.restaurantTagline,
                           style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: Colors.white,
-                                letterSpacing: 1.2,
-                              ),
+                              ?.copyWith(color: Colors.white, letterSpacing: 1),
                         ),
                       ],
                     ),
