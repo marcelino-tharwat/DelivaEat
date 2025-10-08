@@ -142,7 +142,7 @@ final GoRouter router = GoRouter(
           // ✅ استخدام الاسم الفريد من AppRoutes
           name: AppRoutes.restaurantMenuPage,
 
-          // ✅ تعريف المسار الكامل هنا
+          // ✅ تعريف المسار الكامل ]
           path: '/restaurant-menu/:restaurantId',
 
           builder: (BuildContext context, GoRouterState state) {
