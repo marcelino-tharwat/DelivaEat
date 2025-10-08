@@ -554,15 +554,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchPharmaciesHint => 'ابحث عن صيدليات، أدوية...';
 
   @override
-  String get highestRated => 'الأعلى تقييماً';
-
-  @override
-  String get fastestDelivery => 'الأسرع توصيلاً';
-
-  @override
-  String get freeDelivery => 'توصيل مجاني';
-
-  @override
   String get discount20OnMedicines => 'خصم 20% على الأدوية';
 
   @override
@@ -719,6 +710,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get categorySandwich => 'ساندويتش';
+
+  @override
+  String get highestRated => 'الأعلى تقييماً';
+
+  @override
+  String get fastestDelivery => 'الأسرع توصيلاً';
+
+  @override
+  String get freeDelivery => 'توصيل مجاني';
 
   @override
   String get from => 'من';

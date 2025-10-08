@@ -193,9 +193,7 @@
   },
   "pharmaciesSectionTitle": "قسم الصيدليات",
   "searchPharmaciesHint": "ابحث عن صيدليات، أدوية...",
-  "highestRated": "الأعلى تقييماً",
-  "fastestDelivery": "الأسرع توصيلاً",
-  "freeDelivery": "توصيل مجاني",
+ 
   "discount20OnMedicines": "خصم 20% على الأدوية",
   "useCodePharma20": "استخدم كود: PHARMA20",
   "freeDeliveryOnMedicines": "توصيل مجاني للأدوية",
@@ -208,7 +206,6 @@
   "cosmetics": "مستحضرات تجميل",
   "motherAndBabyCare": "العناية بالأم والطفل",
   "medicalEquipment": "الأدوات الطبية",
-  "minutes": "دقيقة",
   "deliveryFee": "رسوم التوصيل: {fee} جنيه",
   "@deliveryFee": {
     "description": "Delivery fee text with amount",

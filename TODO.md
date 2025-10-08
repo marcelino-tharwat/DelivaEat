@@ -1,11 +1,2 @@
-- [x] Add "grocerySectionTitle" and "searchGroceriesHint" keys with English text to intl_en.arb and intl_ar.arb
-- [x] Update grocery_category_page.dart to use localized strings for title and search hint
-- [x] Modify SearchPage constructor to accept categoryType parameter
-- [x] Update app_router.dart to pass categoryType to SearchPage
-- [x] Modify SearchPage to conditionally set hintText for grocery category
-- [x] Regenerate localization files with flutter gen-l10n
-- [x] Test the changes in Arabic locale
-- [x] Fix incomplete AppLocalizations.of(context)!.); line in otp_verify_code.dart
-- [x] Change unknown_error to errorUnknown in otp_verify_code.dart
-- [x] Remove duplicate "unknown_error" from intl_ar.arb
-- [x] Regenerate localization files
+- [ ] Move the restaurant name box to the center of the background image in the Stack
+- [ ] Position the offers section to overlay half on the image and half below, with border radius on top right and top left for the lower part
