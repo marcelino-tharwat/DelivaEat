@@ -29,7 +29,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const RestaurantHomePage();
+        return const HomePageWrapper();
         //  BlocProvider(
         //   create: (context) => getIt<LoginCubit>(),
         //   child: LoginPage(),
@@ -171,6 +171,12 @@ final GoRouter router = GoRouter(
               favoriteRestaurants: favoriteRestaurants,
               favoriteFoods: favoriteFoods,
             );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.restaurantPage,
+          builder: (BuildContext context, GoRouterState state) {
+            return const RestaurantHomePage();
           },
         ),
       ],
