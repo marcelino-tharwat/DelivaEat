@@ -6,11 +6,13 @@ import 'package:deliva_eat/l10n/app_localizations.dart';
 class FoodCard extends StatelessWidget {
   final FoodModel food;
   final int index;
+  final bool isPharmacyMode;
 
   const FoodCard({
     super.key,
     required this.food,
     required this.index,
+    this.isPharmacyMode = false,
   });
 
   @override
@@ -52,14 +54,23 @@ class FoodCard extends StatelessWidget {
                         errorBuilder: (context, error, stackTrace) => Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [
-                                colors.primaryColor.withOpacity(0.3),
-                                colors.primaryColor.withOpacity(0.1),
-                              ],
+                              colors: isPharmacyMode
+                                  ? [
+                                      Colors.blue.withOpacity(0.25),
+                                      Colors.blue.withOpacity(0.08),
+                                    ]
+                                  : [
+                                      colors.primaryColor.withOpacity(0.3),
+                                      colors.primaryColor.withOpacity(0.1),
+                                    ],
                             ),
                           ),
-                          child: const Center(
-                            child: Text('🍕', style: TextStyle(fontSize: 30)),
+                          child: Center(
+                            child: Icon(
+                              isPharmacyMode ? Icons.local_pharmacy : Icons.restaurant,
+                              color: isPharmacyMode ? Colors.blueAccent : colors.hintColor,
+                              size: 36,
+                            ),
                           ),
                         ),
                       ),

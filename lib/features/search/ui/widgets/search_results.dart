@@ -12,11 +12,13 @@ import 'package:deliva_eat/features/search/ui/widgets/food_card.dart';
 class SearchResults extends StatelessWidget {
   final SearchSuccess state;
   final Function() onRefresh;
+  final bool isPharmacyMode;
 
   const SearchResults({
     super.key,
     required this.state,
     required this.onRefresh,
+    this.isPharmacyMode = false,
   });
 
   @override
@@ -61,6 +63,7 @@ class SearchResults extends StatelessWidget {
                 SizedBox(height: 16.h),
                 _buildFoodHorizontalList(
                   _getIndependentFoods(state.foods, state.restaurants),
+                  isPharmacyMode,
                 ),
                 SizedBox(height: 24.h),
               ],
@@ -129,14 +132,14 @@ class SearchResults extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8.h),
-          _buildFoodHorizontalList(restaurantFoods),
+          _buildFoodHorizontalList(restaurantFoods, isPharmacyMode),
         ],
         SizedBox(height: 16.h),
       ],
     );
   }
 
-  Widget _buildFoodHorizontalList(List<FoodModel> foods) {
+  Widget _buildFoodHorizontalList(List<FoodModel> foods, bool isPharmacyMode) {
     return SizedBox(
       height: 180.h,
       child: ListView.builder(
@@ -144,7 +147,7 @@ class SearchResults extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         itemCount: foods.length,
         itemBuilder: (context, index) {
-          return FoodCard(food: foods[index], index: index);
+          return FoodCard(food: foods[index], index: index, isPharmacyMode: isPharmacyMode);
         },
       ),
     );

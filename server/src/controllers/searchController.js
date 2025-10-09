@@ -151,10 +151,22 @@ const globalSearch = async (req, res) => {
         }
 
         if (pharmRoot) {
-          // expand to pharmacy subcategories
-          const subcats = await Category.find({ name: { $in: ['Medicines','Supplements','Personal Care','Cosmetics','Mother & Baby Care','Medical Equipment'] } }).select('_id').lean();
+          // expand to pharmacy subcategories (EN + AR) and include both name and nameAr fields
+          const pharmSubNamesEN = ['Medicines','Supplements','Personal Care','Cosmetics','Mother & Baby Care','Medical Equipment'];
+          const pharmSubNamesAR = ['أدوية','مكملات','العناية الشخصية','مستحضرات تجميل','العناية بالأم والطفل','الأدوات الطبية'];
+          const subcats = await Category.find({
+            $or: [
+              { name: { $in: pharmSubNamesEN } },
+              { nameAr: { $in: pharmSubNamesAR } },
+            ],
+          }).select('_id').lean();
           const ids = subcats.map(s => s._id);
-          foodQuery.category = { $in: ids };
+          // Safe fallback: if no subcategories found, limit to the Pharmacies root id to avoid mixing with food categories
+          if (ids.length > 0) {
+            foodQuery.category = { $in: ids };
+          } else {
+            foodQuery.category = new mongoose.Types.ObjectId(String(catVal));
+          }
         } else {
           foodQuery.category = new mongoose.Types.ObjectId(String(catVal));
         }

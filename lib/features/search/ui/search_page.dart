@@ -39,6 +39,14 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   bool _isSearchFocused = false;
   String? _categoryId;
   String _type = 'all';
+  bool _isPharmacyMode = false;
+
+  bool _detectPharmacyMode(String? categoryId, String type) {
+    final idOrName = (categoryId ?? '').trim().toLowerCase();
+    final looksPharmacy = idOrName.contains('pharm') || idOrName.contains('صيد');
+    // Coming from pharmacies page sets type to 'foods' and passes pharmacies root id/name
+    return (type == 'foods') && (looksPharmacy || idOrName.isNotEmpty);
+  }
 
   @override
   void initState() {
@@ -49,6 +57,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     // initialize optional filters
     _categoryId = widget.categoryId;
     _type = widget.type ?? 'all';
+    _isPharmacyMode = _detectPharmacyMode(_categoryId, _type);
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -183,6 +192,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     if (state is SearchSuccess) {
       return SearchResults(
         state: state,
+        isPharmacyMode: _isPharmacyMode,
         onRefresh: () => _searchCubit.search(
           query: state.query,
           type: _type,
