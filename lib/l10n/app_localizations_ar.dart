@@ -787,4 +787,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get foodChickenSchezwanFriedRicePrice => '30 جنيه مصري';
+
+  @override
+  String get addedToFavorites => 'تمت الإضافة إلى المفضلة';
+
+  @override
+  String get removedFromFavorites => 'تم الحذف من المفضلة';
+
+  @override
+  String get seeAllReviews => 'عرض جميع التقييمات';
+
+  @override
+  String get extras => 'إضافات:';
+
+  @override
+  String get addons => 'إضافات:';
+
+  @override
+  String addExtraChicken(String price) {
+    return 'إضافة دجاج إضافي (جنيه مصري +$price)';
+  }
+
+  @override
+  String addCocaCola(String price) {
+    return 'إضافة كوكا كولا (جنيه مصري +$price)';
+  }
+
+  @override
+  String addToCart(String totalPrice) {
+    return 'إضافة إلى السلة جنيه مصري $totalPrice';
+  }
 }

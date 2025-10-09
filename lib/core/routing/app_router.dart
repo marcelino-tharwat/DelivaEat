@@ -16,6 +16,7 @@ import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/ui/favorites_page.dart';
 import 'package:deliva_eat/features/home/ui/home_page_wrapper.dart';
+import 'package:deliva_eat/features/restaurant/ui/prodcut_page.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_menu_page.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_page.dart';
 import 'package:deliva_eat/features/search/ui/search_page.dart';
@@ -29,7 +30,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const HomePageWrapper();
+        return const FoodOrderPage();
         //  BlocProvider(
         //   create: (context) => getIt<LoginCubit>(),
         //   child: LoginPage(),

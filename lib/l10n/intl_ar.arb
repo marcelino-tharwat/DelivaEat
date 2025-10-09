@@ -286,5 +286,40 @@
   "categoryDrinks": "مشروبات",
   "foodChickenSchezwanFriedRice": "أرز شيزن الدجاج المقلي",
   "foodChickenSchezwanFriedRiceDesc": "قطع دجاج مقلية ذهبية مقلية في المقلاة مع أرز شيزن حار وحار مع الخضروات مثل الأخضر",
-  "foodChickenSchezwanFriedRicePrice": "30 جنيه مصري"
+  "foodChickenSchezwanFriedRicePrice": "30 جنيه مصري",
+  "addedToFavorites": "تمت الإضافة إلى المفضلة",
+  "removedFromFavorites": "تم الحذف من المفضلة",
+  "seeAllReviews": "عرض جميع التقييمات",
+  "extras": "إضافات:",
+  "addons": "إضافات:",
+  "addExtraChicken": "إضافة دجاج إضافي (جنيه مصري +{price})",
+  "@addExtraChicken": {
+    "description": "خيار إضافة دجاج إضافي مع السعر",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "10"
+      }
+    }
+  },
+  "addCocaCola": "إضافة كوكا كولا (جنيه مصري +{price})",
+  "@addCocaCola": {
+    "description": "خيار إضافة كوكا كولا مع السعر",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "15"
+      }
+    }
+  },
+  "addToCart": "إضافة إلى السلة جنيه مصري {totalPrice}",
+  "@addToCart": {
+    "description": "نص زر إضافة إلى السلة مع السعر الإجمالي",
+    "placeholders": {
+      "totalPrice": {
+        "type": "String",
+        "example": "55"
+      }
+    }
+  }
 }
