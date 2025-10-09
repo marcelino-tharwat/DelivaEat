@@ -890,12 +890,6 @@ abstract class AppLocalizations {
   /// **'Invalid or expired code.'**
   String get invalid_or_expired_code;
 
-  /// No description provided for @unknown_error.
-  ///
-  /// In en, this message translates to:
-  /// **'An unknown error occurred.'**
-  String get unknown_error;
-
   /// No description provided for @invalid_code.
   ///
   /// In en, this message translates to:
@@ -1153,24 +1147,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search for pharmacies, medicines...'**
   String get searchPharmaciesHint;
-
-  /// No description provided for @highestRated.
-  ///
-  /// In en, this message translates to:
-  /// **'Highest Rated'**
-  String get highestRated;
-
-  /// No description provided for @fastestDelivery.
-  ///
-  /// In en, this message translates to:
-  /// **'Fastest Delivery'**
-  String get fastestDelivery;
-
-  /// No description provided for @freeDelivery.
-  ///
-  /// In en, this message translates to:
-  /// **'Free Delivery'**
-  String get freeDelivery;
 
   /// No description provided for @discount20OnMedicines.
   ///
@@ -1478,6 +1454,24 @@ abstract class AppLocalizations {
   /// **'Sandwich'**
   String get categorySandwich;
 
+  /// No description provided for @highestRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Rated'**
+  String get highestRated;
+
+  /// No description provided for @fastestDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Fastest Delivery'**
+  String get fastestDelivery;
+
+  /// No description provided for @freeDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Delivery'**
+  String get freeDelivery;
+
   /// No description provided for @from.
   ///
   /// In en, this message translates to:
@@ -1501,6 +1495,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delivery Fee: '**
   String get deliveryFeeLabel;
+
+  /// No description provided for @grocerySectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grocery Section'**
+  String get grocerySectionTitle;
+
+  /// No description provided for @searchGroceriesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for groceries, stores...'**
+  String get searchGroceriesHint;
+
+  /// No description provided for @marketsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Markets Section'**
+  String get marketsSectionTitle;
+
+  /// No description provided for @searchMarketsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for markets, stores...'**
+  String get searchMarketsHint;
+
+  /// No description provided for @pharmacies.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacies'**
+  String get pharmacies;
+
+  /// No description provided for @restaurantName.
+  ///
+  /// In en, this message translates to:
+  /// **'MANDARIN\nOAK'**
+  String get restaurantName;
+
+  /// No description provided for @restaurantTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'TALES FROM THE WOK'**
+  String get restaurantTagline;
+
+  /// No description provided for @offerDiscount15.
+  ///
+  /// In en, this message translates to:
+  /// **'15% off full menu, Min spend 49'**
+  String get offerDiscount15;
+
+  /// No description provided for @offerFreeDelivery99.
+  ///
+  /// In en, this message translates to:
+  /// **'Free delivery on orders above 99'**
+  String get offerFreeDelivery99;
+
+  /// No description provided for @categoryTrending.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending'**
+  String get categoryTrending;
+
+  /// No description provided for @categoryFree.
+  ///
+  /// In en, this message translates to:
+  /// **'free'**
+  String get categoryFree;
+
+  /// No description provided for @categorySoup.
+  ///
+  /// In en, this message translates to:
+  /// **'Soup'**
+  String get categorySoup;
+
+  /// No description provided for @categoryAppetizers.
+  ///
+  /// In en, this message translates to:
+  /// **'Appetizers'**
+  String get categoryAppetizers;
+
+  /// No description provided for @categoryPasta.
+  ///
+  /// In en, this message translates to:
+  /// **'Pasta'**
+  String get categoryPasta;
+
+  /// No description provided for @categoryDrinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Drinks'**
+  String get categoryDrinks;
+
+  /// No description provided for @foodChickenSchezwanFriedRice.
+  ///
+  /// In en, this message translates to:
+  /// **'Chicken Schezwan Fried Rice'**
+  String get foodChickenSchezwanFriedRice;
+
+  /// No description provided for @foodChickenSchezwanFriedRiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green'**
+  String get foodChickenSchezwanFriedRiceDesc;
+
+  /// No description provided for @foodChickenSchezwanFriedRicePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'EGP 30'**
+  String get foodChickenSchezwanFriedRicePrice;
 }
 
 class _AppLocalizationsDelegate

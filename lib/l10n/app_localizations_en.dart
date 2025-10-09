@@ -419,9 +419,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalid_or_expired_code => 'Invalid or expired code.';
 
   @override
-  String get unknown_error => 'An unknown error occurred.';
-
-  @override
   String get invalid_code => 'Invalid code.';
 
   @override
@@ -555,15 +552,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchPharmaciesHint => 'Search for pharmacies, medicines...';
-
-  @override
-  String get highestRated => 'Highest Rated';
-
-  @override
-  String get fastestDelivery => 'Fastest Delivery';
-
-  @override
-  String get freeDelivery => 'Free Delivery';
 
   @override
   String get discount20OnMedicines => '20% Discount on Medicines';
@@ -728,6 +716,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categorySandwich => 'Sandwich';
 
   @override
+  String get highestRated => 'Highest Rated';
+
+  @override
+  String get fastestDelivery => 'Fastest Delivery';
+
+  @override
+  String get freeDelivery => 'Free Delivery';
+
+  @override
   String get from => 'From';
 
   @override
@@ -738,4 +735,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deliveryFeeLabel => 'Delivery Fee: ';
+
+  @override
+  String get grocerySectionTitle => 'Grocery Section';
+
+  @override
+  String get searchGroceriesHint => 'Search for groceries, stores...';
+
+  @override
+  String get marketsSectionTitle => 'Markets Section';
+
+  @override
+  String get searchMarketsHint => 'Search for markets, stores...';
+
+  @override
+  String get pharmacies => 'Pharmacies';
+
+  @override
+  String get restaurantName => 'MANDARIN\nOAK';
+
+  @override
+  String get restaurantTagline => 'TALES FROM THE WOK';
+
+  @override
+  String get offerDiscount15 => '15% off full menu, Min spend 49';
+
+  @override
+  String get offerFreeDelivery99 => 'Free delivery on orders above 99';
+
+  @override
+  String get categoryTrending => 'Trending';
+
+  @override
+  String get categoryFree => 'free';
+
+  @override
+  String get categorySoup => 'Soup';
+
+  @override
+  String get categoryAppetizers => 'Appetizers';
+
+  @override
+  String get categoryPasta => 'Pasta';
+
+  @override
+  String get categoryDrinks => 'Drinks';
+
+  @override
+  String get foodChickenSchezwanFriedRice => 'Chicken Schezwan Fried Rice';
+
+  @override
+  String get foodChickenSchezwanFriedRiceDesc =>
+      'Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green';
+
+  @override
+  String get foodChickenSchezwanFriedRicePrice => 'EGP 30';
 }

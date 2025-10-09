@@ -282,13 +282,17 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
 
     switch (categoryId) {
       case 'food':
-        context.push(AppRoutes.categoryPage);
+        context.push(AppRoutes.categoryPage, extra: {'categoryType': 'food'});
         break;
       case 'pharmacies':
-        context.push(AppRoutes.pharmaciesPage, extra: {'id': categoryId});
+        context.push(AppRoutes.pharmaciesPage, extra: {'id': categoryId, 'categoryType': 'pharmacies'});
         break;
       case 'grocery':
+        context.push(AppRoutes.groceryPage, extra: {'id': categoryId, 'categoryType': 'grocery'});
+        break;
       case 'markets':
+        context.push(AppRoutes.marketsCategoryPage, extra: {'categoryId': categoryId, 'categoryType': 'markets'});
+        break;
       case 'gifts':
       case 'stores':
         ScaffoldMessenger.of(context).showSnackBar(

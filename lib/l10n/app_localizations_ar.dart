@@ -419,9 +419,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invalid_or_expired_code => 'الرمز غير صالح أو منتهي الصلاحية.';
 
   @override
-  String get unknown_error => 'حدث خطأ غير متوقع.';
-
-  @override
   String get invalid_code => 'رمز غير صالح.';
 
   @override
@@ -555,15 +552,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get searchPharmaciesHint => 'ابحث عن صيدليات، أدوية...';
-
-  @override
-  String get highestRated => 'الأعلى تقييماً';
-
-  @override
-  String get fastestDelivery => 'الأسرع توصيلاً';
-
-  @override
-  String get freeDelivery => 'توصيل مجاني';
 
   @override
   String get discount20OnMedicines => 'خصم 20% على الأدوية';
@@ -724,6 +712,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get categorySandwich => 'ساندويتش';
 
   @override
+  String get highestRated => 'الأعلى تقييماً';
+
+  @override
+  String get fastestDelivery => 'الأسرع توصيلاً';
+
+  @override
+  String get freeDelivery => 'توصيل مجاني';
+
+  @override
   String get from => 'من';
 
   @override
@@ -734,4 +731,60 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get deliveryFeeLabel => 'رسوم التوصيل: ';
+
+  @override
+  String get grocerySectionTitle => 'قسم البقالة';
+
+  @override
+  String get searchGroceriesHint => 'ابحث عن بقالة...';
+
+  @override
+  String get marketsSectionTitle => 'Markets Section';
+
+  @override
+  String get searchMarketsHint => 'ابحث عن متاجر...';
+
+  @override
+  String get pharmacies => 'صيدليات';
+
+  @override
+  String get restaurantName => 'MANDARIN\nOAK';
+
+  @override
+  String get restaurantTagline => 'قصص من المقلاة';
+
+  @override
+  String get offerDiscount15 =>
+      'خصم 15% على القائمة الكاملة، الحد الأدنى للإنفاق 49';
+
+  @override
+  String get offerFreeDelivery99 => 'توصيل مجاني على الطلبات فوق 99';
+
+  @override
+  String get categoryTrending => 'الرائج';
+
+  @override
+  String get categoryFree => 'مجاني';
+
+  @override
+  String get categorySoup => 'شوربة';
+
+  @override
+  String get categoryAppetizers => 'مقبلات';
+
+  @override
+  String get categoryPasta => 'باستا';
+
+  @override
+  String get categoryDrinks => 'مشروبات';
+
+  @override
+  String get foodChickenSchezwanFriedRice => 'أرز شيزن الدجاج المقلي';
+
+  @override
+  String get foodChickenSchezwanFriedRiceDesc =>
+      'قطع دجاج مقلية ذهبية مقلية في المقلاة مع أرز شيزن حار وحار مع الخضروات مثل الأخضر';
+
+  @override
+  String get foodChickenSchezwanFriedRicePrice => '30 جنيه مصري';
 }

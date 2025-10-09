@@ -12,13 +12,21 @@ import 'package:deliva_eat/features/search/ui/widgets/food_card.dart';
 class SearchResults extends StatelessWidget {
   final SearchSuccess state;
   final Function() onRefresh;
+<<<<<<< HEAD
   final bool isPharmacyMode;
+=======
+  final String? categoryType;
+>>>>>>> 6ebaaee81658dd208f98eb9c06dd900342181d9b
 
   const SearchResults({
     super.key,
     required this.state,
     required this.onRefresh,
+<<<<<<< HEAD
     this.isPharmacyMode = false,
+=======
+    this.categoryType,
+>>>>>>> 6ebaaee81658dd208f98eb9c06dd900342181d9b
   });
 
   @override
@@ -34,7 +42,9 @@ class SearchResults extends StatelessWidget {
               // عرض المطاعم مع منتجاتها
               if (state.restaurants.isNotEmpty) ...[
                 SectionHeader(
-                  title: AppLocalizations.of(context)!.restaurants,
+                  title: categoryType == 'pharmacies'
+                      ? AppLocalizations.of(context)!.pharmacies
+                      : AppLocalizations.of(context)!.restaurants,
                   count: state.restaurants.length,
                 ),
                 SizedBox(height: 16.h),

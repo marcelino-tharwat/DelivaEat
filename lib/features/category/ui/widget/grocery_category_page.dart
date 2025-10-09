@@ -4,23 +4,19 @@ import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:deliva_eat/features/category/data/model/category_item.dart';
 import 'package:deliva_eat/features/category/data/model/restaurant.dart';
 import 'package:deliva_eat/features/category/ui/category_page.dart';
-// ✅ استيراد القالب من ملفه الجديد
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 
-// هذا الملف يحتوي فقط على الصفحة الذكية الخاصة بالطعام
-class FoodCategoriesPage extends StatefulWidget {
-  const FoodCategoriesPage({super.key, this.categoryId = ""});
+class GroceryCategoriesPage extends StatefulWidget {
+  const GroceryCategoriesPage({super.key, this.categoryId = ""});
   final String categoryId;
   @override
-  State<FoodCategoriesPage> createState() => _FoodCategoriesPageState();
+  State<GroceryCategoriesPage> createState() => _GroceryCategoriesPageState();
 }
 
-class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
-  // ... كل الكود الخاص بالمنطق والحالة يبقى كما هو بدون أي تغيير ...
-  // لقد قمت بنسخه كما هو لأنه صحيح
+class _GroceryCategoriesPageState extends State<GroceryCategoriesPage> {
   String _selectedLocalCategoryId = '';
   String _selectedBackendCategoryId = '';
   String _selectedFilter = '';
@@ -38,28 +34,27 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
   );
 
   List<Map<String, dynamic>> get _offersData {
-    final l10n = AppLocalizations.of(context)!;
     return [
       {
-        'title': l10n.discount50OnFirstOrder,
-        'subtitle': l10n.useCodeNew50,
+        'title': '50% Discount on Fresh Produce',
+        'subtitle': 'Use code FRESH50',
         'image':
-            'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
-        'color': Colors.red,
+            'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
+        'color': Colors.green,
       },
       {
-        'title': l10n.freeDeliveryThisWeek,
-        'subtitle': l10n.forAllParticipatingRestaurants,
+        'title': 'Free Delivery on Orders Over 100 SAR',
+        'subtitle': 'For all participating stores',
         'image':
-            'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1974&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
+            'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=1974&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
         'color': Colors.blue,
       },
       {
-        'title': l10n.familyMealsAtSpecialPrices,
-        'subtitle': l10n.discoverOurNewOffers,
+        'title': 'Special Offers on Dairy Products',
+        'subtitle': 'Discover our new offers',
         'image':
-            'https://images.unsplash.com/photo-1626074353765-517a681e40be?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
-        'color': Colors.green,
+            'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=2070&auto=format&fit=crop&ixlib-rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%33D%3D',
+        'color': Colors.orange,
       },
     ];
   }
@@ -92,11 +87,10 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
         break;
       case 'توصيل مجاني':
       case var filter when filter == l10n.freeDelivery:
-        // نستخدم where لإنشاء قائمة جديدة مفلترة
         _filteredRestaurants = restaurantsCopy
             .where((r) => r.deliveryFee == 0)
             .toList();
-        return; // الخروج مبكراً لتجنب إعادة الكتابة على القائمة
+        return;
     }
     _filteredRestaurants = restaurantsCopy;
   }
@@ -140,8 +134,7 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
     } catch (e) {
       _error = AppLocalizations.of(context)!.failedToLoadRestaurants;
     } finally {
-      _updateAndFilterRestaurants(AppLocalizations.of(context)!); // ✅ استدعاء الدالة بعد جلب البيانات
-
+      _updateAndFilterRestaurants(AppLocalizations.of(context)!);
       if (mounted) setState(() => _loading = false);
     }
   }
@@ -180,7 +173,7 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
       await _fetchTopRatedRandom();
     } finally {
       if (mounted) {
-        _updateAndFilterRestaurants(AppLocalizations.of(context)!); // ✅ استدعاء الدالة بعد جلب البيانات
+        _updateAndFilterRestaurants(AppLocalizations.of(context)!);
         setState(() => _loading = false);
       }
     }
@@ -234,14 +227,11 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
     return null;
   }
 
-  // In _FoodCategoriesPageState
-
   void _handleCategoryTap(String tappedLocalId) async {
     final l10n = AppLocalizations.of(context)!;
     final isCurrentlySelected = _selectedLocalCategoryId == tappedLocalId;
 
     if (isCurrentlySelected) {
-      // إلغاء التحديد والعودة للأعلى تقييماً
       setState(() {
         _selectedLocalCategoryId = '';
         _selectedBackendCategoryId = '';
@@ -249,7 +239,6 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
       });
       _fetchTopRatedRandom();
     } else {
-      // تحديد فئة جديدة
       final category = _categories.firstWhere((cat) => cat.id == tappedLocalId);
       if (_categoryNameToId.isEmpty) {
         await _loadBackendCategoryMap();
@@ -278,16 +267,12 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
     final l10n = AppLocalizations.of(context)!;
     if (_categories.isEmpty) {
       _categories = [
-        CategoryItem(id: '1', name: l10n.categoryPizza, image: "assets/images/Pizza.png"),
-        CategoryItem(id: '2', name: l10n.categoryBurger, image: "assets/images/Burger.png"),
-        CategoryItem(id: '3', name: l10n.categoryCrepes, image: "assets/images/Crepes.png"),
-        CategoryItem(id: '4', name: l10n.categoryDesserts, image: "assets/images/Desserts.png"),
-        CategoryItem(id: '5', name: l10n.categoryGrills, image: "assets/images/Grills.png"),
-        CategoryItem(id: '6', name: l10n.categoryFriedChicken, image: "assets/images/Fried.png"),
-        CategoryItem(id: '7', name: l10n.categoryKoshary, image: "assets/images/Koshary.png"),
-        CategoryItem(id: '8', name: l10n.categoryBreakfast, image: "assets/images/Breakfast.png"),
-        CategoryItem(id: '9', name: l10n.categoryPies, image: "assets/images/Pies.png"),
-        CategoryItem(id: '10', name: l10n.categorySandwich, image: "assets/images/Sandwich.png"),
+        CategoryItem(id: '1', name: 'Fruits & Vegetables', image: "assets/images/groceries.png"),
+        CategoryItem(id: '2', name: 'Dairy & Eggs', image: "assets/images/groceries.png"),
+        CategoryItem(id: '3', name: 'Meat & Poultry', image: "assets/images/groceries.png"),
+        CategoryItem(id: '4', name: 'Bakery', image: "assets/images/groceries.png"),
+        CategoryItem(id: '5', name: 'Beverages', image: "assets/images/groceries.png"),
+        CategoryItem(id: '6', name: 'Snacks', image: "assets/images/groceries.png"),
       ];
     }
     if (!_filterInitialized) {
@@ -295,8 +280,8 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
       _filterInitialized = true;
     }
     return ReusableCategoryLayout(
-      pageTitle: l10n.foodSectionTitle,
-      searchHintText: l10n.searchRestaurantsHint,
+      pageTitle: l10n.grocerySectionTitle,
+      searchHintText: l10n.searchGroceriesHint,
       offers: _offersData,
       categories: _categories,
       selectedCategoryId: _selectedLocalCategoryId,
@@ -304,18 +289,18 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
       selectedFilter: _selectedFilter,
       isLoading: _loading,
       errorMessage: _error,
-      onCategorySelected: _handleCategoryTap, // ✅ الربط الصحيح موجود هنا
+      onCategorySelected: _handleCategoryTap,
       onSearchTap: () {
         context.push(AppRoutes.searchPage, extra: {
-          'categoryId': 'food',
+          'categoryId': 'grocery',
           'type': 'all',
-          'categoryType': 'food',
+          'categoryType': 'grocery',
         });
       },
       onFilterSelected: (filter) {
         setState(() {
           _selectedFilter = filter;
-          _updateAndFilterRestaurants(l10n); // ✅ استدعاء الدالة عند تغيير الفلتر
+          _updateAndFilterRestaurants(l10n);
         });
       },
       onRetry: () {
@@ -325,10 +310,9 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
           _fetchTopRatedRandom();
         }
       },
-      itemCount: _filteredRestaurants.length, // ✅ استخدام القائمة المفلترة
+      itemCount: _filteredRestaurants.length,
       itemBuilder: (context, index) {
-        // بناء الويدجت الجديدة بدلاً من الدالة
-        return _FoodCard(restaurant: _filteredRestaurants[index], l10n: l10n);
+        return _GroceryCard(restaurant: _filteredRestaurants[index], l10n: l10n);
       },
     );
   }
@@ -357,9 +341,8 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
   }
 }
 
-// --- تم فصل كارت الطعام في ويدجت خاصة بها ---
-class _FoodCard extends StatelessWidget {
-  const _FoodCard({required this.restaurant, required this.l10n});
+class _GroceryCard extends StatelessWidget {
+  const _GroceryCard({required this.restaurant, required this.l10n});
 
   final Restaurant restaurant;
   final AppLocalizations l10n;
@@ -376,14 +359,14 @@ class _FoodCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            // Navigate to restaurant details if needed
+            // Navigate to grocery store details if needed
           },
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(
               children: [
                 Hero(
-                  tag: 'restaurant-card-${restaurant.id}',
+                  tag: 'grocery-card-${restaurant.id}',
                   child: Container(
                     width: 70,
                     height: 70,
@@ -407,7 +390,7 @@ class _FoodCard extends StatelessWidget {
                         errorWidget: (context, url, error) => Container(
                           color: Colors.grey[300],
                           child: Icon(
-                            Icons.restaurant,
+                            Icons.store,
                             color: Colors.grey[600],
                             size: 30,
                           ),
