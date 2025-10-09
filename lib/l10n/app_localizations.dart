@@ -1603,6 +1603,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'EGP 30'**
   String get foodChickenSchezwanFriedRicePrice;
+
+  /// No description provided for @addedToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to favorites'**
+  String get addedToFavorites;
+
+  /// No description provided for @removedFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from favorites'**
+  String get removedFromFavorites;
+
+  /// No description provided for @seeAllReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'See all reviews'**
+  String get seeAllReviews;
+
+  /// No description provided for @extras.
+  ///
+  /// In en, this message translates to:
+  /// **'Extras:'**
+  String get extras;
+
+  /// No description provided for @addons.
+  ///
+  /// In en, this message translates to:
+  /// **'Add-ons:'**
+  String get addons;
+
+  /// Option to add extra chicken with price
+  ///
+  /// In en, this message translates to:
+  /// **'Add extra chicken (EGP +{price})'**
+  String addExtraChicken(String price);
+
+  /// Option to add Coca Cola with price
+  ///
+  /// In en, this message translates to:
+  /// **'Add CoCa Cola (EGP +{price})'**
+  String addCocaCola(String price);
+
+  /// Add to cart button text with total price
+  ///
+  /// In en, this message translates to:
+  /// **'Add to cart EGP {totalPrice}'**
+  String addToCart(String totalPrice);
 }
 
 class _AppLocalizationsDelegate

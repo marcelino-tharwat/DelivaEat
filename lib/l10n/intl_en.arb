@@ -192,7 +192,6 @@
   },
   "pharmaciesSectionTitle": "Pharmacies Section",
   "searchPharmaciesHint": "Search for pharmacies, medicines...",
-
   "discount20OnMedicines": "20% Discount on Medicines",
   "useCodePharma20": "Use code: PHARMA20",
   "freeDeliveryOnMedicines": "Free Delivery on Medicines",
@@ -286,5 +285,40 @@
   "categoryDrinks": "Drinks",
   "foodChickenSchezwanFriedRice": "Chicken Schezwan Fried Rice",
   "foodChickenSchezwanFriedRiceDesc": "Golden fried Chicken pieces wok-tossed with hotand spicy schezwan fried rice with vegetables like green",
-  "foodChickenSchezwanFriedRicePrice": "EGP 30"
+  "foodChickenSchezwanFriedRicePrice": "EGP 30",
+  "addedToFavorites": "Added to favorites",
+  "removedFromFavorites": "Removed from favorites",
+  "seeAllReviews": "See all reviews",
+  "extras": "Extras:",
+  "addons": "Add-ons:",
+  "addExtraChicken": "Add extra chicken (EGP +{price})",
+  "@addExtraChicken": {
+    "description": "Option to add extra chicken with price",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "10"
+      }
+    }
+  },
+  "addCocaCola": "Add CoCa Cola (EGP +{price})",
+  "@addCocaCola": {
+    "description": "Option to add Coca Cola with price",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "15"
+      }
+    }
+  },
+  "addToCart": "Add to cart EGP {totalPrice}",
+  "@addToCart": {
+    "description": "Add to cart button text with total price",
+    "placeholders": {
+      "totalPrice": {
+        "type": "String",
+        "example": "55"
+      }
+    }
+  }
 }

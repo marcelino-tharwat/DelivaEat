@@ -790,4 +790,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get foodChickenSchezwanFriedRicePrice => 'EGP 30';
+
+  @override
+  String get addedToFavorites => 'Added to favorites';
+
+  @override
+  String get removedFromFavorites => 'Removed from favorites';
+
+  @override
+  String get seeAllReviews => 'See all reviews';
+
+  @override
+  String get extras => 'Extras:';
+
+  @override
+  String get addons => 'Add-ons:';
+
+  @override
+  String addExtraChicken(String price) {
+    return 'Add extra chicken (EGP +$price)';
+  }
+
+  @override
+  String addCocaCola(String price) {
+    return 'Add CoCa Cola (EGP +$price)';
+  }
+
+  @override
+  String addToCart(String totalPrice) {
+    return 'Add to cart EGP $totalPrice';
+  }
 }
