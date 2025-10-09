@@ -376,7 +376,13 @@ class _FoodCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            // Navigate to restaurant details if needed
+            context.push(
+              AppRoutes.restaurantPage,
+              extra: {
+                'restaurantId': restaurant.id,
+                'restaurantName': restaurant.name,
+              },
+            );
           },
           child: Padding(
             padding: const EdgeInsets.all(12.0),

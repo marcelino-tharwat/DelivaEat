@@ -153,12 +153,14 @@ class _GroceryCategoriesPageState extends State<GroceryCategoriesPage> {
           'limit': 50,
           'lang': lang,
           'sort': 'topRated',
+          'random': 'true',
         },
       );
       final List data = (res.data?['data'] ?? []) as List;
       final list = data
           .map((e) => _mapApiToRestaurant(e as Map<String, dynamic>))
           .toList();
+      list.shuffle();
       _restaurantsByCategory[categoryId] = list;
     } catch (e) {
       String message = AppLocalizations.of(context)!.failedToLoadCategoryRestaurants;
@@ -199,6 +201,17 @@ class _GroceryCategoriesPageState extends State<GroceryCategoriesPage> {
         }
       }
     } catch (_) {}
+  }
+
+  String? _resolveRootIdForGrocery() {
+    // Try to find a root category id for Grocery by name (en/ar)
+    for (final entry in _categoryNameToId.entries) {
+      final k = entry.key.toLowerCase();
+      if (k.contains('grocery') || k.contains('بقال')) {
+        return entry.value;
+      }
+    }
+    return null;
   }
 
   void _updateLocalCategoryFromBackendId(String backendId) {
@@ -291,9 +304,10 @@ class _GroceryCategoriesPageState extends State<GroceryCategoriesPage> {
       errorMessage: _error,
       onCategorySelected: _handleCategoryTap,
       onSearchTap: () {
+        final rootId = _resolveRootIdForGrocery() ?? _selectedBackendCategoryId;
         context.push(AppRoutes.searchPage, extra: {
-          'categoryId': 'grocery',
-          'type': 'all',
+          'categoryId': rootId,
+          'type': 'restaurants',
           'categoryType': 'grocery',
         });
       },

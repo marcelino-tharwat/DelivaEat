@@ -8,6 +8,7 @@ const {
   getRestaurantsByCategory,
   getFoodsByRestaurant,
   toggleFavoriteRestaurant,
+  getRestaurantDetails,
 } = require('../controllers/homeController');
 
 const router = express.Router();
@@ -36,6 +37,11 @@ router.get('/restaurants', getRestaurants);
 // @desc    Get restaurants by categoryId (query: categoryId, limit, random=true|false, sort=rating|topRated)
 // @access  Public
 router.get('/restaurants/by-category', getRestaurantsByCategory);
+
+// @route   GET /api/home/restaurant/details
+// @desc    Get restaurant details, tabs, and badges
+// @access  Public
+router.get('/restaurant/details', getRestaurantDetails);
 
 // @route   GET /api/home/foods/best-selling
 // @desc    Get best selling foods

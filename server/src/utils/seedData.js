@@ -67,6 +67,25 @@ const seedCategories = async () => {
       { name: 'Grills', nameAr: 'مشويات', icon: 'outdoor_grill', color: '#5D4037', gradient: ['#5D4037', '#8D6E63'], order: 16 }
     ];
 
+    // Grocery subcategories (to power grocery UI filters)
+    const grocerySubcategories = [
+      { name: 'Fruits & Vegetables', nameAr: 'فواكه وخضروات', icon: 'nutrition', color: '#43A047', gradient: ['#43A047', '#A5D6A7'], order: 201 },
+      { name: 'Dairy & Eggs', nameAr: 'ألبان وبيض', icon: 'egg', color: '#8E24AA', gradient: ['#8E24AA', '#CE93D8'], order: 202 },
+      { name: 'Meat & Poultry', nameAr: 'لحوم ودواجن', icon: 'set_meal', color: '#D81B60', gradient: ['#D81B60', '#F06292'], order: 203 },
+      { name: 'Bakery', nameAr: 'مخبوزات', icon: 'bakery_dining', color: '#F57C00', gradient: ['#F57C00', '#FFB74D'], order: 204 },
+      { name: 'Beverages', nameAr: 'مشروبات', icon: 'local_drink', color: '#1E88E5', gradient: ['#1E88E5', '#90CAF9'], order: 205 },
+      { name: 'Snacks', nameAr: 'سناكس', icon: 'cookie', color: '#6D4C41', gradient: ['#6D4C41', '#A1887F'], order: 206 },
+    ];
+
+    // Markets subcategories (to power markets UI filters)
+    const marketsSubcategories = [
+      { name: 'Fresh Produce', nameAr: 'منتجات طازجة', icon: 'eco', color: '#2E7D32', gradient: ['#2E7D32', '#66BB6A'], order: 301 },
+      { name: 'Organic Products', nameAr: 'منتجات عضوية', icon: 'spa', color: '#00796B', gradient: ['#00796B', '#26A69A'], order: 302 },
+      { name: 'Beverages', nameAr: 'مشروبات', icon: 'local_drink', color: '#1565C0', gradient: ['#1565C0', '#64B5F6'], order: 303 },
+      { name: 'Snacks', nameAr: 'سناكس', icon: 'cookie', color: '#4E342E', gradient: ['#4E342E', '#8D6E63'], order: 304 },
+      { name: 'Household Items', nameAr: 'منتجات منزلية', icon: 'home', color: '#5E35B1', gradient: ['#5E35B1', '#9575CD'], order: 305 },
+    ];
+
     const ensureCategory = async (c) => {
       await Category.updateOne(
         { name: c.name },
@@ -77,6 +96,8 @@ const seedCategories = async () => {
 
     for (const c of baseCategories) await ensureCategory(c);
     for (const c of cuisineCategories) await ensureCategory(c);
+    for (const c of grocerySubcategories) await ensureCategory(c);
+    for (const c of marketsSubcategories) await ensureCategory(c);
 
     // Pharmacy subcategories (to filter pharmacies section)
     const pharmacySubcategories = [
@@ -126,6 +147,7 @@ const seedOffers = async () => {
         color: '#FF6B35',
         icon: '🚚',
         image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400',
+        coverImage: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200',
         discount: 'FREE',
         discountType: 'free_delivery',
         endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -163,12 +185,21 @@ const seedRestaurants = async () => {
 
     const categories = await Category.find();
     const foodCategory = categories.find(cat => cat.name === 'Food');
+    const groceryCat = categories.find(cat => cat.name === 'Grocery');
+    const marketsCat = categories.find(cat => cat.name === 'Markets');
     const pizzaCat = categories.find(cat => cat.name === 'Pizza');
     const burgerCat = categories.find(cat => cat.name === 'Burger');
     const shawarmaCat = categories.find(cat => cat.name === 'Shawarma');
     const friedCat = categories.find(cat => cat.name === 'Fried Chicken');
     const dessertsCat = categories.find(cat => cat.name === 'Desserts');
     const grillsCat = categories.find(cat => cat.name === 'Grills');
+    // Grocery subcats
+    const fruitsVegCat = categories.find(cat => cat.name === 'Fruits & Vegetables');
+    const dairyEggsCat = categories.find(cat => cat.name === 'Dairy & Eggs');
+    const meatPoultryCat = categories.find(cat => cat.name === 'Meat & Poultry');
+    const bakeryCat = categories.find(cat => cat.name === 'Bakery');
+    const beveragesGroceryCat = categories.find(cat => cat.name === 'Beverages');
+    const snacksGroceryCat = categories.find(cat => cat.name === 'Snacks');
     // Pharmacies and its subcategories
     const pharmaciesCat = categories.find(cat => cat.name === 'Pharmacies');
     const medCat = categories.find(cat => cat.name === 'Medicines');
@@ -177,6 +208,12 @@ const seedRestaurants = async () => {
     const cosmeticsCat = categories.find(cat => cat.name === 'Cosmetics');
     const motherBabyCat = categories.find(cat => cat.name === 'Mother & Baby Care');
     const equipmentCat = categories.find(cat => cat.name === 'Medical Equipment');
+    // Markets subcats
+    const freshProduceCat = categories.find(cat => cat.name === 'Fresh Produce');
+    const organicProductsCat = categories.find(cat => cat.name === 'Organic Products');
+    const beveragesMarketsCat = categories.find(cat => cat.name === 'Beverages');
+    const snacksMarketsCat = categories.find(cat => cat.name === 'Snacks');
+    const householdItemsCat = categories.find(cat => cat.name === 'Household Items');
 
     const baseRestaurants = [
       {
@@ -185,6 +222,7 @@ const seedRestaurants = async () => {
         description: 'Best burgers in town with fresh ingredients',
         descriptionAr: 'أفضل برجر في المدينة بمكونات طازجة',
         image: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400',
+        coverImage: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=1200',
         rating: 4.5,
         reviewCount: 120,
         deliveryTime: '25-35 دقيقة',
@@ -218,6 +256,7 @@ const seedRestaurants = async () => {
         description: 'Traditional Middle Eastern shawarma',
         descriptionAr: 'شاورما شرق أوسطية تقليدية',
         image: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400',
+        coverImage: 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?w=1200',
         rating: 4.3,
         reviewCount: 156,
         deliveryTime: '20-30 دقيقة',
@@ -271,6 +310,37 @@ const seedRestaurants = async () => {
       mk({ name: 'Prime Burger', nameAr: 'برايم برجر', image: 'https://images.unsplash.com/photo-1550547660-7f30e2f8f0b3?w=400', categories: [foodCategory?._id, burgerCat?._id].filter(Boolean) }),
       mk({ name: 'Urban Beef', nameAr: 'أوربان بيف', image: 'https://images.unsplash.com/photo-1552632159-1b11f4c1a3b1?w=400', categories: [foodCategory?._id, burgerCat?._id].filter(Boolean) }),
       mk({ name: 'Burger Factory', nameAr: 'مصنع البرجر', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400', categories: [foodCategory?._id, burgerCat?._id].filter(Boolean) }),
+    ];
+
+    // Grocery stores
+    const mkGrocery = (overrides = {}) => mk({
+      image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400',
+      ...overrides,
+    });
+
+    const groceryStoresFruitsVeg = [
+      mkGrocery({ name: 'Green Basket', nameAr: 'السلة الخضراء', categories: [groceryCat?._id, fruitsVegCat?._id].filter(Boolean) }),
+      mkGrocery({ name: 'Fresh Farm', nameAr: 'المزرعة الطازجة', categories: [groceryCat?._id, fruitsVegCat?._id].filter(Boolean) }),
+    ];
+    const groceryStoresDairyEggs = [
+      mkGrocery({ name: 'Dairy Hub', nameAr: 'دايري هب', categories: [groceryCat?._id, dairyEggsCat?._id].filter(Boolean) }),
+      mkGrocery({ name: 'Egg & Milk', nameAr: 'بيض وحليب', categories: [groceryCat?._id, dairyEggsCat?._id].filter(Boolean) }),
+    ];
+    const groceryStoresMeatPoultry = [
+      mkGrocery({ name: 'Prime Butchery', nameAr: 'الملحمة المميزة', categories: [groceryCat?._id, meatPoultryCat?._id].filter(Boolean) }),
+      mkGrocery({ name: 'Poultry House', nameAr: 'بيت الدواجن', categories: [groceryCat?._id, meatPoultryCat?._id].filter(Boolean) }),
+    ];
+    const groceryStoresBakery = [
+      mkGrocery({ name: 'Daily Bread', nameAr: 'خبز يومي', categories: [groceryCat?._id, bakeryCat?._id].filter(Boolean) }),
+      mkGrocery({ name: 'Golden Bakery', nameAr: 'المخبز الذهبي', categories: [groceryCat?._id, bakeryCat?._id].filter(Boolean) }),
+    ];
+    const groceryStoresBeverages = [
+      mkGrocery({ name: 'Beverage Corner', nameAr: 'ركن المشروبات', categories: [groceryCat?._id, beveragesGroceryCat?._id].filter(Boolean) }),
+      mkGrocery({ name: 'Drink Station', nameAr: 'محطة المشروبات', categories: [groceryCat?._id, beveragesGroceryCat?._id].filter(Boolean) }),
+    ];
+    const groceryStoresSnacks = [
+      mkGrocery({ name: 'Snack World', nameAr: 'عالم السناكس', categories: [groceryCat?._id, snacksGroceryCat?._id].filter(Boolean) }),
+      mkGrocery({ name: 'Crunchy Bites', nameAr: 'لقيمات مقرمشة', categories: [groceryCat?._id, snacksGroceryCat?._id].filter(Boolean) }),
     ];
 
     const shawarmaList = [
@@ -340,9 +410,37 @@ const seedRestaurants = async () => {
       mkPharmacy({ name: 'HealthTech Supplies', nameAr: 'هيلث تك سبلايز', categories: [pharmaciesCat?._id, equipmentCat?._id].filter(Boolean) }),
     ];
 
+    // Markets stores
+    const mkMarket = (overrides = {}) => mk({
+      image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
+      ...overrides,
+    });
+    const marketsFreshProduce = [
+      mkMarket({ name: 'Daily Market', nameAr: 'ماركت يومي', categories: [marketsCat?._id, freshProduceCat?._id].filter(Boolean) }),
+      mkMarket({ name: 'Farmers Market', nameAr: 'سوق المزارعين', categories: [marketsCat?._id, freshProduceCat?._id].filter(Boolean) }),
+    ];
+    const marketsOrganic = [
+      mkMarket({ name: 'Organic Haven', nameAr: 'العضوي', categories: [marketsCat?._id, organicProductsCat?._id].filter(Boolean) }),
+      mkMarket({ name: 'Pure Organics', nameAr: 'بيور أورجانيكس', categories: [marketsCat?._id, organicProductsCat?._id].filter(Boolean) }),
+    ];
+    const marketsBeverages = [
+      mkMarket({ name: 'Drink Depot', nameAr: 'ديبوت المشروبات', categories: [marketsCat?._id, beveragesMarketsCat?._id].filter(Boolean) }),
+    ];
+    const marketsSnacks = [
+      mkMarket({ name: 'Snack Stop', nameAr: 'وقف السناكس', categories: [marketsCat?._id, snacksMarketsCat?._id].filter(Boolean) }),
+    ];
+    const marketsHousehold = [
+      mkMarket({ name: 'Home Essentials', nameAr: 'أساسيات المنزل', categories: [marketsCat?._id, householdItemsCat?._id].filter(Boolean) }),
+    ];
+
     const allLists = [
       pizzaList, burgerList, shawarmaList, friedList, dessertsList, grillsList,
-      pharmaciesMedicines, pharmaciesSupplements, pharmaciesPersonalCare, pharmaciesCosmetics, pharmaciesMotherBaby, pharmaciesEquipment
+      // Grocery
+      groceryStoresFruitsVeg, groceryStoresDairyEggs, groceryStoresMeatPoultry, groceryStoresBakery, groceryStoresBeverages, groceryStoresSnacks,
+      // Pharmacies
+      pharmaciesMedicines, pharmaciesSupplements, pharmaciesPersonalCare, pharmaciesCosmetics, pharmaciesMotherBaby, pharmaciesEquipment,
+      // Markets
+      marketsFreshProduce, marketsOrganic, marketsBeverages, marketsSnacks, marketsHousehold,
     ];
     for (const list of allLists) {
       for (const r of list) {
@@ -377,6 +475,25 @@ const seedFoods = async () => {
     const cosmeticsCat = categories.find(cat => cat.name === 'Cosmetics');
     const motherBabyCat = categories.find(cat => cat.name === 'Mother & Baby Care');
     const equipmentCat = categories.find(cat => cat.name === 'Medical Equipment');
+    // Grocery root + subcats
+    const groceryRoot = categories.find(cat => cat.name === 'Grocery');
+    const grocerySubcats = {
+      fruitsVeg: categories.find(cat => cat.name === 'Fruits & Vegetables'),
+      dairyEggs: categories.find(cat => cat.name === 'Dairy & Eggs'),
+      meatPoultry: categories.find(cat => cat.name === 'Meat & Poultry'),
+      bakery: categories.find(cat => cat.name === 'Bakery'),
+      beverages: categories.find(cat => cat.name === 'Beverages'),
+      snacks: categories.find(cat => cat.name === 'Snacks'),
+    };
+    // Markets root + subcats
+    const marketsRoot = categories.find(cat => cat.name === 'Markets');
+    const marketsSubcats = {
+      freshProduce: categories.find(cat => cat.name === 'Fresh Produce'),
+      organicProducts: categories.find(cat => cat.name === 'Organic Products'),
+      beverages: categories.find(cat => cat.name === 'Beverages'),
+      snacks: categories.find(cat => cat.name === 'Snacks'),
+      household: categories.find(cat => cat.name === 'Household Items'),
+    };
 
     const foods = [
       {
@@ -465,6 +582,8 @@ const seedFoods = async () => {
       const baseName = r.name;
       const rId = r._id;
       const isPharmacy = Array.isArray(r.categories) && pharmaciesCat && r.categories.some(c => String(c) === String(pharmaciesCat._id));
+      const isGrocery = Array.isArray(r.categories) && groceryRoot && r.categories.some(c => String(c) === String(groceryRoot._id));
+      const isMarkets = Array.isArray(r.categories) && marketsRoot && r.categories.some(c => String(c) === String(marketsRoot._id));
 
       if (isPharmacy) {
         // Pharmacy products: assign category to one of pharmacy subcategories that the pharmacy belongs to
@@ -479,14 +598,80 @@ const seedFoods = async () => {
           makeFood({ name: `${baseName} Skin Cleanser`, nameAr: `${r.nameAr ?? baseName} منظف بشرة`, image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400', price: 45, ...common, tags: ['personal-care'] }),
         ];
         for (const f of items) await ensureFood(f);
-      } else {
-        // Regular restaurant foods
-        const common = { restaurant: rId, category: foodCategory?._id };
+      } else if (isGrocery) {
+        // Grocery products: pick one of the grocery subcategories the store belongs to
+        const gOwned = [grocerySubcats.fruitsVeg, grocerySubcats.dairyEggs, grocerySubcats.meatPoultry, grocerySubcats.bakery, grocerySubcats.beverages, grocerySubcats.snacks]
+          .filter(Boolean)
+          .filter(cat => r.categories.some(c => String(c) === String(cat._id)));
+        const pickCat = (gOwned[0] || grocerySubcats.fruitsVeg || grocerySubcats.dairyEggs || grocerySubcats.meatPoultry || grocerySubcats.bakery || grocerySubcats.beverages || grocerySubcats.snacks)?._id;
+        const common = { restaurant: rId, category: pickCat };
         const items = [
-          makeFood({ name: `${baseName} Special 1`, nameAr: `${r.nameAr ?? baseName} خاص 1`, image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400', ...common }),
-          makeFood({ name: `${baseName} Special 2`, nameAr: `${r.nameAr ?? baseName} خاص 2`, image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400', ...common }),
-          makeFood({ name: `${baseName} Combo`, nameAr: `${r.nameAr ?? baseName} كومبو`, image: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400', ...common }),
-          makeFood({ name: `${baseName} Classic`, nameAr: `${r.nameAr ?? baseName} كلاسيك`, image: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=400', ...common }),
+          makeFood({ name: `${baseName} Apples 1kg`, nameAr: `${r.nameAr ?? baseName} تفاح 1كجم`, image: 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400', price: 12, ...common, tags: ['fruits'] }),
+          makeFood({ name: `${baseName} Fresh Milk 1L`, nameAr: `${r.nameAr ?? baseName} حليب طازج 1 لتر`, image: 'https://images.unsplash.com/photo-1550581190-9c1c48d21d6c?w=400', price: 9, ...common, tags: ['dairy'] }),
+          makeFood({ name: `${baseName} Brown Bread`, nameAr: `${r.nameAr ?? baseName} خبز بني`, image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=400', price: 7, ...common, tags: ['bakery'] }),
+          makeFood({ name: `${baseName} Orange Juice 1L`, nameAr: `${r.nameAr ?? baseName} عصير برتقال 1 لتر`, image: 'https://images.unsplash.com/photo-1571070243306-30c8a3cfa4b6?w=400', price: 10, ...common, tags: ['beverages'] }),
+          makeFood({ name: `${baseName} Chips Family Pack`, nameAr: `${r.nameAr ?? baseName} شيبس عائلي`, image: 'https://images.unsplash.com/photo-1604908177224-6efc0fb4bcb2?w=400', price: 8, ...common, tags: ['snacks'] }),
+        ];
+        for (const f of items) await ensureFood(f);
+      } else if (isMarkets) {
+        // Markets products: pick one of the markets subcategories the store belongs to
+        const mOwned = [marketsSubcats.freshProduce, marketsSubcats.organicProducts, marketsSubcats.beverages, marketsSubcats.snacks, marketsSubcats.household]
+          .filter(Boolean)
+          .filter(cat => r.categories.some(c => String(c) === String(cat._id)));
+        const pickCat = (mOwned[0] || marketsSubcats.freshProduce || marketsSubcats.organicProducts || marketsSubcats.beverages || marketsSubcats.snacks || marketsSubcats.household)?._id;
+        const common = { restaurant: rId, category: pickCat };
+        const items = [
+          makeFood({ name: `${baseName} Organic Tomatoes 1kg`, nameAr: `${r.nameAr ?? baseName} طماطم عضوية 1كجم`, image: 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400', price: 14, ...common, tags: ['fresh-produce'] }),
+          makeFood({ name: `${baseName} Eco Dish Soap`, nameAr: `${r.nameAr ?? baseName} سائل جلي صديق للبيئة`, image: 'https://images.unsplash.com/photo-1601460011310-30c9b82a90b9?w=400', price: 18, ...common, tags: ['household'] }),
+          makeFood({ name: `${baseName} Sparkling Water 6x`, nameAr: `${r.nameAr ?? baseName} مياه غازية 6 عبوات`, image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400', price: 16, ...common, tags: ['beverages'] }),
+          makeFood({ name: `${baseName} Mixed Nuts 250g`, nameAr: `${r.nameAr ?? baseName} مكسرات مشكلة 250جم`, image: 'https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=400', price: 22, ...common, tags: ['snacks'] }),
+        ];
+        for (const f of items) await ensureFood(f);
+      } else {
+        // Regular restaurant foods (Food root): seed 3-4 items per tab via tags
+        const common = { restaurant: rId, category: foodCategory?._id };
+
+        const soupItems = [
+          makeFood({ name: `${baseName} Tomato Soup`, nameAr: `${r.nameAr ?? baseName} شوربة طماطم`, image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400', price: 25, ...common, tags: ['soup'] }),
+          makeFood({ name: `${baseName} Chicken Soup`, nameAr: `${r.nameAr ?? baseName} شوربة دجاج`, image: 'https://images.unsplash.com/photo-1516100882582-96c3a05fe590?w=400', price: 28, ...common, tags: ['soup'] }),
+          makeFood({ name: `${baseName} Mushroom Cream Soup`, nameAr: `${r.nameAr ?? baseName} شوربة كريمة الفطر`, image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400', price: 30, ...common, tags: ['soup'] }),
+        ];
+
+        const appItems = [
+          makeFood({ name: `${baseName} Spring Rolls`, nameAr: `${r.nameAr ?? baseName} سبرنج رولز`, image: 'https://images.unsplash.com/photo-1526318472351-c75fcf070305?w=400', price: 32, ...common, tags: ['appetizers'] }),
+          makeFood({ name: `${baseName} Garlic Bread`, nameAr: `${r.nameAr ?? baseName} خبز بالثوم`, image: 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=400', price: 20, ...common, tags: ['appetizers'] }),
+          makeFood({ name: `${baseName} Fried Calamari`, nameAr: `${r.nameAr ?? baseName} حلقات كالماري`, image: 'https://images.unsplash.com/photo-1604908176997-4312f9b1b175?w=400', price: 45, ...common, tags: ['appetizers'] }),
+        ];
+
+        const pastaItems = [
+          makeFood({ name: `${baseName} Alfredo Pasta`, nameAr: `${r.nameAr ?? baseName} مكرونة ألفريدو`, image: 'https://images.unsplash.com/photo-1523986371872-9d3ba2e2f642?w=400', price: 55, ...common, tags: ['pasta'] }),
+          makeFood({ name: `${baseName} Arrabbiata Pasta`, nameAr: `${r.nameAr ?? baseName} مكرونة أرابياتا`, image: 'https://images.unsplash.com/photo-1481931715705-36f3f9a2d626?w=400', price: 48, ...common, tags: ['pasta'] }),
+          makeFood({ name: `${baseName} Bolognese Pasta`, nameAr: `${r.nameAr ?? baseName} مكرونة بولونيز`, image: 'https://images.unsplash.com/photo-1543352632-5a1d6f2c6f58?w=400', price: 52, ...common, tags: ['pasta'] }),
+        ];
+
+        const drinkItems = [
+          makeFood({ name: `${baseName} Lemonade`, nameAr: `${r.nameAr ?? baseName} ليمونادة`, image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400', price: 18, ...common, tags: ['drinks'] }),
+          makeFood({ name: `${baseName} Iced Tea`, nameAr: `${r.nameAr ?? baseName} شاي مثلج`, image: 'https://images.unsplash.com/photo-1527169402691-feff5539e52c?w=400', price: 16, ...common, tags: ['drinks'] }),
+          makeFood({ name: `${baseName} Orange Juice`, nameAr: `${r.nameAr ?? baseName} عصير برتقال`, image: 'https://images.unsplash.com/photo-1542444459-db63c7c0d8e9?w=400', price: 20, ...common, tags: ['drinks'] }),
+        ];
+
+        const trending = [
+          makeFood({ name: `${baseName} Special 1`, nameAr: `${r.nameAr ?? baseName} خاص 1`, image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400', price: 40, ...common, isPopular: true }),
+          makeFood({ name: `${baseName} Special 2`, nameAr: `${r.nameAr ?? baseName} خاص 2`, image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400', price: 45, ...common, isBestSelling: true }),
+        ];
+
+        const general = [
+          makeFood({ name: `${baseName} Combo`, nameAr: `${r.nameAr ?? baseName} كومبو`, image: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400', price: 60, ...common }),
+          makeFood({ name: `${baseName} Classic`, nameAr: `${r.nameAr ?? baseName} كلاسيك`, image: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=400', price: 35, ...common }),
+        ];
+
+        const items = [
+          ...soupItems,
+          ...appItems,
+          ...pastaItems,
+          ...drinkItems,
+          ...trending,
+          ...general,
         ];
         for (const f of items) await ensureFood(f);
       }

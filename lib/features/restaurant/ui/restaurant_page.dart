@@ -1,12 +1,16 @@
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:deliva_eat/core/widgets/mobile_only_layout.dart';
-import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
+import 'package:deliva_eat/core/network/api_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dio/dio.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 
 class RestaurantHomePage extends StatefulWidget {
-  const RestaurantHomePage({super.key});
+  const RestaurantHomePage({super.key, required this.restaurantId, required this.restaurantName});
+
+  final String restaurantId;
+  final String restaurantName;
 
   @override
   State<RestaurantHomePage> createState() => _RestaurantHomePageState();
@@ -14,6 +18,18 @@ class RestaurantHomePage extends StatefulWidget {
 
 class _RestaurantHomePageState extends State<RestaurantHomePage> {
   bool _isFavorite = false;
+  bool _loading = true;
+  String? _error;
+
+  // API
+  late final Dio _dio;
+  Map<String, dynamic>? _restaurant; // details
+  List<String> _tabs = [];
+  List<String> _badges = [];
+
+  // Items per active tab
+  String selectedCategory = '';
+  final Map<String, List<Map<String, dynamic>>> _itemsByTab = {};
 
   void _toggleFavorite() {
     setState(() {
@@ -21,62 +37,161 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
     });
   }
 
-  // هذا الموديل لا يؤثر على التصميم
-  final RestaurantModel restaurant = RestaurantModel(
-    id: 'static_id',
-    name: 'DelivaEat Restaurant',
-    nameAr: 'مطعم ديليفا إيت',
-    description: 'A delicious restaurant serving various cuisines',
-    descriptionAr: 'مطعم لذيذ يقدم مجموعة متنوعة من المأكلات',
-    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400',
-    coverImage:
-        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
-    rating: 4.5,
-    reviewCount: 100,
-    deliveryTime: '30-45 min',
-    deliveryFee: 5.0,
-    minimumOrder: 20.0,
-    isOpen: true,
-    isActive: true,
-    isFavorite: false,
-    isTopRated: true,
-    address: '123 Main St',
-    phone: '+1234567890',
-  );
-
   late final ScrollController _scrollController;
-  late List<String> _categories;
   final Map<String, GlobalKey> _categoryKeys = {};
-  late String selectedCategory;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    _dio = Dio(BaseOptions(
+      baseUrl: ApiConstant.baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 20),
+    ));
   }
+
+  bool _didFetch = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final l10n = AppLocalizations.of(context)!;
-    _categories = [
-      l10n.categoryTrending,
-      l10n.categoryFree,
-      l10n.categorySoup,
-      l10n.categoryAppetizers,
-      l10n.categoryPasta,
-      l10n.categoryDrinks,
-    ];
-    selectedCategory = _categories.first;
-    for (final category in _categories) {
-      _categoryKeys[category] = GlobalKey();
+    if (!_didFetch) {
+      _didFetch = true;
+      _fetchDetails();
     }
+  }
+
+  Future<void> _fetchDetails() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final lang = Localizations.localeOf(context).languageCode;
+      final res = await _dio.get(
+        'home/restaurant/details',
+        queryParameters: {
+          'restaurantId': widget.restaurantId,
+          'lang': lang,
+        },
+      );
+      final data = (res.data?['data'] ?? {}) as Map<String, dynamic>;
+      _restaurant = data['restaurant'] as Map<String, dynamic>?;
+      final List tabsRaw = (data['tabs'] ?? []) as List;
+      _tabs = tabsRaw.map((e) => e.toString()).toList();
+      final List badgesRaw = (data['badges'] ?? []) as List;
+      _badges = badgesRaw.map((e) => e.toString().toLowerCase()).toList();
+
+      // Localize default two tabs
+      final l10n = AppLocalizations.of(context)!;
+      final localizedTrending = l10n.categoryTrending;
+      final localizedFree = l10n.categoryFree;
+      // Ensure Trending/Free first
+      _tabs.removeWhere((t) => t.toLowerCase() == 'trending' || t.toLowerCase() == 'free');
+      // Localize known Food tabs coming from API (Soup, Appetizers, Pasta, Drinks)
+      final localizedRest = _tabs.map((t) {
+        final tl = t.toLowerCase();
+        if (tl == 'soup') return l10n.categorySoup;
+        if (tl == 'appetizers') return l10n.categoryAppetizers;
+        if (tl == 'pasta') return l10n.categoryPasta;
+        if (tl == 'drinks') return l10n.categoryDrinks;
+        return t; // keep original for other types
+      }).toList();
+      _tabs = [localizedTrending, localizedFree, ...localizedRest];
+
+      // Guard: if API returned empty tabs, use sensible defaults
+      if (_tabs.isEmpty) {
+        _tabs = [
+          localizedTrending,
+          localizedFree,
+          l10n.categorySoup,
+          l10n.categoryAppetizers,
+          l10n.categoryPasta,
+          l10n.categoryDrinks,
+        ];
+      }
+
+      // Build keys
+      _categoryKeys.clear();
+      for (final t in _tabs) {
+        _categoryKeys[t] = GlobalKey();
+      }
+      if (_tabs.isNotEmpty) {
+        selectedCategory = _tabs.first;
+        await _fetchItemsForTab(selectedCategory);
+      }
+    } catch (e) {
+      // Fallback: show default tabs so UI works even if API failed (e.g., device cannot reach server)
+      final l10n = AppLocalizations.of(context)!;
+      _error = l10n.failedToLoadRestaurants;
+      _tabs = [
+        l10n.categoryTrending,
+        l10n.categoryFree,
+        l10n.categorySoup,
+        l10n.categoryAppetizers,
+        l10n.categoryPasta,
+        l10n.categoryDrinks,
+      ];
+      _categoryKeys.clear();
+      for (final t in _tabs) {
+        _categoryKeys[t] = GlobalKey();
+      }
+      selectedCategory = _tabs.first;
+      await _fetchItemsForTab(selectedCategory);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _fetchItemsForTab(String tab) async {
+    final lang = Localizations.localeOf(context).languageCode;
+    try {
+      final apiTab = _mapDisplayTabToApi(tab);
+      final res = await _dio.get(
+        'home/foods/by-restaurant',
+        queryParameters: {
+          'restaurantId': widget.restaurantId,
+          'tab': apiTab,
+          'lang': lang,
+          'limit': 50,
+        },
+      );
+      final List list = (res.data?['data'] ?? []) as List;
+      _itemsByTab[tab] = list.cast<Map<String, dynamic>>();
+      if (mounted) setState(() {});
+    } catch (_) {
+      _itemsByTab[tab] = [];
+    }
+  }
+
+  String _mapDisplayTabToApi(String tab) {
+    final t = tab.toLowerCase();
+    final l10n = AppLocalizations.of(context)!;
+    if (t == l10n.categoryTrending.toLowerCase()) return 'Trending';
+    if (t == l10n.categoryFree.toLowerCase()) return 'Free';
+    if (t == l10n.categorySoup.toLowerCase()) return 'Soup';
+    if (t == l10n.categoryAppetizers.toLowerCase()) return 'Appetizers';
+    if (t == l10n.categoryPasta.toLowerCase()) return 'Pasta';
+    if (t == l10n.categoryDrinks.toLowerCase()) return 'Drinks';
+    return tab; // fallback uses same label (Pharmacy/Grocery/Markets subcats)
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  String _formatPrice(dynamic value) {
+    try {
+      if (value == null) return '';
+      final numVal = value is num ? value.toDouble() : double.tryParse(value.toString()) ?? 0.0;
+      // Adjust currency label if needed
+      return 'EGP ${numVal.toStringAsFixed(numVal % 1 == 0 ? 0 : 2)}';
+    } catch (_) {
+      return '';
+    }
   }
 
   @override
@@ -92,19 +207,22 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
           padding: EdgeInsets.zero,
           children: [
             // --- الجزء الأول: الهيدر (صورة + لوجو) ---
+            if (_loading)
+              const Center(child: CircularProgressIndicator())
+            else
             Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.center,
               children: [
-                // الخلفية
+                // الخلفية: صورة الغلاف من المطعم
                 Container(
                   height: 280.h,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(
-                        'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800',
+                        (_restaurant?['coverImage'] ?? _restaurant?['image'] ?? 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800') as String,
                       ),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -143,39 +261,26 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
                     onPressed: _toggleFavorite,
                   ),
                 ),
-                // اللوجو
+                // اللوجو (بدل الشارة الحمراء)
                 Positioned(
                   top: 90.h,
                   child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 12.h,
-                    ),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.error,
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          '木',
-                          style: Theme.of(context).textTheme.headlineLarge
-                              ?.copyWith(color: Colors.white, fontSize: 16.sp),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          l10n.restaurantName,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(color: Colors.white, height: 1),
-                        ),
-                        // SizedBox(height: 2.h),
-                        Text(
-                          l10n.restaurantTagline,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: Colors.white, letterSpacing: 1),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.25),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
                         ),
                       ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 36.r,
+                      backgroundColor: Colors.white,
+                      backgroundImage: NetworkImage(
+                        (_restaurant?['image'] ?? 'https://placehold.co/160x160/png?text=Logo') as String,
+                      ),
                     ),
                   ),
                 ),
@@ -310,7 +415,7 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
                         padding: EdgeInsets.symmetric(horizontal: 10.w),
                         children: [
                           Icon(Icons.menu, size: 24.sp),
-                          ..._categories
+                          ..._tabs
                               .map((category) => _buildCategoryTab(category))
                               .toList(),
                         ],
@@ -320,7 +425,7 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
 
                   // قائمة الطعام (Food Items) - Sections for each category
                   Column(
-                    children: _categories.map((category) {
+                    children: _tabs.map((category) {
                       return Container(
                         key: _categoryKeys[category],
                         padding: EdgeInsets.all(16.w),
@@ -332,40 +437,22 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
                               style: Theme.of(context).textTheme.headlineSmall,
                             ),
                             SizedBox(height: 16.h),
-                            _buildFoodItem(
-                              l10n.foodChickenSchezwanFriedRice,
-                              l10n.foodChickenSchezwanFriedRiceDesc,
-                              l10n.foodChickenSchezwanFriedRicePrice,
-                              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
-                            ),
-                            SizedBox(height: 16.h),
-                            _buildFoodItem(
-                              l10n.foodChickenSchezwanFriedRice,
-                              l10n.foodChickenSchezwanFriedRiceDesc,
-                              l10n.foodChickenSchezwanFriedRicePrice,
-                              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
-                            ),
-                            SizedBox(height: 16.h),
-                            _buildFoodItem(
-                              l10n.foodChickenSchezwanFriedRice,
-                              l10n.foodChickenSchezwanFriedRiceDesc,
-                              l10n.foodChickenSchezwanFriedRicePrice,
-                              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
-                            ),
-                            SizedBox(height: 16.h),
-                            _buildFoodItem(
-                              l10n.foodChickenSchezwanFriedRice,
-                              l10n.foodChickenSchezwanFriedRiceDesc,
-                              l10n.foodChickenSchezwanFriedRicePrice,
-                              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
-                            ),
-                            SizedBox(height: 16.h),
-                            _buildFoodItem(
-                              l10n.foodChickenSchezwanFriedRice,
-                              l10n.foodChickenSchezwanFriedRiceDesc,
-                              l10n.foodChickenSchezwanFriedRicePrice,
-                              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400',
-                            ),
+                            ...(_itemsByTab[category] ?? [])
+                                .map((item) => Padding(
+                                      padding: EdgeInsets.only(bottom: 16.h),
+                                      child: _buildFoodItem(
+                                        (item['nameAr'] ?? item['name'] ?? '').toString(),
+                                        (item['descriptionAr'] ?? item['description'] ?? '').toString(),
+                                        _formatPrice(item['price']),
+                                        (item['image'] ?? '').toString(),
+                                      ),
+                                    ))
+                                .toList(),
+                            if ((_itemsByTab[category] ?? []).isEmpty)
+                              Text(
+                                _error == null ? 'لا توجد بيانات' : l10n.failedToLoadRestaurants,
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                              ),
                           ],
                         ),
                       );
@@ -388,6 +475,9 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
         setState(() {
           selectedCategory = title;
         });
+        if (!_itemsByTab.containsKey(title)) {
+          _fetchItemsForTab(title);
+        }
         Scrollable.ensureVisible(
           _categoryKeys[title]!.currentContext!,
           duration: const Duration(milliseconds: 500),

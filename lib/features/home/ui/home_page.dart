@@ -306,10 +306,27 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
   
   void _handleRestaurantTap(String name, int index) {
     HapticFeedback.lightImpact();
+    final state = context.read<HomeCubit>().state;
+    if (state is HomeSuccess) {
+      if (index >= 0 && index < state.favoriteRestaurants.length) {
+        final r = state.favoriteRestaurants[index];
+        final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+        final displayName = isArabic ? r.nameAr : r.name;
+        // Navigate to RestaurantHomePage
+        context.push(
+          AppRoutes.restaurantPage,
+          extra: {
+            'restaurantId': r.id,
+            'restaurantName': displayName,
+          },
+        );
+        return;
+      }
+    }
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم اختيار مطعم: $name')));
   }
-
-  // ADDED: Handler for toggling restaurant favorite status
+  
+  // Handler for toggling restaurant favorite status (used by Favorite and Top Rated lists)
   void _handleToggleFavorite(String restaurantId) {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     context.read<HomeCubit>().toggleFavorite(
@@ -317,7 +334,6 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       lang: isArabic ? 'ar' : 'en',
     );
   }
-
   // ADDED: Handler for toggling food favorite status
   void _handleToggleFoodFavorite(String foodId) {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
@@ -328,11 +344,37 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
   }
 
   void _handleRestaurantDetailTap(Map<String, dynamic> restaurant, int index) {
-    _openRestaurantMenu(restaurant);
+    // Open RestaurantHomePage instead of menu page
+    final id = (restaurant['id'] ?? '').toString();
+    final name = (restaurant['name'] ?? '').toString();
+    if (id.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('معرف المطعم غير متوفر')));
+      return;
+    }
+    context.push(
+      AppRoutes.restaurantPage,
+      extra: {
+        'restaurantId': id,
+        'restaurantName': name.isEmpty ? 'المطعم' : name,
+      },
+    );
   }
 
   void _handleViewMenu(Map<String, dynamic> restaurant) {
-    _openRestaurantMenu(restaurant);
+    // Also open RestaurantHomePage for consistency
+    final id = (restaurant['id'] ?? '').toString();
+    final name = (restaurant['name'] ?? '').toString();
+    if (id.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('معرف المطعم غير متوفر')));
+      return;
+    }
+    context.push(
+      AppRoutes.restaurantPage,
+      extra: {
+        'restaurantId': id,
+        'restaurantName': name.isEmpty ? 'المطعم' : name,
+      },
+    );
   }
 
   void _handleSeeAll(String section) {

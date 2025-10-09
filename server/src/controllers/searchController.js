@@ -134,9 +134,15 @@ const globalSearch = async (req, res) => {
         let catVal = category;
         const isHex24 = typeof catVal === 'string' && /^[0-9a-fA-F]{24}$/.test(catVal);
         let pharmRoot = null;
+        let groceryRoot = null;
+        let marketsRoot = null;
         if (isHex24) {
           const c = await Category.findById(catVal).select('name nameAr').lean();
-          if (c && (c.name === 'Pharmacies' || c.nameAr === 'صيدليات')) pharmRoot = c;
+          if (c) {
+            if (c.name === 'Pharmacies' || c.nameAr === 'صيدليات') pharmRoot = c;
+            if (c.name === 'Grocery' || c.nameAr === 'بقالة') groceryRoot = c;
+            if (c.name === 'Markets' || c.nameAr === 'أسواق') marketsRoot = c;
+          }
         } else {
           const byName = await Category.findOne({
             $or: [
@@ -147,17 +153,31 @@ const globalSearch = async (req, res) => {
           if (byName) {
             catVal = String(byName._id);
             if (byName.name === 'Pharmacies' || byName.nameAr === 'صيدليات') pharmRoot = byName;
+            if (byName.name === 'Grocery' || byName.nameAr === 'بقالة') groceryRoot = byName;
+            if (byName.name === 'Markets' || byName.nameAr === 'أسواق') marketsRoot = byName;
           }
         }
 
-        if (pharmRoot) {
+        if (pharmRoot || groceryRoot || marketsRoot) {
           // expand to pharmacy subcategories (EN + AR) and include both name and nameAr fields
-          const pharmSubNamesEN = ['Medicines','Supplements','Personal Care','Cosmetics','Mother & Baby Care','Medical Equipment'];
-          const pharmSubNamesAR = ['أدوية','مكملات','العناية الشخصية','مستحضرات تجميل','العناية بالأم والطفل','الأدوات الطبية'];
+          const namesEN = [];
+          const namesAR = [];
+          if (pharmRoot) {
+            namesEN.push('Medicines','Supplements','Personal Care','Cosmetics','Mother & Baby Care','Medical Equipment');
+            namesAR.push('أدوية','مكملات','العناية الشخصية','مستحضرات تجميل','العناية بالأم والطفل','الأدوات الطبية');
+          }
+          if (groceryRoot) {
+            namesEN.push('Fruits & Vegetables','Dairy & Eggs','Meat & Poultry','Bakery','Beverages','Snacks');
+            namesAR.push('فواكه وخضروات','ألبان وبيض','لحوم ودواجن','مخبوزات','مشروبات','سناكس');
+          }
+          if (marketsRoot) {
+            namesEN.push('Fresh Produce','Organic Products','Beverages','Snacks','Household Items');
+            namesAR.push('منتجات طازجة','منتجات عضوية','مشروبات','سناكس','منتجات منزلية');
+          }
           const subcats = await Category.find({
             $or: [
-              { name: { $in: pharmSubNamesEN } },
-              { nameAr: { $in: pharmSubNamesAR } },
+              { name: { $in: namesEN } },
+              { nameAr: { $in: namesAR } },
             ],
           }).select('_id').lean();
           const ids = subcats.map(s => s._id);

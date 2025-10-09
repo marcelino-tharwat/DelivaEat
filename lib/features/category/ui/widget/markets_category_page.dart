@@ -153,12 +153,14 @@ class _MarketsCategoriesPageState extends State<MarketsCategoriesPage> {
           'limit': 50,
           'lang': lang,
           'sort': 'topRated',
+          'random': 'true',
         },
       );
       final List data = (res.data?['data'] ?? []) as List;
       final list = data
           .map((e) => _mapApiToRestaurant(e as Map<String, dynamic>))
           .toList();
+      list.shuffle();
       _restaurantsByCategory[categoryId] = list;
     } catch (e) {
       String message = AppLocalizations.of(context)!.failedToLoadCategoryRestaurants;
@@ -199,6 +201,17 @@ class _MarketsCategoriesPageState extends State<MarketsCategoriesPage> {
         }
       }
     } catch (_) {}
+  }
+
+  String? _resolveRootIdForMarkets() {
+    // Try to find a root category id for Markets by name (en/ar)
+    for (final entry in _categoryNameToId.entries) {
+      final k = entry.key.toLowerCase();
+      if (k.contains('market') || k.contains('ماركت') || entry.key == 'أسواق') {
+        return entry.value;
+      }
+    }
+    return null;
   }
 
   void _updateLocalCategoryFromBackendId(String backendId) {
@@ -290,9 +303,10 @@ class _MarketsCategoriesPageState extends State<MarketsCategoriesPage> {
       errorMessage: _error,
       onCategorySelected: _handleCategoryTap,
       onSearchTap: () {
+        final rootId = _resolveRootIdForMarkets() ?? _selectedBackendCategoryId;
         context.push(AppRoutes.searchPage, extra: {
-          'categoryId': 'markets',
-          'type': 'all',
+          'categoryId': rootId,
+          'type': 'restaurants',
           'categoryType': 'markets',
         });
       },

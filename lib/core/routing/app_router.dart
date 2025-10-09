@@ -176,7 +176,13 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.restaurantPage,
           builder: (BuildContext context, GoRouterState state) {
-            return const RestaurantHomePage();
+            final data = state.extra as Map<String, dynamic>?;
+            final String restaurantId = (data?['restaurantId'] ?? '').toString();
+            final String restaurantName = (data?['restaurantName'] ?? '').toString();
+            return RestaurantHomePage(
+              restaurantId: restaurantId,
+              restaurantName: restaurantName.isEmpty ? 'المطعم' : restaurantName,
+            );
           },
         ),
       ],
