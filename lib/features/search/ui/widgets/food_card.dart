@@ -22,11 +22,14 @@ class FoodCard extends StatelessWidget {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final displayName = isArabic ? food.nameAr : food.name;
     final hasDiscount =
-        food.originalPrice != null && food.price != null && food.originalPrice! > food.price!.toInt();
+        food.originalPrice != null &&
+        food.price != null &&
+        food.originalPrice! > food.price!.toInt();
 
     return Container(
-      width: 150.w,
-      margin: EdgeInsets.only(left: 12.w),
+      width: 180.w,
+      // height: 300.h,
+      // margin: EdgeInsets.only(left: 12.w),
       child: Card(
         elevation: 6,
         shadowColor: colors.shadowColor.withOpacity(0.2),
@@ -67,8 +70,12 @@ class FoodCard extends StatelessWidget {
                           ),
                           child: Center(
                             child: Icon(
-                              isPharmacyMode ? Icons.local_pharmacy : Icons.restaurant,
-                              color: isPharmacyMode ? Colors.blueAccent : colors.hintColor,
+                              isPharmacyMode
+                                  ? Icons.local_pharmacy
+                                  : Icons.restaurant,
+                              color: isPharmacyMode
+                                  ? Colors.blueAccent
+                                  : colors.hintColor,
                               size: 36,
                             ),
                           ),
@@ -140,7 +147,9 @@ class FoodCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                food.price != null ? "${food.price} ${l10n.riyal}" : l10n.notSpecified,
+                                food.price != null
+                                    ? "${food.price} ${l10n.riyal}"
+                                    : l10n.notSpecified,
                                 style: TextStyle(
                                   color: colors.primaryColor,
                                   fontWeight: FontWeight.bold,

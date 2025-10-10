@@ -30,7 +30,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const FoodOrderPage();
+        return const HomePageWrapper();
         //  BlocProvider(
         //   create: (context) => getIt<LoginCubit>(),
         //   child: LoginPage(),

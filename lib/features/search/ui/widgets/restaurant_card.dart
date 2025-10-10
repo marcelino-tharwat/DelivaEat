@@ -6,10 +6,7 @@ import 'package:deliva_eat/l10n/app_localizations.dart';
 class RestaurantCard extends StatelessWidget {
   final RestaurantModel restaurant;
 
-  const RestaurantCard({
-    super.key,
-    required this.restaurant,
-  });
+  const RestaurantCard({super.key, required this.restaurant});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +17,7 @@ class RestaurantCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(vertical: 4.h),
+      // margin: EdgeInsets.symmetric(vertical: 0.h),
       child: Card(
         elevation: 6,
         shadowColor: colors.shadowColor.withOpacity(0.2),

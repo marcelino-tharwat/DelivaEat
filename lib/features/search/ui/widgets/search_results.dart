@@ -29,21 +29,24 @@ class SearchResults extends StatelessWidget {
       onRefresh: () async => onRefresh(),
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          padding: EdgeInsets.symmetric(horizontal: 1.w, vertical: 8.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // عرض المطاعم مع منتجاتها
               if (state.restaurants.isNotEmpty) ...[
-                SectionHeader(
-                  title: categoryType == 'pharmacies'
-                      ? AppLocalizations.of(context)!.pharmacies
-                      : categoryType == 'grocery'
-                          ? AppLocalizations.of(context)!.categoryGrocery
-                          : categoryType == 'markets'
-                              ? AppLocalizations.of(context)!.categoryMarkets
-                              : AppLocalizations.of(context)!.restaurants,
-                  count: state.restaurants.length,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: SectionHeader(
+                    title: categoryType == 'pharmacies'
+                        ? AppLocalizations.of(context)!.pharmacies
+                        : categoryType == 'grocery'
+                        ? AppLocalizations.of(context)!.categoryGrocery
+                        : categoryType == 'markets'
+                        ? AppLocalizations.of(context)!.categoryMarkets
+                        : AppLocalizations.of(context)!.restaurants,
+                    count: state.restaurants.length,
+                  ),
                 ),
                 SizedBox(height: 16.h),
                 ...state.restaurants.map(
@@ -126,36 +129,41 @@ class SearchResults extends StatelessWidget {
 
         // منتجات المطعم إذا وُجدت
         if (restaurantFoods.isNotEmpty) ...[
-          SizedBox(height: 12.h),
+          SizedBox(height: 8.h),
           Padding(
-            padding: EdgeInsets.only(right: 16.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Text(
               AppLocalizations.of(
                 context,
               )!.restaurantProducts(restaurant.nameAr),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
           SizedBox(height: 8.h),
           _buildFoodHorizontalList(restaurantFoods, isPharmacyMode),
         ],
-        SizedBox(height: 16.h),
+        // SizedBox(height: 16.h),
       ],
     );
   }
 
   Widget _buildFoodHorizontalList(List<FoodModel> foods, bool isPharmacyMode) {
     return SizedBox(
-      height: 180.h,
+      height: 230.h,
+      width: double.infinity,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        padding: EdgeInsets.symmetric(horizontal: 5.w),
         itemCount: foods.length,
         itemBuilder: (context, index) {
-          return FoodCard(food: foods[index], index: index, isPharmacyMode: isPharmacyMode);
+          return FoodCard(
+            food: foods[index],
+            index: index,
+            isPharmacyMode: isPharmacyMode,
+          );
         },
       ),
     );
