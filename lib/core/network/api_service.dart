@@ -102,11 +102,13 @@ Future<dynamic> resetPassword(
     @Query('q') String query,
     @Query('lang') String lang,
     @Query('limit') int limit,
+    @Query('category') String? category,
   );
 
   @GET(ApiConstant.popularSearchesUrl)
   Future<PopularSearchesResponseModel> getPopularSearches(
     @Query('lang') String lang,
     @Query('limit') int limit,
+    @Query('category') String? category,
   );
 }

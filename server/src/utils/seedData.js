@@ -2,6 +2,7 @@ const Category = require('../models/Category');
 const Offer = require('../models/Offer');
 const Restaurant = require('../models/Restaurant');
 const Food = require('../models/Food');
+const Review = require('../models/Review');
 
 const seedCategories = async () => {
   try {
@@ -686,12 +687,34 @@ const seedFoods = async () => {
   }
 };
 
+const seedReviews = async () => {
+  try {
+    const count = await Review.countDocuments();
+    if (count > 0) return; // don't spam if already seeded
+    const foods = await Food.find().limit(3).select('_id restaurant name').lean();
+    const restaurants = await Restaurant.find().limit(3).select('_id name').lean();
+    const docs = [];
+    for (const f of foods) {
+      docs.push({ foodId: f._id, rating: 5, comment: `Amazing ${f.name}!`, userName: 'Ali' });
+      docs.push({ foodId: f._id, rating: 4, comment: 'Very good taste', userName: 'Sara' });
+    }
+    for (const r of restaurants) {
+      docs.push({ restaurantId: r._id, rating: 5, comment: `Great place: ${r.name}`, userName: 'Hassan' });
+    }
+    if (docs.length) await Review.insertMany(docs);
+    console.log('Reviews seeded successfully');
+  } catch (e) {
+    console.error('Error seeding reviews:', e);
+  }
+};
+
 const seedAllData = async () => {
   console.log('Starting data seeding...');
   await seedCategories();
   await seedOffers();
   await seedRestaurants();
   await seedFoods();
+  await seedReviews();
   console.log('Data seeding completed!');
 };
 
@@ -700,5 +723,6 @@ module.exports = {
   seedCategories,
   seedOffers,
   seedRestaurants,
-  seedFoods
+  seedFoods,
+  seedReviews
 };

@@ -2,9 +2,31 @@ import 'package:deliva_eat/core/widgets/app_button.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
+import 'package:deliva_eat/features/home/cubit/home_state.dart';
+import 'package:deliva_eat/features/home/data/models/food_model.dart';
+import 'package:dio/dio.dart';
+import 'package:deliva_eat/core/network/dio_factory.dart';
+import 'package:deliva_eat/core/network/api_constant.dart';
+import 'package:go_router/go_router.dart';
+import 'package:deliva_eat/core/routing/routes.dart';
 
 class FoodOrderPage extends StatefulWidget {
-  const FoodOrderPage({super.key});
+  final String foodId;
+  final String title;
+  final String image;
+  final String priceText;
+  final bool isFavorite;
+
+  const FoodOrderPage({
+    super.key,
+    this.foodId = '',
+    this.title = '',
+    this.image = '',
+    this.priceText = '',
+    this.isFavorite = false,
+  });
 
   @override
   State<FoodOrderPage> createState() => _FoodOrderPageState();
@@ -17,31 +39,123 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
   int basePrice = 30;
   int extraChickenPrice = 10;
   int colaPrice = 15;
+  int quantity = 1;
 
   int get totalPrice {
     int total = basePrice;
     if (extraChickenSelected) total += extraChickenPrice;
     if (colaSelected) total += colaPrice;
-    return total;
+    return total * (quantity < 1 ? 1 : quantity);
+  }
+
+  Future<void> _addToCart() async {
+    final lang = Localizations.localeOf(context).languageCode;
+    final dio = DioFactory.getDio();
+    final options = <Map<String, dynamic>>[];
+    if (extraChickenSelected) {
+      options.add({'code': 'extra_chicken', 'price': extraChickenPrice});
+    }
+    if (colaSelected) {
+      options.add({'code': 'cola', 'price': colaPrice});
+    }
+    final payload = {
+      'foodId': widget.foodId,
+      'quantity': quantity,
+      'options': options,
+    };
+    try {
+      final res = await dio.post(
+        ApiConstant.cartAddItemUrl,
+        data: payload,
+        queryParameters: {'lang': lang},
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }),
+      );
+      final ok = res.data is Map && (res.data['success'] == true);
+      if (ok) {
+        final isAr = Localizations.localeOf(context).languageCode == 'ar';
+        final msg = isAr ? 'تمت الإضافة إلى السلة' : 'Added to cart';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(msg)),
+        );
+      } else {
+        String err = 'failed add to cart';
+        if (res.data is Map && res.data['error'] is Map) {
+          err = (res.data['error']['message'] ?? err).toString();
+        }
+        throw Exception(err);
+      }
+    } catch (e) {
+      final isAr = Localizations.localeOf(context).languageCode == 'ar';
+      final msg = isAr ? 'فشل الإضافة إلى السلة' : 'Failed to add to cart';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    }
   }
 
   bool _isFavorite = false;
 
-  void _toggleFavorite() {
-    setState(() {
-      _isFavorite = !_isFavorite;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _isFavorite = widget.isFavorite;
+    // parse base price from incoming priceText if possible (e.g., 'EGP 40')
+    final digits = RegExp(r"[0-9]+(\.[0-9]+)?").firstMatch(widget.priceText);
+    if (digits != null) {
+      final p = double.tryParse(digits.group(0) ?? '');
+      if (p != null) basePrice = p.round();
+    }
+  }
 
-    // إزالة أي رسالة سابقة لمنع تراكمها
+  Future<void> _toggleFavorite() async {
+    final newVal = !_isFavorite;
+    setState(() => _isFavorite = newVal);
+
+    // propagate to global store + backend
+    final lang = Localizations.localeOf(context).languageCode;
+    bool ok = false;
+    try {
+      // Build a minimal base food model for global update
+      final base = FoodModel(
+        id: widget.foodId,
+        name: widget.title,
+        nameAr: widget.title,
+        description: null,
+        descriptionAr: null,
+        image: widget.image,
+        price: basePrice.toDouble(),
+        originalPrice: null,
+        rating: null,
+        reviewCount: null,
+        preparationTime: null,
+        isAvailable: true,
+        isPopular: false,
+        isBestSelling: false,
+        isFavorite: newVal,
+        restaurant: null,
+        ingredients: null,
+        allergens: null,
+        tags: null,
+      );
+      await context.read<HomeCubit>().toggleFoodFavorite(
+            foodId: widget.foodId,
+            lang: lang,
+            baseOverride: base,
+          );
+      ok = true;
+    } catch (_) {
+      // ignore; fallback: show snackbar only
+    }
+
+    // feedback
     ScaffoldMessenger.of(context).clearSnackBars();
-
-    // إظهار رسالة جديدة لتأكيد الإجراء
     final message = _isFavorite
         ? AppLocalizations.of(context)!.addedToFavorites
         : AppLocalizations.of(context)!.removedFromFavorites;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(message + (ok ? '' : '')), // silent if failed – state will reconcile later
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -66,10 +180,20 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
             left: 0,
             right: 0,
             child: Image.network(
-              'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800',
+              (widget.image.isNotEmpty
+                      ? widget.image
+                      : 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800'),
               width: double.infinity,
               height: 280.h,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: double.infinity,
+                  height: 280.h,
+                  color: Colors.grey.shade300,
+                  child: const Center(child: Icon(Icons.broken_image)),
+                );
+              },
             ),
           ),
 
@@ -105,16 +229,16 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // ... باقي المحتوى هنا ...
-                          // العنوان والسعر
+                          // العنوان والسعر + عداد الكمية
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               SizedBox(
                                 width: 250.w,
                                 child: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.foodChickenSchezwanFriedRice,
+                                  (widget.title.isNotEmpty
+                                      ? widget.title
+                                      : AppLocalizations.of(context)!.foodChickenSchezwanFriedRice),
                                   style: theme.textTheme.headlineSmall
                                       ?.copyWith(
                                         height: 1.3,
@@ -125,25 +249,66 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                                       ),
                                 ),
                               ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 6.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: theme.primaryColor.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(20.r),
-                                ),
-                                child: Text(
-                                  'EGP $basePrice',
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: theme.brightness == Brightness.light
-                                        ? Colors.black87
-                                        : Colors.white70,
+                              Row(
+                                children: [
+                                  // Quantity stepper
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: theme.cardColor,
+                                      borderRadius: BorderRadius.circular(20.r),
+                                      border: Border.all(color: Colors.grey.shade300),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.remove),
+                                          onPressed: () {
+                                            setState(() {
+                                              if (quantity > 1) quantity--;
+                                            });
+                                          },
+                                          constraints: const BoxConstraints(),
+                                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                          child: Text('$quantity', style: theme.textTheme.titleMedium),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.add),
+                                          onPressed: () {
+                                            setState(() {
+                                              quantity++;
+                                            });
+                                          },
+                                          constraints: const BoxConstraints(),
+                                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                  SizedBox(width: 8.w),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12.w,
+                                      vertical: 6.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: theme.primaryColor.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                    child: Text(
+                                      'EGP ${totalPrice}',
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.brightness == Brightness.light
+                                            ? Colors.black87
+                                            : Colors.white70,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -188,7 +353,12 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                               ),
                               const Spacer(),
                               TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  context.push(AppRoutes.reviewsPage, extra: {
+                                    'foodId': widget.foodId,
+                                    'title': widget.title,
+                                  });
+                                },
                                 child: Text(
                                   AppLocalizations.of(context)!.seeAllReviews,
                                   style: TextStyle(
@@ -264,7 +434,7 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
               color: Colors.white,
               padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 20.h),
               child: AppButton(
-                onPressed: () {},
+                onPressed: _addToCart,
                 text: AppLocalizations.of(
                   context,
                 )!.addToCart(totalPrice.toString()),

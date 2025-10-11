@@ -54,7 +54,7 @@ router.get('/', searchValidation, globalSearch);
 // @route   GET /api/search/suggestions
 // @desc    Get search suggestions/autocomplete
 // @access  Public
-// Query params: q, lang, limit
+// Query params: q, lang, limit, category
 router.get('/suggestions', [
   query('q')
     .optional()
@@ -68,13 +68,16 @@ router.get('/suggestions', [
   query('limit')
     .optional()
     .isInt({ min: 1, max: 10 })
-    .withMessage('Limit must be between 1 and 10')
+    .withMessage('Limit must be between 1 and 10'),
+  query('category')
+    .optional()
+    .isString()
 ], getSearchSuggestions);
 
 // @route   GET /api/search/popular
 // @desc    Get popular search terms
 // @access  Public
-// Query params: lang, limit
+// Query params: lang, limit, category
 router.get('/popular', [
   query('lang')
     .optional()
@@ -83,7 +86,10 @@ router.get('/popular', [
   query('limit')
     .optional()
     .isInt({ min: 1, max: 20 })
-    .withMessage('Limit must be between 1 and 20')
+    .withMessage('Limit must be between 1 and 20'),
+  query('category')
+    .optional()
+    .isString()
 ], getPopularSearches);
 
 module.exports = router;

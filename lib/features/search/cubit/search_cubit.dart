@@ -219,7 +219,6 @@ class SearchCubit extends Cubit<SearchState> {
       _isLoadingMore = false;
     }
   }
-
   // Optimized search suggestions
   Timer? _suggestionsTimer;
   final Map<String, List<SearchSuggestionModel>> _suggestionsCache = {};
@@ -229,6 +228,7 @@ class SearchCubit extends Cubit<SearchState> {
     String lang = 'ar',
     int limit = 5,
     Duration debounceTime = const Duration(milliseconds: 150),
+    String? category,
   }) {
     _suggestionsTimer?.cancel();
     
@@ -237,14 +237,14 @@ class SearchCubit extends Cubit<SearchState> {
       return;
     }
     
-    final cacheKey = '${query.toLowerCase()}_${lang}_$limit';
+    final cacheKey = '${query.toLowerCase()}_${lang}_${limit}_${category ?? ''}';
     if (_suggestionsCache.containsKey(cacheKey)) {
       emit(SearchSuggestionsSuccess(suggestions: _suggestionsCache[cacheKey]!));
       return;
     }
     
     _suggestionsTimer = Timer(debounceTime, () async {
-      await _fetchSuggestions(query: query, lang: lang, limit: limit);
+      await _fetchSuggestions(query: query, lang: lang, limit: limit, category: category);
     });
   }
 
@@ -252,24 +252,26 @@ class SearchCubit extends Cubit<SearchState> {
     required String query,
     String lang = 'ar',
     int limit = 5,
+    String? category,
   }) async {
     _suggestionsTimer?.cancel();
-    await _fetchSuggestions(query: query, lang: lang, limit: limit);
+    await _fetchSuggestions(query: query, lang: lang, limit: limit, category: category);
   }
 
   Future<void> _fetchSuggestions({
     required String query,
     String lang = 'ar',
     int limit = 5,
+    String? category,
   }) async {
     try {
       final queryTrimmed = query.trim();
       if (queryTrimmed.length < 2) {
-         emit(SearchSuggestionsSuccess(suggestions: []));
+        emit(SearchSuggestionsSuccess(suggestions: []));
         return;
       }
 
-      final cacheKey = '${queryTrimmed.toLowerCase()}_${lang}_$limit';
+      final cacheKey = '${queryTrimmed.toLowerCase()}_${lang}_${limit}_${category ?? ''}';
       if (_suggestionsCache.containsKey(cacheKey)) {
         emit(SearchSuggestionsSuccess(suggestions: _suggestionsCache[cacheKey]!));
         return;
@@ -277,7 +279,7 @@ class SearchCubit extends Cubit<SearchState> {
 
       emit(SearchSuggestionsLoading());
       
-      final result = await _searchRepo.getSearchSuggestions(query: queryTrimmed, lang: lang, limit: limit);
+      final result = await _searchRepo.getSearchSuggestions(query: queryTrimmed, lang: lang, limit: limit, category: category);
       
       result.either(
         (error) { // Left (Failure)
@@ -301,10 +303,11 @@ class SearchCubit extends Cubit<SearchState> {
   Future<void> getPopularSearches({
     String lang = 'ar',
     int limit = 10,
+    String? category,
   }) async {
     emit(PopularSearchesLoading());
     
-    final result = await _searchRepo.getPopularSearches(lang: lang, limit: limit);
+    final result = await _searchRepo.getPopularSearches(lang: lang, limit: limit, category: category);
     
     result.either(
       (error) { // Left (Failure)

@@ -56,13 +56,14 @@ class SearchRepo {
     required String query,
     String lang = 'ar',
     int limit = 5,
+    String? category,
   }) async {
     try {
-      final response = await _apiService.getSearchSuggestions(query, lang, limit);
+      final response = await _apiService.getSearchSuggestions(query, lang, limit, category);
       final data = response.data; // استخراج البيانات للتحقق منها
-      
+
       return Right(data);
-        } catch (error) {
+    } catch (error) {
       if (error is DioException) {
         return Left(ServerError.fromDioError(error));
       } else {
@@ -75,13 +76,14 @@ class SearchRepo {
   Future<Either<ApiErrorHandler, List<PopularSearchModel>>> getPopularSearches({
     String lang = 'ar',
     int limit = 10,
+    String? category,
   }) async {
     try {
-      final response = await _apiService.getPopularSearches(lang, limit);
+      final response = await _apiService.getPopularSearches(lang, limit, category);
       final data = response.data; // استخراج البيانات للتحقق منها
 
       return Right(data);
-        } catch (error) {
+    } catch (error) {
       if (error is DioException) {
         return Left(ServerError.fromDioError(error));
       } else {

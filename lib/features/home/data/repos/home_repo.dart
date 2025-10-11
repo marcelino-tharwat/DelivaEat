@@ -11,6 +11,7 @@ import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:deliva_eat/core/network/api_constant.dart';
 import 'package:dio/dio.dart'; // ستحتاج هذا للتعامل مع DioException
+import 'package:deliva_eat/core/network/dio_factory.dart';
 
 class HomeRepo {
   final ApiService _apiService;
@@ -132,9 +133,9 @@ class HomeRepo {
     String lang,
   ) async {
     try {
-      final dio = Dio();
+      final dio = DioFactory.getDio();
       final res = await dio.post(
-        ApiConstant.baseUrl + ApiConstant.toggleFavoriteUrl,
+        ApiConstant.toggleFavoriteUrl,
         data: { 'restaurantId': restaurantId },
         queryParameters: { 'lang': lang },
         options: Options(
@@ -168,9 +169,9 @@ class HomeRepo {
     String lang,
   ) async {
     try {
-      final dio = Dio();
+      final dio = DioFactory.getDio();
       final res = await dio.post(
-        ApiConstant.baseUrl + ApiConstant.toggleFoodFavoriteUrl,
+        ApiConstant.toggleFoodFavoriteUrl,
         data: { 'foodId': foodId },
         queryParameters: { 'lang': lang },
         options: Options(headers: {

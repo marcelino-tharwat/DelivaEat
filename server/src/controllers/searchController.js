@@ -248,11 +248,11 @@ const globalSearch = async (req, res) => {
 };
 
 // @desc    Search suggestions/autocomplete
-// @route   GET /api/search/suggestions?q=query&lang=ar&limit=5
+// @route   GET /api/search/suggestions?q=query&lang=ar&limit=5&category=<idOrName>
 // @access  Public
 const getSearchSuggestions = async (req, res) => {
   try {
-    const { q: query = '', lang = 'ar', limit = 5 } = req.query;
+    const { q: query = '', lang = 'ar', limit = 5, category = null } = req.query;
 
     if (!query.trim()) {
       return res.json({
@@ -264,10 +264,29 @@ const getSearchSuggestions = async (req, res) => {
     const searchRegex = new RegExp(`^${query}`, 'i');
     const limitNum = parseInt(limit);
 
+    // Build optional category filter
+    let catFilter = {};
+    if (category) {
+      let catVal = category;
+      const isHex24 = typeof catVal === 'string' && /^[0-9a-fA-F]{24}$/.test(catVal);
+      if (!isHex24) {
+        const byName = await Category.findOne({
+          $or: [
+            { name: { $regex: `^${String(catVal).trim()}$`, $options: 'i' } },
+            { nameAr: { $regex: `^${String(catVal).trim()}$`, $options: 'i' } },
+          ],
+        }).select('_id').lean();
+        if (byName) catVal = String(byName._id);
+      }
+      const catId = new mongoose.Types.ObjectId(String(catVal));
+      catFilter = { categories: catId };
+    }
+
     // Get restaurant suggestions
     const restaurantSuggestions = await Restaurant.find({
       isActive: true,
       isOpen: true,
+      ...(category ? catFilter : {}),
       $or: [
         { [`name${lang === 'ar' ? 'Ar' : ''}`]: searchRegex },
         { name: searchRegex },
@@ -281,6 +300,7 @@ const getSearchSuggestions = async (req, res) => {
     // Get food suggestions
     const foodSuggestions = await Food.find({
       isAvailable: true,
+      ...(category ? { category: catFilter.categories } : {}),
       $or: [
         { [`name${lang === 'ar' ? 'Ar' : ''}`]: searchRegex },
         { name: searchRegex },
@@ -326,15 +346,32 @@ const getSearchSuggestions = async (req, res) => {
 };
 
 // @desc    Get popular search terms
-// @route   GET /api/search/popular?lang=ar&limit=10
+// @route   GET /api/search/popular?lang=ar&limit=10&category=<idOrName>
 // @access  Public
 const getPopularSearches = async (req, res) => {
   try {
-    const { lang = 'ar', limit = 10 } = req.query;
+    const { lang = 'ar', limit = 10, category = null } = req.query;
     
-    // Get most popular food tags
+    // Optional category filter
+    let catId = null;
+    if (category) {
+      let catVal = category;
+      const isHex24 = typeof catVal === 'string' && /^[0-9a-fA-F]{24}$/.test(catVal);
+      if (!isHex24) {
+        const byName = await Category.findOne({
+          $or: [
+            { name: { $regex: `^${String(catVal).trim()}$`, $options: 'i' } },
+            { nameAr: { $regex: `^${String(catVal).trim()}$`, $options: 'i' } },
+          ],
+        }).select('_id').lean();
+        if (byName) catVal = String(byName._id);
+      }
+      catId = new mongoose.Types.ObjectId(String(catVal));
+    }
+
+    // Get most popular food tags (scoped)
     const popularTags = await Food.aggregate([
-      { $match: { isAvailable: true } },
+      { $match: { isAvailable: true, ...(catId ? { category: catId } : {}) } },
       { $unwind: '$tags' },
       { $group: { _id: '$tags', count: { $sum: 1 } } },
       { $sort: { count: -1 } },
@@ -342,11 +379,12 @@ const getPopularSearches = async (req, res) => {
       { $project: { _id: 0, term: '$_id', count: 1 } }
     ]);
 
-    // Get top-rated restaurant names as popular searches
+    // Get top-rated restaurant names as popular searches (scoped)
     const popularRestaurants = await Restaurant.find({
       isActive: true,
       isOpen: true,
-      rating: { $gte: 4.5 }
+      rating: { $gte: 4.5 },
+      ...(catId ? { categories: catId } : {})
     })
       .select(`name${lang === 'ar' ? 'Ar' : ''} name nameAr rating`)
       .sort({ rating: -1, reviewCount: -1 })

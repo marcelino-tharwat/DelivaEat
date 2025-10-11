@@ -208,6 +208,17 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
     } catch (_) {}
   }
 
+  String? _resolveRootIdForFood() {
+    // Try to find a root category id for Food by name (en/ar)
+    for (final entry in _categoryNameToId.entries) {
+      final k = entry.key.toLowerCase();
+      if (k == 'food' || k.contains('food') || k == 'طعام' || k.contains('طعام')) {
+        return entry.value;
+      }
+    }
+    return null;
+  }
+
   void _updateLocalCategoryFromBackendId(String backendId) {
     for (var entry in _categoryNameToId.entries) {
       if (entry.value == backendId) {
@@ -306,8 +317,11 @@ class _FoodCategoriesPageState extends State<FoodCategoriesPage> {
       errorMessage: _error,
       onCategorySelected: _handleCategoryTap, // ✅ الربط الصحيح موجود هنا
       onSearchTap: () {
+        // Resolve Food root id; fall back to Arabic/English name if id not available
+        final rootId = _resolveRootIdForFood() ?? _selectedBackendCategoryId;
+        final categoryParam = (rootId != null && rootId.isNotEmpty) ? rootId : 'Food';
         context.push(AppRoutes.searchPage, extra: {
-          'categoryId': 'food',
+          'categoryId': categoryParam,
           'type': 'all',
           'categoryType': 'food',
         });

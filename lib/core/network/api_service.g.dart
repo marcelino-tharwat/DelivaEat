@@ -514,13 +514,16 @@ class _ApiService implements ApiService {
     String query,
     String lang,
     int limit,
+    String? category,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'q': query,
       r'lang': lang,
       r'limit': limit,
+      r'category': category,
     };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<SearchSuggestionsResponseModel>(
@@ -548,9 +551,11 @@ class _ApiService implements ApiService {
   Future<PopularSearchesResponseModel> getPopularSearches(
     String lang,
     int limit,
+    String? category,
   ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'lang': lang, r'limit': limit};
+    final queryParameters = <String, dynamic>{r'lang': lang, r'limit': limit, r'category': category};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<PopularSearchesResponseModel>(

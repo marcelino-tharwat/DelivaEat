@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:deliva_eat/core/auth/google_auth.dart';
 import 'package:deliva_eat/core/auth/facebook_auth.dart';
+import 'package:deliva_eat/core/auth/token_storage.dart';
 
 class SocialLoginButtons extends StatelessWidget {
   const SocialLoginButtons({super.key});
@@ -54,7 +55,10 @@ class SocialLoginButtons extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('تم تسجيل الدخول بجوجل بنجاح'), backgroundColor: Colors.green),
         );
-        // TODO: احفظ التوكن res['data']['token'] وانتقل للصفحة الرئيسية
+        final token = (res['data']?['token'] ?? res['token'])?.toString();
+        if (token != null && token.isNotEmpty) {
+          await TokenStorage.setToken(token);
+        }
       } else {
         final msg = (res['error']?['message'] ?? 'فشل تسجيل الدخول بجوجل').toString();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -75,7 +79,10 @@ class SocialLoginButtons extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('تم تسجيل الدخول بفيسبوك بنجاح'), backgroundColor: Colors.green),
         );
-        // TODO: احفظ التوكن res['data']['token'] وانتقل للصفحة الرئيسية
+        final token = (res['data']?['token'] ?? res['token'])?.toString();
+        if (token != null && token.isNotEmpty) {
+          await TokenStorage.setToken(token);
+        }
       } else {
         final msg = (res['error']?['message'] ?? 'فشل تسجيل الدخول بفيسبوك').toString();
         ScaffoldMessenger.of(context).showSnackBar(

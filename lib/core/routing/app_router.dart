@@ -19,6 +19,7 @@ import 'package:deliva_eat/features/home/ui/home_page_wrapper.dart';
 import 'package:deliva_eat/features/restaurant/ui/prodcut_page.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_menu_page.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_page.dart';
+import 'package:deliva_eat/features/reviews/ui/reviews_page.dart';
 import 'package:deliva_eat/features/search/ui/search_page.dart';
 import 'package:deliva_eat/setting.dart';
 import 'package:flutter/material.dart';
@@ -183,6 +184,33 @@ final GoRouter router = GoRouter(
             return RestaurantHomePage(
               restaurantId: restaurantId,
               restaurantName: restaurantName.isEmpty ? 'المطعم' : restaurantName,
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.productDetailsPage,
+          builder: (BuildContext context, GoRouterState state) {
+            final data = (state.extra as Map<String, dynamic>?) ?? {};
+            return FoodOrderPage(
+              foodId: (data['foodId'] ?? '').toString(),
+              title: (data['title'] ?? '').toString(),
+              image: (data['image'] ?? '').toString(),
+              priceText: (data['price'] ?? '').toString(),
+              isFavorite: data['isFavorite'] == true,
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.reviewsPage,
+          builder: (BuildContext context, GoRouterState state) {
+            final data = (state.extra as Map<String, dynamic>?) ?? {};
+            final foodId = (data['foodId'] ?? '').toString();
+            final restaurantId = (data['restaurantId'] ?? '').toString();
+            final title = (data['title'] ?? '').toString();
+            return ReviewsPage(
+              foodId: foodId.isEmpty ? null : foodId,
+              restaurantId: restaurantId.isEmpty ? null : restaurantId,
+              title: title,
             );
           },
         ),

@@ -2,6 +2,9 @@ import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
+import 'package:deliva_eat/features/home/cubit/home_state.dart';
 
 class FavoritesPage extends StatelessWidget {
   final List<RestaurantModel> favoriteRestaurants;
@@ -16,20 +19,25 @@ class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final allItems = [...favoriteRestaurants, ...favoriteFoods];
+    List<RestaurantModel> favRestaurants = favoriteRestaurants;
+    List<FoodModel> favFoods = favoriteFoods;
+    final state = context.watch<HomeCubit>().state;
+    if (state is HomeSuccess) {
+      favRestaurants = state.favoriteRestaurants;
+      favFoods = state.favoriteFoods;
+    }
+    final allItems = [...favRestaurants, ...favFoods];
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea( // <--- أضف SafeArea هنا
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Title and back button like category page
               Padding(
-                // يمكنك تقليل هذا الـ top أو ضبطه بناءً على statusBarHeight إذا أردت تحكمًا دقيقًا
-                // For now, let's try a smaller fixed value or remove it if SafeArea handles status bar
-                padding: const EdgeInsets.only(top: 10, left: 16, right: 16 , bottom: 0) , // قللنا الـ top هنا
+                padding: const EdgeInsets.only(top: 10, left: 16, right: 16, bottom: 0),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -48,7 +56,7 @@ class FavoritesPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Text( // Moved Text after Align for better Z-order logic, though it doesn't matter for center alignment
+                    Text(
                       'المفضلة',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.headlineMedium?.copyWith(
@@ -59,7 +67,7 @@ class FavoritesPage extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 0), // تأكد أن هذا 0
+              const SizedBox(height: 0),
               allItems.isEmpty
                   ? Center(
                       child: Padding(
@@ -105,7 +113,6 @@ class FavoritesPage extends StatelessWidget {
     );
   }
 
-  // ... (_buildRestaurantCard and _buildFoodCard remain the same)
   Widget _buildRestaurantCard(BuildContext context, RestaurantModel restaurant) {
     final theme = Theme.of(context);
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
@@ -199,6 +206,21 @@ class FavoritesPage extends StatelessWidget {
                         ],
                       ),
                     ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+                    context.read<HomeCubit>().toggleFavorite(
+                      restaurantId: restaurant.id?.toString() ?? '',
+                      lang: isAr ? 'ar' : 'en',
+                      baseOverride: restaurant,
+                    );
+                  },
+                  child: Icon(
+                    (restaurant.isFavorite ?? false) ? Icons.favorite : Icons.favorite_border,
+                    color: (restaurant.isFavorite ?? false) ? Colors.red : theme.colorScheme.primary,
+                    size: 20,
                   ),
                 ),
                 Icon(
@@ -301,6 +323,20 @@ class FavoritesPage extends StatelessWidget {
                         ],
                       ),
                     ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+                    context.read<HomeCubit>().toggleFoodFavorite(
+                      foodId: food.id?.toString() ?? '',
+                      lang: isAr ? 'ar' : 'en',
+                    );
+                  },
+                  child: Icon(
+                    (food.isFavorite ?? false) ? Icons.favorite : Icons.favorite_border,
+                    color: (food.isFavorite ?? false) ? Colors.red : theme.colorScheme.primary,
+                    size: 20,
                   ),
                 ),
                 Icon(

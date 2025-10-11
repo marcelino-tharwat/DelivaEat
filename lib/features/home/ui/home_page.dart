@@ -9,14 +9,15 @@ import 'package:deliva_eat/features/home/ui/widget/show_notifications_bottom_she
 import 'package:deliva_eat/features/home/ui/widget/top_rated_resturant_list.dart';
 import 'package:deliva_eat/features/home/ui/widget/favorite_restaurant_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
 import 'package:deliva_eat/features/home/cubit/home_state.dart';
+import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 
 class FoodDeliveryHomePage extends StatefulWidget {
   const FoodDeliveryHomePage({super.key});
@@ -185,9 +186,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                             onToggleFavorite: _handleToggleFavorite,
                           ),
                           FoodCardList(
-                            foods: state.bestSellingFoods
-                                .where((f) => f.isFavorite ?? false)
-                                .toList(),
+                            foods: state.favoriteFoods,
                             onFoodCardTap: _handleFoodCardTap,
                             onToggleFavorite: _handleToggleFoodFavorite,
                             heroTagPrefix: 'favorite_food',
@@ -304,28 +303,51 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     }
   }
   
-  void _handleRestaurantTap(String name, int index) {
+  Future<void> _handleRestaurantTap(String name, int index) async {
     HapticFeedback.lightImpact();
     final state = context.read<HomeCubit>().state;
     if (state is HomeSuccess) {
       if (index >= 0 && index < state.favoriteRestaurants.length) {
         final r = state.favoriteRestaurants[index];
         final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-        final displayName = isArabic ? r.nameAr : r.name;
+        final displayName = isArabic ? (r.nameAr ?? r.name) : (r.name ?? r.nameAr);
         // Navigate to RestaurantHomePage
-        context.push(
+        final result = await context.push(
           AppRoutes.restaurantPage,
           extra: {
-            'restaurantId': r.id,
-            'restaurantName': displayName,
+            'restaurantId': r.id?.toString() ?? '',
+            'restaurantName': (displayName ?? '').isEmpty ? 'المطعم' : displayName,
           },
         );
-        return;
+        if (result is Map) {
+          final restaurantId = (result['restaurantId'] ?? '').toString();
+          final lang = (result['lang'] ?? (isArabic ? 'ar' : 'en')).toString();
+          final baseJson = (result['base'] as Map?)?.cast<String, dynamic>();
+          final base = baseJson != null ? RestaurantModel.fromJson(baseJson) : null;
+          if (restaurantId.isNotEmpty) {
+            final curr = context.read<HomeCubit>().state;
+            if (curr is HomeSuccess) {
+              final merged = [...curr.favoriteRestaurants, ...curr.topRatedRestaurants];
+              final currentItem = merged.firstWhere(
+                (rr) => rr.id == restaurantId,
+                orElse: () => base ?? r,
+              );
+              final currentFav = currentItem.isFavorite ?? false;
+              final returnedFav = (base?.isFavorite) ?? false;
+              if (currentFav != returnedFav) {
+                context.read<HomeCubit>().toggleFavorite(
+                  restaurantId: restaurantId,
+                  lang: lang,
+                  baseOverride: base,
+                );
+              }
+            }
+          }
+        }
       }
     }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم اختيار مطعم: $name')));
   }
-  
+
   // Handler for toggling restaurant favorite status (used by Favorite and Top Rated lists)
   void _handleToggleFavorite(String restaurantId) {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
@@ -343,7 +365,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     );
   }
 
-  void _handleRestaurantDetailTap(Map<String, dynamic> restaurant, int index) {
+  Future<void> _handleRestaurantDetailTap(Map<String, dynamic> restaurant, int index) async {
     // Open RestaurantHomePage instead of menu page
     final id = (restaurant['id'] ?? '').toString();
     final name = (restaurant['name'] ?? '').toString();
@@ -351,16 +373,41 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('معرف المطعم غير متوفر')));
       return;
     }
-    context.push(
+    final result = await context.push(
       AppRoutes.restaurantPage,
       extra: {
         'restaurantId': id,
         'restaurantName': name.isEmpty ? 'المطعم' : name,
       },
     );
+    if (result is Map) {
+      final restaurantId = (result['restaurantId'] ?? '').toString();
+      final lang = (result['lang'] ?? 'ar').toString();
+      final baseJson = (result['base'] as Map?)?.cast<String, dynamic>();
+      final base = baseJson != null ? RestaurantModel.fromJson(baseJson) : null;
+      if (restaurantId.isNotEmpty && base != null) {
+        final curr = context.read<HomeCubit>().state;
+        if (curr is HomeSuccess) {
+          final merged = [...curr.favoriteRestaurants, ...curr.topRatedRestaurants];
+          final currentItem = merged.firstWhere(
+            (r) => r.id == restaurantId,
+            orElse: () => base,
+          );
+          final currentFav = currentItem.isFavorite ?? false;
+          final returnedFav = base.isFavorite ?? false;
+          if (currentFav != returnedFav) {
+            context.read<HomeCubit>().toggleFavorite(
+              restaurantId: restaurantId,
+              lang: lang,
+              baseOverride: base,
+            );
+          }
+        }
+      }
+    }
   }
 
-  void _handleViewMenu(Map<String, dynamic> restaurant) {
+  Future<void> _handleViewMenu(Map<String, dynamic> restaurant) async {
     // Also open RestaurantHomePage for consistency
     final id = (restaurant['id'] ?? '').toString();
     final name = (restaurant['name'] ?? '').toString();
@@ -368,13 +415,38 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('معرف المطعم غير متوفر')));
       return;
     }
-    context.push(
+    final result = await context.push(
       AppRoutes.restaurantPage,
       extra: {
         'restaurantId': id,
         'restaurantName': name.isEmpty ? 'المطعم' : name,
       },
     );
+    if (result is Map) {
+      final restaurantId = (result['restaurantId'] ?? '').toString();
+      final lang = (result['lang'] ?? 'ar').toString();
+      final baseJson = (result['base'] as Map?)?.cast<String, dynamic>();
+      final base = baseJson != null ? RestaurantModel.fromJson(baseJson) : null;
+      if (restaurantId.isNotEmpty) {
+        final curr = context.read<HomeCubit>().state;
+        if (curr is HomeSuccess && base != null) {
+          final merged = [...curr.favoriteRestaurants, ...curr.topRatedRestaurants];
+          final currentItem = merged.firstWhere(
+            (r) => r.id == restaurantId,
+            orElse: () => base,
+          );
+          final currentFav = currentItem.isFavorite ?? false;
+          final returnedFav = base.isFavorite ?? false;
+          if (currentFav != returnedFav) {
+            context.read<HomeCubit>().toggleFavorite(
+              restaurantId: restaurantId,
+              lang: lang,
+              baseOverride: base,
+            );
+          }
+        }
+      }
+    }
   }
 
   void _handleSeeAll(String section) {
@@ -383,7 +455,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     if (section == appLocalizations.favorites) {
       final homeState = context.read<HomeCubit>().state;
       if (homeState is HomeSuccess) {
-        final favoriteFoods = homeState.bestSellingFoods.where((f) => f.isFavorite ?? false).toList();
+        final favoriteFoods = homeState.favoriteFoods;
         context.push(AppRoutes.favoritesPage, extra: {
           'favoriteRestaurants': homeState.favoriteRestaurants,
           'favoriteFoods': favoriteFoods,

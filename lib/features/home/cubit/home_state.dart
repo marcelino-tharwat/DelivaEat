@@ -15,6 +15,7 @@ class HomeSuccess extends HomeState {
   final List<RestaurantModel> favoriteRestaurants;
   final List<RestaurantModel> topRatedRestaurants;
   final List<FoodModel> bestSellingFoods;
+  final List<FoodModel> favoriteFoods;
 
   HomeSuccess({
     required this.categories,
@@ -22,6 +23,7 @@ class HomeSuccess extends HomeState {
     required this.favoriteRestaurants,
     required this.topRatedRestaurants,
     required this.bestSellingFoods,
+    required this.favoriteFoods,
   });
 }
 

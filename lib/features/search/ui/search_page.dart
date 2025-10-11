@@ -117,7 +117,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     final l10n = AppLocalizations.of(context)!;
 
     return BlocProvider<SearchCubit>.value(
-      value: _searchCubit..getPopularSearches(),
+      value: _searchCubit..getPopularSearches(category: _categoryId),
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         body: SafeArea(
@@ -148,9 +148,13 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                         type: _type,
                         category: _categoryId,
                       );
-                      _searchCubit.getSuggestionsRealTime(query: value);
+                      _searchCubit.getSuggestionsRealTime(
+                        query: value,
+                        category: _categoryId,
+                      );
                     } else if (value.isEmpty) {
                       _searchCubit.clearSearch();
+                      _searchCubit.getPopularSearches(category: _categoryId);
                     }
                   },
                   onSubmitted: (value) {

@@ -16,6 +16,7 @@ class AppRoutes {
   static const String restaurantMenuPage = '/restaurantMenuPage';
   static const String restaurantPage = '/restaurantPage';
   static const String favoritesPage = '/favoritesPage';
+  static const String reviewsPage = '/reviewsPage';
   
 
 }

@@ -23,27 +23,31 @@ class HomeCubit extends Cubit<HomeState> {
         emit(HomeError(message: error.errorMessage)); 
       },
       (homeResponse) { // الدالة الثانية: حالة النجاح (Right)
+        final favFoods = homeResponse.data.bestSellingFoods
+            .where((f) => f.isFavorite == true)
+            .toList();
         emit(HomeSuccess(
           categories: homeResponse.data.categories,
           offers: homeResponse.data.offers,
           favoriteRestaurants: homeResponse.data.favoriteRestaurants,
           topRatedRestaurants: homeResponse.data.topRatedRestaurants,
           bestSellingFoods: homeResponse.data.bestSellingFoods,
+          favoriteFoods: favFoods,
         ));
       },
     );
   }
 
   // Toggle food favorite (best selling list) with optimistic UI
-  Future<void> toggleFoodFavorite({required String foodId, String lang = 'ar'}) async {
+  Future<void> toggleFoodFavorite({required String foodId, String lang = 'ar', FoodModel? baseOverride}) async {
     final current = state;
     if (current is! HomeSuccess) return;
 
     final exists = current.bestSellingFoods.any((f) => f.id == foodId);
-    if (!exists) return; // only handle items shown on best selling list for now
+    // proceed even if not in best-selling to keep favoriteFoods consistent
 
-    final before = current.bestSellingFoods;
-    final toggled = before
+    final beforeBest = current.bestSellingFoods;
+    final toggledBest = beforeBest
         .map((f) => f.id == foodId
             ? FoodModel(
                 id: f.id,
@@ -69,13 +73,59 @@ class HomeCubit extends Cubit<HomeState> {
             : f)
         .toList();
 
+    // compute optimistic favoriteFoods
+    final isInFavorites = current.favoriteFoods.any((ff) => ff.id == foodId);
+    List<FoodModel> toggledFavFoods = current.favoriteFoods;
+    if (isInFavorites) {
+      // remove if currently in favorites (since we're toggling)
+      toggledFavFoods = current.favoriteFoods.where((ff) => ff.id != foodId).toList();
+    } else {
+      // if present in best-selling, and toggled to true, add it; otherwise we can't safely add
+      FoodModel? maybeBest;
+      for (final f in toggledBest) {
+        if (f.id == foodId) {
+          maybeBest = f;
+          break;
+        }
+      }
+      if (maybeBest != null && (maybeBest!.isFavorite ?? false)) {
+        toggledFavFoods = [maybeBest!, ...current.favoriteFoods];
+      } else if (baseOverride != null) {
+        final candidate = (baseOverride.isFavorite ?? false)
+            ? baseOverride
+            : FoodModel(
+                id: baseOverride.id,
+                name: baseOverride.name,
+                nameAr: baseOverride.nameAr,
+                description: baseOverride.description,
+                descriptionAr: baseOverride.descriptionAr,
+                image: baseOverride.image,
+                price: baseOverride.price,
+                originalPrice: baseOverride.originalPrice,
+                rating: baseOverride.rating,
+                reviewCount: baseOverride.reviewCount,
+                preparationTime: baseOverride.preparationTime,
+                isAvailable: baseOverride.isAvailable,
+                isPopular: baseOverride.isPopular,
+                isBestSelling: baseOverride.isBestSelling,
+                isFavorite: true,
+                restaurant: baseOverride.restaurant,
+                ingredients: baseOverride.ingredients,
+                allergens: baseOverride.allergens,
+                tags: baseOverride.tags,
+              );
+        toggledFavFoods = [candidate, ...current.favoriteFoods.where((ff) => ff.id != foodId)];
+      }
+    }
+
     emit(
       HomeSuccess(
         categories: current.categories,
         offers: current.offers,
         favoriteRestaurants: current.favoriteRestaurants,
         topRatedRestaurants: current.topRatedRestaurants,
-        bestSellingFoods: toggled,
+        bestSellingFoods: toggledBest,
+        favoriteFoods: toggledFavFoods,
       ),
     );
 
@@ -114,6 +164,22 @@ class HomeCubit extends Cubit<HomeState> {
                     )
                   : f)
               .toList();
+          // reconcile favoriteFoods
+          List<FoodModel> reconciledFavFoods;
+          final serverFav = updated.isFavorite == true;
+          final alreadyFav = curr.favoriteFoods.any((ff) => ff.id == foodId);
+          if (serverFav) {
+            if (alreadyFav) {
+              reconciledFavFoods = curr.favoriteFoods
+                  .map((ff) => ff.id == foodId ? updated : ff)
+                  .toList();
+            } else {
+              final toAdd = updated;
+              reconciledFavFoods = [toAdd, ...curr.favoriteFoods];
+            }
+          } else {
+            reconciledFavFoods = curr.favoriteFoods.where((ff) => ff.id != foodId).toList();
+          }
           emit(
             HomeSuccess(
               categories: curr.categories,
@@ -121,6 +187,7 @@ class HomeCubit extends Cubit<HomeState> {
               favoriteRestaurants: curr.favoriteRestaurants,
               topRatedRestaurants: curr.topRatedRestaurants,
               bestSellingFoods: reconciled,
+              favoriteFoods: reconciledFavFoods,
             ),
           );
         }
@@ -200,12 +267,16 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   // Toggle restaurant favorite with optimistic UI update
-  Future<void> toggleFavorite({required String restaurantId, String lang = 'ar'}) async {
+  Future<void> toggleFavorite({
+    required String restaurantId,
+    String lang = 'ar',
+    RestaurantModel? baseOverride,
+  }) async {
     final current = state;
     if (current is! HomeSuccess) return;
 
     // Find the restaurant in any list to know current favorite state
-    RestaurantModel? base = (
+    RestaurantModel? base = baseOverride ?? (
       [...current.favoriteRestaurants, ...current.topRatedRestaurants]
     ).firstWhere(
       (r) => r.id == restaurantId,
@@ -283,6 +354,7 @@ class HomeCubit extends Cubit<HomeState> {
         favoriteRestaurants: updatedFavorites,
         topRatedRestaurants: updatedTopRated,
         bestSellingFoods: current.bestSellingFoods,
+        favoriteFoods: current.favoriteFoods,
       ),
     );
 
@@ -340,6 +412,7 @@ class HomeCubit extends Cubit<HomeState> {
               favoriteRestaurants: newFavList,
               topRatedRestaurants: newTop,
               bestSellingFoods: curr.bestSellingFoods,
+              favoriteFoods: curr.favoriteFoods,
             ),
           );
         }

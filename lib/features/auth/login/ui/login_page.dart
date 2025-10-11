@@ -3,6 +3,7 @@ import 'package:deliva_eat/features/auth/login/ui/widgets/login_form.dart';
 import 'package:deliva_eat/features/auth/login/ui/widgets/login_header.dart';
 import 'package:deliva_eat/features/auth/login/ui/widgets/or_divider.dart';
 import 'package:deliva_eat/features/auth/login/ui/widgets/social_login.dart';
+import 'package:deliva_eat/core/auth/token_storage.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -45,6 +46,11 @@ class LoginPage extends StatelessWidget {
                   backgroundColor: Colors.green,
                 ),
               );
+              final token = state.authResponse.data?.token;
+              if (token != null && token.isNotEmpty) {
+                // persist token for authenticated requests
+                TokenStorage.setToken(token);
+              }
               // Navigate here if you want:
               // Navigator.pushReplacementNamed(context, "/home");
             }
