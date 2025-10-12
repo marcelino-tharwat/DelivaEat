@@ -3,11 +3,12 @@ import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:deliva_eat/features/home/ui/widget/home_skeleton_loader.dart';
 import 'package:deliva_eat/features/home/ui/widget/SectionHeader.dart';
 import 'package:deliva_eat/features/home/ui/widget/custom_botton_navigation_bar.dart';
-import 'package:deliva_eat/features/home/ui/widget/food_card_list.dart';
+// import removed: food_card_list.dart
 import 'package:deliva_eat/features/home/ui/widget/home_header.dart';
 import 'package:deliva_eat/features/home/ui/widget/show_notifications_bottom_sheet.dart';
 import 'package:deliva_eat/features/home/ui/widget/top_rated_resturant_list.dart';
-import 'package:deliva_eat/features/home/ui/widget/favorite_restaurant_list.dart';
+// import removed: favorite_restaurant_list.dart
+import 'package:deliva_eat/features/home/ui/widget/favorite_mixed_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -179,17 +180,13 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                             iconColor: const Color(0xFFFFD93D),
                             onSeeAllTap: _handleSeeAll,
                           ),
-                          FavoriteRestaurantsList(
+                          FavoriteMixedList(
                             restaurants: state.favoriteRestaurants,
-                            onRestaurantTap: _handleRestaurantTap,
-                            // CHANGED: Added toggle favorite handler
-                            onToggleFavorite: _handleToggleFavorite,
-                          ),
-                          FoodCardList(
                             foods: state.favoriteFoods,
-                            onFoodCardTap: _handleFoodCardTap,
-                            onToggleFavorite: _handleToggleFoodFavorite,
-                            heroTagPrefix: 'favorite_food',
+                            onRestaurantTap: _handleRestaurantTap,
+                            onFoodTap: _handleFoodCardTap,
+                            onToggleRestaurantFavorite: _handleToggleFavorite,
+                            onToggleFoodFavorite: _handleToggleFoodFavorite,
                           ),
                           SizedBox(height: 8.h),
                           SectionHeader(
