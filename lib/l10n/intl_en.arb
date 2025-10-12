@@ -320,5 +320,22 @@
         "example": "55"
       }
     }
-  }
+  },
+  "ratingAndReviews": "Rating & Reviews",
+  "writeAReview": "Write a Review",
+  "shareYourExperience": "Share your experience",
+  "submitReview": "Submit Review",
+  "userReviews": "User Reviews ({count})",
+  "@userReviews": {
+    "description": "User reviews section title with count",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "5"
+      }
+    }
+  },
+  "pleaseAddRatingAndReview": "Please add rating and review",
+  "reviewSubmittedSuccessfully": "Review submitted successfully!",
+  "you": "You"
 }

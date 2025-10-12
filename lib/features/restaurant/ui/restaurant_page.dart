@@ -13,6 +13,7 @@ import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:deliva_eat/core/network/dio_factory.dart';
 import 'package:go_router/go_router.dart';
 import 'package:deliva_eat/core/routing/routes.dart';
+import 'package:deliva_eat/features/restaurant/ui/widgets/restaurant_skeleton_loader.dart';
 
 class RestaurantHomePage extends StatefulWidget {
   const RestaurantHomePage({
@@ -43,6 +44,7 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
   String selectedCategory = '';
   final Map<String, List<Map<String, dynamic>>> _itemsByTab = {};
   late final ScrollController _scrollController;
+  List<GlobalKey> _categoryKeys = [];
 
   Future<void> _toggleFavorite() async {
     // Optimistic UI update
@@ -60,15 +62,23 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
       id: (m['_id']?.toString() ?? widget.restaurantId),
       name: (m['name'] ?? '') as String,
       nameAr: (m['nameAr'] ?? m['name'] ?? '') as String,
-      description: (m['description'] as String?) ?? (m['descriptionAr'] as String?),
-      descriptionAr: (m['descriptionAr'] as String?) ?? (m['description'] as String?),
+      description:
+          (m['description'] as String?) ?? (m['descriptionAr'] as String?),
+      descriptionAr:
+          (m['descriptionAr'] as String?) ?? (m['description'] as String?),
       image: (m['image'] ?? '') as String,
       coverImage: m['coverImage'] as String?,
       rating: (m['rating'] is num) ? (m['rating'] as num).toDouble() : null,
-      reviewCount: m['reviewCount'] is int ? m['reviewCount'] as int : int.tryParse('${m['reviewCount'] ?? ''}'),
+      reviewCount: m['reviewCount'] is int
+          ? m['reviewCount'] as int
+          : int.tryParse('${m['reviewCount'] ?? ''}'),
       deliveryTime: m['deliveryTime']?.toString(),
-      deliveryFee: (m['deliveryFee'] is num) ? (m['deliveryFee'] as num).toDouble() : null,
-      minimumOrder: (m['minimumOrder'] is num) ? (m['minimumOrder'] as num).toDouble() : null,
+      deliveryFee: (m['deliveryFee'] is num)
+          ? (m['deliveryFee'] as num).toDouble()
+          : null,
+      minimumOrder: (m['minimumOrder'] is num)
+          ? (m['minimumOrder'] as num).toDouble()
+          : null,
       isOpen: m['isOpen'] as bool?,
       isActive: m['isActive'] as bool?,
       // Pass the PRE-TOGGLE state so HomeCubit toggles to newVal internally
@@ -129,7 +139,9 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
             _isFavorite = !newVal;
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Connection error while updating favorite')),
+            const SnackBar(
+              content: Text('Connection error while updating favorite'),
+            ),
           );
         }
       }
@@ -206,6 +218,9 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
         ];
       }
 
+      // Initialize keys for scrolling
+      _categoryKeys = List.generate(_tabs.length, (_) => GlobalKey());
+
       if (_tabs.isNotEmpty) {
         selectedCategory = _tabs.first;
         await _fetchItemsForTab(selectedCategory);
@@ -222,6 +237,10 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
         l10n.categoryPasta,
         l10n.categoryDrinks,
       ];
+
+      // Initialize keys for scrolling
+      _categoryKeys = List.generate(_tabs.length, (_) => GlobalKey());
+
       selectedCategory = _tabs.first;
       await _fetchItemsForTab(selectedCategory);
     } finally {
@@ -285,6 +304,7 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
     return WillPopScope(
       onWillPop: () async {
         final lang = Localizations.localeOf(context).languageCode;
@@ -293,15 +313,23 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
           id: (m['_id']?.toString() ?? widget.restaurantId),
           name: (m['name'] ?? '') as String,
           nameAr: (m['nameAr'] ?? m['name'] ?? '') as String,
-          description: (m['description'] as String?) ?? (m['descriptionAr'] as String?),
-          descriptionAr: (m['descriptionAr'] as String?) ?? (m['description'] as String?),
+          description:
+              (m['description'] as String?) ?? (m['descriptionAr'] as String?),
+          descriptionAr:
+              (m['descriptionAr'] as String?) ?? (m['description'] as String?),
           image: (m['image'] ?? '') as String,
           coverImage: m['coverImage'] as String?,
           rating: (m['rating'] is num) ? (m['rating'] as num).toDouble() : null,
-          reviewCount: m['reviewCount'] is int ? m['reviewCount'] as int : int.tryParse('${m['reviewCount'] ?? ''}'),
+          reviewCount: m['reviewCount'] is int
+              ? m['reviewCount'] as int
+              : int.tryParse('${m['reviewCount'] ?? ''}'),
           deliveryTime: m['deliveryTime']?.toString(),
-          deliveryFee: (m['deliveryFee'] is num) ? (m['deliveryFee'] as num).toDouble() : null,
-          minimumOrder: (m['minimumOrder'] is num) ? (m['minimumOrder'] as num).toDouble() : null,
+          deliveryFee: (m['deliveryFee'] is num)
+              ? (m['deliveryFee'] as num).toDouble()
+              : null,
+          minimumOrder: (m['minimumOrder'] is num)
+              ? (m['minimumOrder'] as num).toDouble()
+              : null,
           isOpen: m['isOpen'] as bool?,
           isActive: m['isActive'] as bool?,
           isFavorite: _isFavorite,
@@ -318,419 +346,382 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
         return false;
       },
       child: Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: MobileOnlyLayout(
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            // --- الجزء الأول: الهيدر (صورة + لوجو) ---
-            if (_loading)
-              const SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator()),
-              )
-            else
-              SliverToBoxAdapter(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  alignment: Alignment.center,
-                  children: [
-                    // الخلفية: صورة الغلاف من المطعم
-                    Container(
-                      height: 280.h,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            (_restaurant?['coverImage'] ??
-                                    _restaurant?['image'] ??
-                                    'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800')
-                                as String,
+        backgroundColor: colorScheme.background,
+        body: MobileOnlyLayout(
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              // --- الجزء الأول: الهيدر (صورة + لوجو) ---
+              if (_loading)
+                SliverToBoxAdapter(child: RestaurantSkeletonLoader())
+              else
+                SliverToBoxAdapter(
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.center,
+                    children: [
+                      // الخلفية: صورة الغلاف من المطعم
+                      Container(
+                        height: 280.h,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(
+                              (_restaurant?['coverImage'] ??
+                                      _restaurant?['image'] ??
+                                      'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800')
+                                  as String,
+                            ),
+                            fit: BoxFit.cover,
                           ),
-                          fit: BoxFit.cover,
                         ),
                       ),
-                    ),
-                    // Back button
-                    Positioned(
-                      top: 50.h,
-                      left: 16.w,
-                      child: InkWell(
-                        onTap: () {
-                          final lang = Localizations.localeOf(context).languageCode;
-                          final m = _restaurant ?? <String, dynamic>{};
-                          final base = RestaurantModel(
-                            id: (m['_id']?.toString() ?? widget.restaurantId),
-                            name: (m['name'] ?? '') as String,
-                            nameAr: (m['nameAr'] ?? m['name'] ?? '') as String,
-                            description: (m['description'] as String?) ?? (m['descriptionAr'] as String?),
-                            descriptionAr: (m['descriptionAr'] as String?) ?? (m['description'] as String?),
-                            image: (m['image'] ?? '') as String,
-                            coverImage: m['coverImage'] as String?,
-                            rating: (m['rating'] is num) ? (m['rating'] as num).toDouble() : null,
-                            reviewCount: m['reviewCount'] is int ? m['reviewCount'] as int : int.tryParse('${m['reviewCount'] ?? ''}'),
-                            deliveryTime: m['deliveryTime']?.toString(),
-                            deliveryFee: (m['deliveryFee'] is num) ? (m['deliveryFee'] as num).toDouble() : null,
-                            minimumOrder: (m['minimumOrder'] is num) ? (m['minimumOrder'] as num).toDouble() : null,
-                            isOpen: m['isOpen'] as bool?,
-                            isActive: m['isActive'] as bool?,
-                            isFavorite: _isFavorite,
-                            isTopRated: m['isTopRated'] as bool?,
-                            address: m['address'] as String?,
-                            phone: m['phone'] as String?,
-                          );
-                          Navigator.of(context).pop({
-                            'restaurantId': widget.restaurantId,
-                            'lang': lang,
-                            'isFavorite': _isFavorite,
-                            'base': base.toJson(),
-                          });
-                        },
-                        borderRadius: BorderRadius.circular(12),
+                      // Back button
+                      Positioned(
+                        top: 50.h,
+                        left: 16.w,
+                        child: InkWell(
+                          onTap: () {
+                            final lang = Localizations.localeOf(
+                              context,
+                            ).languageCode;
+                            final m = _restaurant ?? <String, dynamic>{};
+                            final base = RestaurantModel(
+                              id: (m['_id']?.toString() ?? widget.restaurantId),
+                              name: (m['name'] ?? '') as String,
+                              nameAr:
+                                  (m['nameAr'] ?? m['name'] ?? '') as String,
+                              description:
+                                  (m['description'] as String?) ??
+                                  (m['descriptionAr'] as String?),
+                              descriptionAr:
+                                  (m['descriptionAr'] as String?) ??
+                                  (m['description'] as String?),
+                              image: (m['image'] ?? '') as String,
+                              coverImage: m['coverImage'] as String?,
+                              rating: (m['rating'] is num)
+                                  ? (m['rating'] as num).toDouble()
+                                  : null,
+                              reviewCount: m['reviewCount'] is int
+                                  ? m['reviewCount'] as int
+                                  : int.tryParse('${m['reviewCount'] ?? ''}'),
+                              deliveryTime: m['deliveryTime']?.toString(),
+                              deliveryFee: (m['deliveryFee'] is num)
+                                  ? (m['deliveryFee'] as num).toDouble()
+                                  : null,
+                              minimumOrder: (m['minimumOrder'] is num)
+                                  ? (m['minimumOrder'] as num).toDouble()
+                                  : null,
+                              isOpen: m['isOpen'] as bool?,
+                              isActive: m['isActive'] as bool?,
+                              isFavorite: _isFavorite,
+                              isTopRated: m['isTopRated'] as bool?,
+                              address: m['address'] as String?,
+                              phone: m['phone'] as String?,
+                            );
+                            Navigator.of(context).pop({
+                              'restaurantId': widget.restaurantId,
+                              'lang': lang,
+                              'isFavorite': _isFavorite,
+                              'base': base.toJson(),
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: colorScheme.onSurface,
+                                width: 1.5.w,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.arrow_back_ios_new,
+                              size: 20.sp,
+                              color: colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Favorite button
+                      Positioned(
+                        top: 50.h,
+                        right: 16.w,
                         child: Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(6.w),
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: theme.dividerColor),
-                          ),
-                          child: Icon(
-                            Icons.arrow_back_ios_new,
-                            size: 20,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Colors.black
+                            color: _isFavorite
+                                ? const Color(0xFFFF6B6B)
                                 : Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 4.r,
+                              ),
+                            ],
+                          ),
+                          child: InkWell(
+                            onTap: _toggleFavorite,
+                            child: Icon(
+                              _isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              size: 26.sp,
+                              color: _isFavorite
+                                  ? Colors.white
+                                  : Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    // Favorite button
-                    Positioned(
-                      top: 50.h,
-                      right: 16.w,
-                      child: IconButton(
-                        icon: Icon(
-                          _isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: _isFavorite ? Colors.red : Colors.white,
-                        ),
-                        onPressed: _toggleFavorite,
-                      ),
-                    ),
-                    // اللوجو (بدل الشارة الحمراء)
-                    Positioned(
-                      top: 90.h,
-                      child: Container(
-                        width: 130.w,
-                        height: 100.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
-                          child: Image.network(
-                            (_restaurant?['image'] ??
-                                    'https://placehold.co/160x160/png?text=Logo')
-                                as String,
-                            fit: BoxFit.cover, // عشان تملى المساحة بشكل مظبوط
+                      // اللوجو (بدل الشارة الحمراء)
+                      Positioned(
+                        top: 90.h,
+                        child: Container(
+                          width: 130.w,
+                          height: 100.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.r),
+                            child: Image.network(
+                              (_restaurant?['image'] ??
+                                      'https://placehold.co/160x160/png?text=Logo')
+                                  as String,
+                              fit: BoxFit.cover, // عشان تملى المساحة بشكل مظبوط
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    // ✅ العروض (نص فوق الصورة ونص فوق الكونتينر)
-                    Positioned(
-                      top: 260.h, // يخلي الكونتينر يبدأ بعد الصورة
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(24.r),
-                            topRight: Radius.circular(24.r),
+                      // ✅ العروض (نص فوق الصورة ونص فوق الكونتينر)
+                      Positioned(
+                        top: 260.h, // يخلي الكونتينر يبدأ بعد الصورة
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(24.r),
+                              topRight: Radius.circular(24.r),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Tabs + قائمة الأكل زي ما هي
+                              SizedBox(height: 60.h), // 👈 مساحة للعروض فوق
+                            ],
                           ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Tabs + قائمة الأكل زي ما هي
-                            SizedBox(height: 60.h), // 👈 مساحة للعروض فوق
-                          ],
-                        ),
                       ),
-                    ),
 
-                    // ✅ العروض (فوق الصورة وجزء منها فوق الكونتينر)
-                    Positioned(
-                      top: 230.h, // بين الصورة والكونتينر الأبيض
-                      left: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.all(12.w),
-                                decoration: BoxDecoration(
-                                  color: Color(0xffFEF5F8),
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.local_offer,
-                                      color: Colors.pink,
-                                      size: 20.sp,
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    Expanded(
-                                      child: Text(
-                                        l10n.offerDiscount15,
-                                        style: TextStyle(
-                                          color: Colors.pink,
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w600,
+                      // ✅ العروض (فوق الصورة وجزء منها فوق الكونتينر)
+                      Positioned(
+                        top: 230.h, // بين الصورة والكونتينر الأبيض
+                        left: 0,
+                        right: 0,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.all(12.w),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffFEF5F8),
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.local_offer,
+                                        color: Colors.pink,
+                                        size: 20.sp,
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Expanded(
+                                        child: Text(
+                                          l10n.offerDiscount15,
+                                          style: TextStyle(
+                                            color: Colors.pink,
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.all(12.w),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryYellow,
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.local_offer,
-                                      color: Colors.pink,
-                                      size: 20.sp,
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    Expanded(
-                                      child: Text(
-                                        l10n.offerFreeDelivery99,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w600,
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.all(12.w),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryYellow,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.local_offer,
+                                        color: Colors.pink,
+                                        size: 20.sp,
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Expanded(
+                                        child: Text(
+                                          l10n.offerFreeDelivery99,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ),
+
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: EdgeInsets.only(top: 40.h),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    boxShadow: [],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // شريط التصنيفات (Category Tabs)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
+                        child: Container(
+                          height: 50.h,
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
+                            borderRadius: BorderRadius.circular(10.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorScheme.shadow.withOpacity(0.2),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.symmetric(horizontal: 10.w),
+                            children: [
+                              Icon(Icons.menu, size: 24.sp),
+                              ..._tabs
+                                  .map(
+                                    (category) => _buildCategoryTab(category),
+                                  )
+                                  .toList(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
-            SliverToBoxAdapter(
-              child: Container(
-                margin: EdgeInsets.only(top: 20.h),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  boxShadow: [],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // شريط التصنيفات (Category Tabs)
-                    Padding(
-                      padding: EdgeInsets.all(8.w),
-                      child: Container(
-                        height: 50.h,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.circular(10.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade800,
-                              blurRadius: 4.r,
-                              offset: Offset(0, 2.h),
-                            ),
-                          ],
-                        ),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.symmetric(horizontal: 10.w),
-                          children: [
-                            Icon(Icons.menu, size: 24.sp),
-                            ..._tabs
-                                .map((category) => _buildCategoryTab(category))
-                                .toList(),
-                          ],
-                        ),
+              // قائمة الطعام (Food Items) - Sections for each category
+              ..._tabs
+                  .asMap()
+                  .entries
+                  .map((tabEntry) {
+                    final index = tabEntry.key;
+                    final category = tabEntry.value;
+                    return [
+                      SliverPersistentHeader(
+                        key: _categoryKeys[index],
+                        pinned: false,
+                        delegate: _CategoryHeaderDelegate(category),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // قائمة الطعام (Food Items) - Sections for each category
-            ..._tabs
-                .map((category) {
-                  return [
-                    SliverPersistentHeader(
-                      pinned: true,
-                      delegate: _CategoryHeaderDelegate(category),
-                    ),
-                    SliverList(
-                      delegate: SliverChildListDelegate([
-                        ...(_itemsByTab[category] ?? [])
-                            .asMap()
-                            .entries
-                            .map((entry) {
-                              final idx = entry.key;
-                              final item = entry.value;
-                              final foodId = (item['_id'] ?? item['id'] ?? '').toString();
-                              final isFav = (item['isFavorite'] == true);
-                              return Container(
-                                color: Theme.of(context).cardColor,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: 16.h,
-                                    left: 16.w,
-                                    right: 16.w,
-                                  ),
-                                  child: _buildFoodItem(
-                                    (item['nameAr'] ?? item['name'] ?? '').toString(),
-                                    (item['descriptionAr'] ?? item['description'] ?? '').toString(),
-                                    _formatPrice(item['price']),
-                                    (item['image'] ?? '').toString(),
-                                    foodId,
-                                    isFav,
-                                    () async {
-                                      // Determine latest value from source of truth, not the captured isFav
-                                      bool newFav;
-                                      Map<String, dynamic>? baseMap;
-                                      final list0 = _itemsByTab[category] ?? [];
-                                      if (idx >= 0 && idx < list0.length) {
-                                        baseMap = Map<String, dynamic>.from(list0[idx]);
-                                        final curr = (baseMap['isFavorite'] == true);
-                                        newFav = !curr;
-                                      } else {
-                                        newFav = !isFav;
-                                      }
-                                      // Optimistic local update
-                                      setState(() {
-                                        final list = _itemsByTab[category] ?? [];
-                                        if (idx >= 0 && idx < list.length) {
-                                          list[idx] = {
-                                            ...list[idx],
-                                            'isFavorite': newFav,
-                                          };
-                                          _itemsByTab[category] = List<Map<String, dynamic>>.from(list);
-                                        }
-                                      });
-                                      final lang = Localizations.localeOf(context).languageCode;
-                                      // Propagate to global state + backend
-                                      bool sent = false;
-                                      try {
-                                        // Build baseOverride from current item so cubit can add/remove globally
-                                        final base = FoodModel(
-                                          id: foodId,
-                                          name: (item['name'] ?? '') as String? ?? '',
-                                          nameAr: (item['nameAr'] ?? item['name'] ?? '') as String? ?? '',
-                                          description: item['description'] as String?,
-                                          descriptionAr: item['descriptionAr'] as String?,
-                                          image: (item['image'] ?? '') as String? ?? '',
-                                          price: (item['price'] is num) ? (item['price'] as num).toDouble() : double.tryParse('${item['price'] ?? ''}'),
-                                          originalPrice: (item['originalPrice'] is num) ? (item['originalPrice'] as num).toDouble() : double.tryParse('${item['originalPrice'] ?? ''}'),
-                                          rating: (item['rating'] is num) ? (item['rating'] as num).toDouble() : double.tryParse('${item['rating'] ?? ''}'),
-                                          reviewCount: item['reviewCount'] is int ? item['reviewCount'] as int : int.tryParse('${item['reviewCount'] ?? ''}'),
-                                          preparationTime: item['preparationTime']?.toString(),
-                                          isAvailable: (item['isAvailable'] ?? true) == true,
-                                          isPopular: (item['isPopular'] ?? false) == true,
-                                          isBestSelling: (item['isBestSelling'] ?? false) == true,
-                                          isFavorite: newFav,
-                                          restaurant: null,
-                                          ingredients: (item['ingredients'] as List?)?.map((e) => e.toString()).toList(),
-                                          allergens: (item['allergens'] as List?)?.map((e) => e.toString()).toList(),
-                                          tags: (item['tags'] as List?)?.map((e) => e.toString()).toList(),
-                                        );
-                                        await context.read<HomeCubit>().toggleFoodFavorite(
-                                          foodId: foodId,
-                                          lang: lang,
-                                          baseOverride: base,
-                                        );
-                                        sent = true;
-                                      } catch (_) {
-                                        // ignore and try backend fallback
-                                      }
-                                      if (!sent) {
-                                        try {
-                                          final res = await _dio.post(
-                                            ApiConstant.toggleFoodFavoriteUrl,
-                                            data: { 'foodId': foodId },
-                                            queryParameters: { 'lang': lang },
-                                          );
-                                          final ok = (res.data is Map) && (res.data['success'] == true);
-                                          if (!ok) {
-                                            throw Exception('failed');
-                                          }
-                                        } catch (_) {
-                                          // rollback local toggle on failure
-                                          if (mounted) {
-                                            setState(() {
-                                              final list = _itemsByTab[category] ?? [];
-                                              if (idx >= 0 && idx < list.length) {
-                                                list[idx] = {
-                                                  ...list[idx],
-                                                  'isFavorite': !newFav,
-                                                };
-                                                _itemsByTab[category] = List<Map<String, dynamic>>.from(list);
-                                              }
-                                            });
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(content: Text('Connection error while updating favorite')),
-                                            );
-                                          }
-                                        }
-                                      }
-                                    },
-                                  ),
+                      SliverList(
+                        delegate: SliverChildListDelegate([
+                          ...(_itemsByTab[category] ?? []).asMap().entries.map((
+                            entry,
+                          ) {
+                            final idx = entry.key;
+                            final item = entry.value;
+                            final foodId = (item['_id'] ?? item['id'] ?? '')
+                                .toString();
+                            final isFav = (item['isFavorite'] == true);
+                            return Container(
+                              color: colorScheme.surface,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: 16.h,
+                                  left: 16.w,
+                                  right: 16.w,
+                                  top: idx == 0 ? 2.h : 0,
                                 ),
-                              );
-                            })
-                            .toList(),
-                        if ((_itemsByTab[category] ?? []).isEmpty)
-                          Container(
-                            color: Theme.of(context).cardColor,
-                            child: Padding(
-                              padding: EdgeInsets.all(16.w),
-                              child: Text(
-                                _error == null
-                                    ? 'لا توجد بيانات'
-                                    : l10n.failedToLoadRestaurants,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: Theme.of(context).textTheme.bodySmall?.color,
-                                    ),
+                                child: _buildFoodItem(
+                                  (item['nameAr'] ?? item['name'] ?? '')
+                                      .toString(),
+                                  (item['descriptionAr'] ??
+                                          item['description'] ??
+                                          '')
+                                      .toString(),
+                                  _formatPrice(item['price']),
+                                  (item['image'] ?? '').toString(),
+                                  foodId,
+                                  colorScheme,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          if ((_itemsByTab[category] ?? []).isEmpty)
+                            Container(
+                              color: colorScheme.surface,
+                              child: Padding(
+                                padding: EdgeInsets.all(16.w),
+                                child: Text(
+                                  _error == null
+                                      ? 'لا توجد بيانات'
+                                      : l10n.failedToLoadRestaurants,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(color: colorScheme.onSurface),
+                                ),
                               ),
                             ),
-                          ),
-                      ]),
-                    ),
-                  ];
-                })
-                .expand((element) => element)
-                .toList(),
-
-          ],
+                        ]),
+                      ),
+                    ];
+                  })
+                  .expand((element) => element)
+                  .toList(),
+            ],
+          ),
         ),
       ),
-      ),
     );
+  }
+
+  void _scrollToCategory(String category) {
+    final index = _tabs.indexOf(category);
+    if (index != -1 && _categoryKeys[index].currentContext != null) {
+      Scrollable.ensureVisible(
+        _categoryKeys[index].currentContext!,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   // Tabs builder
@@ -744,6 +735,10 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
         if (!_itemsByTab.containsKey(title)) {
           _fetchItemsForTab(title);
         }
+        // Scroll to the category section
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToCategory(title);
+        });
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
@@ -778,18 +773,19 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
     String price,
     String imageUrl,
     String foodId,
-    bool isFavorite,
-    VoidCallback onToggleFavorite,
+    dynamic colorScheme,
   ) {
     return InkWell(
       onTap: () {
-        context.push(AppRoutes.productDetailsPage, extra: {
-          'foodId': foodId,
-          'title': title,
-          'image': imageUrl,
-          'price': price,
-          'isFavorite': isFavorite,
-        });
+        context.push(
+          AppRoutes.productDetailsPage,
+          extra: {
+            'foodId': foodId,
+            'title': title,
+            'image': imageUrl,
+            'price': price,
+          },
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -797,9 +793,10 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.shade800,
-              blurRadius: 8.r,
-              offset: Offset(0, 2.h),
+              color: colorScheme.shadow.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -828,7 +825,7 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
               SizedBox(width: 12.w),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(title, style: Theme.of(context).textTheme.titleMedium),
                     SizedBox(height: 8.h),
@@ -844,7 +841,8 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
                     ),
                     SizedBox(height: 12.h),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // alignment: Alignment.centerRight,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Container(
                           padding: EdgeInsets.symmetric(
@@ -860,17 +858,12 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).brightness == Brightness.dark
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
                                   ? Colors.white
                                   : Colors.black,
                             ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: onToggleFavorite,
-                          child: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.red : Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ],
@@ -897,10 +890,16 @@ class _CategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: EdgeInsets.all(16.w),
-      color: Theme.of(context).cardColor,
-      child: Text(category, style: Theme.of(context).textTheme.headlineSmall),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
+      color: colorScheme.surface,
+      child: Text(
+        category,
+        style: Theme.of(
+          context,
+        ).textTheme.headlineSmall?.copyWith(color: colorScheme.onSurface),
+      ),
     );
   }
 

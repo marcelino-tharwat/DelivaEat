@@ -820,4 +820,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String addToCart(String totalPrice) {
     return 'Add to cart EGP $totalPrice';
   }
+
+  @override
+  String get ratingAndReviews => 'Rating & Reviews';
+
+  @override
+  String get writeAReview => 'Write a Review';
+
+  @override
+  String get shareYourExperience => 'Share your experience';
+
+  @override
+  String get submitReview => 'Submit Review';
+
+  @override
+  String userReviews(String count) {
+    return 'User Reviews ($count)';
+  }
+
+  @override
+  String get pleaseAddRatingAndReview => 'Please add rating and review';
+
+  @override
+  String get reviewSubmittedSuccessfully => 'Review submitted successfully!';
+
+  @override
+  String get you => 'You';
 }

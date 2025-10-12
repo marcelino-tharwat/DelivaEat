@@ -321,5 +321,22 @@
         "example": "55"
       }
     }
-  }
+  },
+  "ratingAndReviews": "التقييم والمراجعات",
+  "writeAReview": "اكتب مراجعة",
+  "shareYourExperience": "شارك تجربتك",
+  "submitReview": "إرسال المراجعة",
+  "userReviews": "مراجعات المستخدمين ({count})",
+  "@userReviews": {
+    "description": "عنوان قسم مراجعات المستخدمين مع العدد",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "5"
+      }
+    }
+  },
+  "pleaseAddRatingAndReview": "يرجى إضافة تقييم ومراجعة",
+  "reviewSubmittedSuccessfully": "تم إرسال المراجعة بنجاح!",
+  "you": "أنت"
 }

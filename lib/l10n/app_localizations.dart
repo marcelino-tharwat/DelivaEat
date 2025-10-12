@@ -1651,6 +1651,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add to cart EGP {totalPrice}'**
   String addToCart(String totalPrice);
+
+  /// No description provided for @ratingAndReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating & Reviews'**
+  String get ratingAndReviews;
+
+  /// No description provided for @writeAReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a Review'**
+  String get writeAReview;
+
+  /// No description provided for @shareYourExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your experience'**
+  String get shareYourExperience;
+
+  /// No description provided for @submitReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Review'**
+  String get submitReview;
+
+  /// User reviews section title with count
+  ///
+  /// In en, this message translates to:
+  /// **'User Reviews ({count})'**
+  String userReviews(String count);
+
+  /// No description provided for @pleaseAddRatingAndReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add rating and review'**
+  String get pleaseAddRatingAndReview;
+
+  /// No description provided for @reviewSubmittedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Review submitted successfully!'**
+  String get reviewSubmittedSuccessfully;
+
+  /// No description provided for @you.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get you;
 }
 
 class _AppLocalizationsDelegate

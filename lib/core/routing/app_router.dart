@@ -179,11 +179,15 @@ final GoRouter router = GoRouter(
           path: AppRoutes.restaurantPage,
           builder: (BuildContext context, GoRouterState state) {
             final data = state.extra as Map<String, dynamic>?;
-            final String restaurantId = (data?['restaurantId'] ?? '').toString();
-            final String restaurantName = (data?['restaurantName'] ?? '').toString();
+            final String restaurantId = (data?['restaurantId'] ?? '')
+                .toString();
+            final String restaurantName = (data?['restaurantName'] ?? '')
+                .toString();
             return RestaurantHomePage(
               restaurantId: restaurantId,
-              restaurantName: restaurantName.isEmpty ? 'المطعم' : restaurantName,
+              restaurantName: restaurantName.isEmpty
+                  ? 'المطعم'
+                  : restaurantName,
             );
           },
         ),
@@ -203,14 +207,14 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.reviewsPage,
           builder: (BuildContext context, GoRouterState state) {
-            final data = (state.extra as Map<String, dynamic>?) ?? {};
-            final foodId = (data['foodId'] ?? '').toString();
-            final restaurantId = (data['restaurantId'] ?? '').toString();
-            final title = (data['title'] ?? '').toString();
-            return ReviewsPage(
-              foodId: foodId.isEmpty ? null : foodId,
-              restaurantId: restaurantId.isEmpty ? null : restaurantId,
-              title: title,
+            // final data = (state.extra as Map<String, dynamic>?) ?? {};
+            // final foodId = (data['foodId'] ?? '').toString();
+            // final restaurantId = (data['restaurantId'] ?? '').toString();
+            // final title = (data['title'] ?? '').toString();
+            return RatingReviewsPage(
+              // foodId: foodId.isEmpty ? null : foodId,
+              // restaurantId: restaurantId.isEmpty ? null : restaurantId,
+              // title: title,
             );
           },
         ),

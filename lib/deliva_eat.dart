@@ -7,6 +7,9 @@ import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:deliva_eat/core/di/dependency_injection.dart';
+import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
 
 class DelivaEat extends StatelessWidget {
   const DelivaEat({super.key});
@@ -17,6 +20,7 @@ class DelivaEat extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        BlocProvider<HomeCubit>(create: (context) => getIt<HomeCubit>()),
       ],
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {
