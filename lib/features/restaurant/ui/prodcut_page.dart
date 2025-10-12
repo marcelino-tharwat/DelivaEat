@@ -1,3 +1,4 @@
+import 'package:deliva_eat/core/theme/app_colors.dart';
 import 'package:deliva_eat/core/widgets/app_button.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -39,13 +40,11 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
   int basePrice = 30;
   int extraChickenPrice = 10;
   int colaPrice = 15;
-  int quantity = 1;
-
   int get totalPrice {
     int total = basePrice;
     if (extraChickenSelected) total += extraChickenPrice;
     if (colaSelected) total += colaPrice;
-    return total * (quantity < 1 ? 1 : quantity);
+    return total;
   }
 
   Future<void> _addToCart() async {
@@ -60,7 +59,7 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
     }
     final payload = {
       'foodId': widget.foodId,
-      'quantity': quantity,
+      'quantity': 1,
       'options': options,
     };
     try {
@@ -68,18 +67,20 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
         ApiConstant.cartAddItemUrl,
         data: payload,
         queryParameters: {'lang': lang},
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        }),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
       );
       final ok = res.data is Map && (res.data['success'] == true);
       if (ok) {
         final isAr = Localizations.localeOf(context).languageCode == 'ar';
         final msg = isAr ? 'تمت الإضافة إلى السلة' : 'Added to cart';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(msg)));
       } else {
         String err = 'failed add to cart';
         if (res.data is Map && res.data['error'] is Map) {
@@ -139,10 +140,10 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
         tags: null,
       );
       await context.read<HomeCubit>().toggleFoodFavorite(
-            foodId: widget.foodId,
-            lang: lang,
-            baseOverride: base,
-          );
+        foodId: widget.foodId,
+        lang: lang,
+        baseOverride: base,
+      );
       ok = true;
     } catch (_) {
       // ignore; fallback: show snackbar only
@@ -155,7 +156,9 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
         : AppLocalizations.of(context)!.removedFromFavorites;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message + (ok ? '' : '')), // silent if failed – state will reconcile later
+        content: Text(
+          message + (ok ? '' : ''),
+        ), // silent if failed – state will reconcile later
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -168,10 +171,11 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final safeAreaTop = MediaQuery.of(context).padding.top;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           // الصورة في الخلفية
@@ -181,8 +185,8 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
             right: 0,
             child: Image.network(
               (widget.image.isNotEmpty
-                      ? widget.image
-                      : 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800'),
+                  ? widget.image
+                  : 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800'),
               width: double.infinity,
               height: 280.h,
               fit: BoxFit.cover,
@@ -190,7 +194,7 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                 return Container(
                   width: double.infinity,
                   height: 280.h,
-                  color: Colors.grey.shade300,
+                  color: colorScheme.surfaceVariant,
                   child: const Center(child: Icon(Icons.broken_image)),
                 );
               },
@@ -207,18 +211,14 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: theme.brightness == Brightness.light
-                          ? Colors.white
-                          : Colors.grey[900],
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(24.r),
                         topRight: Radius.circular(24.r),
                       ),
                       border: Border(
                         top: BorderSide(
-                          color: theme.brightness == Brightness.light
-                              ? Colors.grey.shade300
-                              : Colors.grey.shade700,
+                          color: colorScheme.outline,
                           width: 1.5.w,
                         ),
                       ),
@@ -238,77 +238,33 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                                 child: Text(
                                   (widget.title.isNotEmpty
                                       ? widget.title
-                                      : AppLocalizations.of(context)!.foodChickenSchezwanFriedRice),
+                                      : AppLocalizations.of(
+                                          context,
+                                        )!.foodChickenSchezwanFriedRice),
                                   style: theme.textTheme.headlineSmall
                                       ?.copyWith(
                                         height: 1.3,
-                                        color:
-                                            theme.brightness == Brightness.light
-                                            ? Colors.black
-                                            : Colors.white,
+                                        color: colorScheme.onSurface,
                                       ),
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  // Quantity stepper
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: theme.cardColor,
-                                      borderRadius: BorderRadius.circular(20.r),
-                                      border: Border.all(color: Colors.grey.shade300),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.remove),
-                                          onPressed: () {
-                                            setState(() {
-                                              if (quantity > 1) quantity--;
-                                            });
-                                          },
-                                          constraints: const BoxConstraints(),
-                                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                          child: Text('$quantity', style: theme.textTheme.titleMedium),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.add),
-                                          onPressed: () {
-                                            setState(() {
-                                              quantity++;
-                                            });
-                                          },
-                                          constraints: const BoxConstraints(),
-                                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                        ),
-                                      ],
-                                    ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.w,
+                                  vertical: 6.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withOpacity(0.9),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                child: Text(
+                                  'EGP ${totalPrice}',
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface,
                                   ),
-                                  SizedBox(width: 8.w),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 12.w,
-                                      vertical: 6.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: theme.primaryColor.withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(20.r),
-                                    ),
-                                    child: Text(
-                                      'EGP ${totalPrice}',
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.bold,
-                                        color: theme.brightness == Brightness.light
-                                            ? Colors.black87
-                                            : Colors.white70,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ],
                           ),
@@ -318,9 +274,7 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                               context,
                             )!.foodChickenSchezwanFriedRiceDesc,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.brightness == Brightness.light
-                                  ? Colors.grey
-                                  : Colors.grey[400],
+                              color: colorScheme.onSurfaceVariant,
                               height: 1.4,
                             ),
                           ),
@@ -337,34 +291,31 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                                 '4.9',
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: theme.brightness == Brightness.light
-                                      ? Colors.black
-                                      : Colors.white,
+                                  color: colorScheme.onSurface,
                                 ),
                               ),
                               SizedBox(width: 4.w),
                               Text(
                                 '(1,205)',
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.brightness == Brightness.light
-                                      ? Colors.grey
-                                      : Colors.grey[400],
+                                  color: colorScheme.onSurfaceVariant,
                                 ),
                               ),
                               const Spacer(),
                               TextButton(
                                 onPressed: () {
-                                  context.push(AppRoutes.reviewsPage, extra: {
-                                    'foodId': widget.foodId,
-                                    'title': widget.title,
-                                  });
+                                  context.push(
+                                    AppRoutes.reviewsPage,
+                                    extra: {
+                                      'foodId': widget.foodId,
+                                      'title': widget.title,
+                                    },
+                                  );
                                 },
                                 child: Text(
                                   AppLocalizations.of(context)!.seeAllReviews,
                                   style: TextStyle(
-                                    color: theme.brightness == Brightness.light
-                                        ? Colors.black87
-                                        : Colors.white70,
+                                    color: colorScheme.onSurface,
                                     decoration: TextDecoration.underline,
                                   ),
                                 ),
@@ -427,11 +378,11 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
 
           // زر Add to cart في الأسفل
           Positioned(
-            bottom: 0,
+            bottom: 10.h,
             left: 0,
             right: 0,
             child: Container(
-              color: Colors.white,
+              color: colorScheme.surface,
               padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 20.h),
               child: AppButton(
                 onPressed: _addToCart,
@@ -444,44 +395,51 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
 
           // أزرار الرجوع والمفضلة في الأعلى (فوق كل شيء)
           Positioned(
-            top:
-                safeAreaTop +
-                10.h, // استخدام safeArea لضمان عدم التداخل مع شريط الحالة
+            top: 50.h,
             left: 16.w,
             child: InkWell(
               onTap: () =>
                   Navigator.of(context).pop(), // <-- هنا تشغيل زر الرجوع
-              borderRadius: BorderRadius.circular(12.r),
               child: Container(
-                padding: EdgeInsets.all(8.r),
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: theme.dividerColor),
+                  border: Border.all(
+                    color: colorScheme.onSurface,
+                    width: 1.5.w,
+                  ),
                 ),
                 child: Icon(
                   Icons.arrow_back_ios_new,
                   size: 20.sp,
-                  color: Colors.white,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ),
           ),
           Positioned(
-            top: safeAreaTop + 10.h, // استخدام safeArea
+            top: 50.h,
             right: 16.w,
-            child: InkWell(
-              onTap: _toggleFavorite, // <-- هنا تشغيل زر المفضلة
-              borderRadius: BorderRadius.circular(12.r),
-              child: Container(
-                padding: EdgeInsets.all(8.r),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.black.withOpacity(0.4),
-                ),
+            child: Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                color: _isFavorite ? const Color(0xFFFF6B6B) : Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 4.r,
+                  ),
+                ],
+              ),
+              child: InkWell(
+                onTap: _toggleFavorite, // <-- هنا تشغيل زر المفضلة
                 child: Icon(
                   _isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: _isFavorite ? Colors.red : Colors.white,
-                  size: 22.sp,
+                  size: 26.sp,
+                  color: _isFavorite
+                      ? Colors.white
+                      : Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
@@ -499,17 +457,18 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
     required bool isSelected,
     required ValueChanged<bool?> onChanged,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () => onChanged(!isSelected),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.shade200,
+              color: colorScheme.shadow.withOpacity(0.2),
               blurRadius: 4.r,
               offset: Offset(0, 2.h),
             ),
@@ -530,15 +489,16 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
             Expanded(
               child: Text(
                 title,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ),
             Checkbox(
               value: isSelected,
               onChanged: onChanged,
-              activeColor: Theme.of(context).primaryColor,
+              activeColor: colorScheme.primary,
               mouseCursor: SystemMouseCursors.click,
             ),
           ],

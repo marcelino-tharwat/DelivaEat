@@ -817,4 +817,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String addToCart(String totalPrice) {
     return 'إضافة إلى السلة جنيه مصري $totalPrice';
   }
+
+  @override
+  String get ratingAndReviews => 'التقييم والمراجعات';
+
+  @override
+  String get writeAReview => 'اكتب مراجعة';
+
+  @override
+  String get shareYourExperience => 'شارك تجربتك';
+
+  @override
+  String get submitReview => 'إرسال المراجعة';
+
+  @override
+  String userReviews(String count) {
+    return 'مراجعات المستخدمين ($count)';
+  }
+
+  @override
+  String get pleaseAddRatingAndReview => 'يرجى إضافة تقييم ومراجعة';
+
+  @override
+  String get reviewSubmittedSuccessfully => 'تم إرسال المراجعة بنجاح!';
+
+  @override
+  String get you => 'أنت';
 }

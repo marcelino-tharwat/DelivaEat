@@ -554,7 +554,11 @@ class _ApiService implements ApiService {
     String? category,
   ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'lang': lang, r'limit': limit, r'category': category};
+    final queryParameters = <String, dynamic>{
+      r'lang': lang,
+      r'limit': limit,
+      r'category': category,
+    };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
