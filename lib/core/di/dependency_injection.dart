@@ -9,6 +9,11 @@ import 'package:deliva_eat/features/home/data/repos/home_repo.dart';
 import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
 import 'package:deliva_eat/features/search/data/repos/search_repo.dart';
 import 'package:deliva_eat/features/search/cubit/search_cubit.dart';
+import 'package:deliva_eat/features/reviews/data/repos/reviews_repo.dart';
+import 'package:deliva_eat/features/reviews/cubit/reviews_cubit.dart';
+import 'package:deliva_eat/features/restaurant/data/repos/restaurant_repo.dart';
+import 'package:deliva_eat/features/restaurant/data/repos/product_repo.dart';
+import 'package:deliva_eat/features/restaurant/cubit/product_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:deliva_eat/core/network/dio_factory.dart';
@@ -58,4 +63,15 @@ void setupGetIt() {
   // SEARCH
   getIt.registerLazySingleton<SearchRepo>(() => SearchRepo(apiService: getIt()));
   getIt.registerFactory<SearchCubit>(() => SearchCubit(searchRepo: getIt()));
+
+  // REVIEWS
+  getIt.registerLazySingleton<ReviewsRepo>(() => ReviewsRepo(apiService: getIt()));
+  getIt.registerFactory<ReviewsCubit>(() => ReviewsCubit(repo: getIt()));
+
+  // RESTAURANT
+  getIt.registerLazySingleton<RestaurantRepo>(() => RestaurantRepo(apiService: getIt()));
+
+  // PRODUCT
+  getIt.registerLazySingleton<ProductRepo>(() => ProductRepo(apiService: getIt()));
+  getIt.registerFactory<ProductCubit>(() => ProductCubit(repo: getIt()));
 }

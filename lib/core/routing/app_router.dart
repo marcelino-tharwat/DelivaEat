@@ -20,11 +20,17 @@ import 'package:deliva_eat/features/restaurant/ui/prodcut_page.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_menu_page.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_page.dart';
 import 'package:deliva_eat/features/reviews/ui/reviews_page.dart';
+import 'package:deliva_eat/features/reviews/cubit/reviews_cubit.dart';
 import 'package:deliva_eat/features/search/ui/search_page.dart';
 import 'package:deliva_eat/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:deliva_eat/features/restaurant/cubit/restaurant_cubit.dart';
+import 'package:deliva_eat/features/restaurant/cubit/restaurant_state.dart';
+import 'package:deliva_eat/features/restaurant/data/repos/restaurant_repo.dart';
+import 'package:deliva_eat/features/restaurant/cubit/product_cubit.dart';
+import 'package:deliva_eat/core/di/dependency_injection.dart';
 
 final GoRouter router = GoRouter(
   routes: <RouteBase>[
@@ -183,11 +189,17 @@ final GoRouter router = GoRouter(
                 .toString();
             final String restaurantName = (data?['restaurantName'] ?? '')
                 .toString();
-            return RestaurantHomePage(
-              restaurantId: restaurantId,
-              restaurantName: restaurantName.isEmpty
-                  ? 'المطعم'
-                  : restaurantName,
+            return BlocProvider(
+              create: (_) => RestaurantCubit(
+                repo: getIt<RestaurantRepo>(),
+                restaurantId: restaurantId,
+              )..loadDetails(),
+              child: RestaurantHomePage(
+                restaurantId: restaurantId,
+                restaurantName: restaurantName.isEmpty
+                    ? 'المطعم'
+                    : restaurantName,
+              ),
             );
           },
         ),
@@ -195,26 +207,33 @@ final GoRouter router = GoRouter(
           path: AppRoutes.productDetailsPage,
           builder: (BuildContext context, GoRouterState state) {
             final data = (state.extra as Map<String, dynamic>?) ?? {};
-            return FoodOrderPage(
-              foodId: (data['foodId'] ?? '').toString(),
-              title: (data['title'] ?? '').toString(),
-              image: (data['image'] ?? '').toString(),
-              priceText: (data['price'] ?? '').toString(),
-              isFavorite: data['isFavorite'] == true,
+            return BlocProvider<ProductCubit>(
+              create: (_) => getIt<ProductCubit>(),
+              child: FoodOrderPage(
+                foodId: (data['foodId'] ?? '').toString(),
+                title: (data['title'] ?? '').toString(),
+                image: (data['image'] ?? '').toString(),
+                priceText: (data['price'] ?? '').toString(),
+                isFavorite: data['isFavorite'] == true,
+              ),
             );
           },
         ),
         GoRoute(
           path: AppRoutes.reviewsPage,
           builder: (BuildContext context, GoRouterState state) {
-            // final data = (state.extra as Map<String, dynamic>?) ?? {};
-            // final foodId = (data['foodId'] ?? '').toString();
-            // final restaurantId = (data['restaurantId'] ?? '').toString();
-            // final title = (data['title'] ?? '').toString();
-            return RatingReviewsPage(
-              // foodId: foodId.isEmpty ? null : foodId,
-              // restaurantId: restaurantId.isEmpty ? null : restaurantId,
-              // title: title,
+            final data = (state.extra as Map<String, dynamic>?) ?? {};
+            final String? foodId = (data['foodId']?.toString().isNotEmpty == true)
+                ? data['foodId'].toString()
+                : null;
+            final String? restaurantId = (data['restaurantId']?.toString().isNotEmpty == true)
+                ? data['restaurantId'].toString()
+                : null;
+            return BlocProvider(
+              create: (_) => getIt<ReviewsCubit>()
+                ..setContext(foodId: foodId, restaurantId: restaurantId)
+                ..fetchReviews(page: 1),
+              child: const RatingReviewsPage(),
             );
           },
         ),

@@ -14,6 +14,11 @@ import 'package:deliva_eat/features/home/data/models/offer_model.dart';
 import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:deliva_eat/features/search/data/models/search_response_model.dart';
+import 'package:deliva_eat/features/reviews/data/models/review_list_response.dart';
+import 'package:deliva_eat/features/reviews/data/models/review_model.dart';
+import 'package:deliva_eat/features/reviews/data/models/review_create_request.dart';
+import 'package:deliva_eat/features/restaurant/data/models/restaurant_details_model.dart';
+import 'package:deliva_eat/features/restaurant/data/models/cart_models.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -81,6 +86,15 @@ Future<dynamic> resetPassword(
     @Query('restaurantId') String restaurantId,
     @Query('limit') int limit,
     @Query('lang') String lang,
+    @Query('tab') String? tab,
+    @Query('type') String? type,
+  );
+
+  // Restaurant details
+  @GET(ApiConstant.restaurantDetailsUrl)
+  Future<RestaurantDetailsResponse> getRestaurantDetails(
+    @Query('restaurantId') String restaurantId,
+    @Query('lang') String lang,
   );
 
   // Search endpoints
@@ -110,5 +124,33 @@ Future<dynamic> resetPassword(
     @Query('lang') String lang,
     @Query('limit') int limit,
     @Query('category') String? category,
+  );
+
+  // Reviews endpoints
+  @GET(ApiConstant.reviewsUrl)
+  Future<ReviewsListResponse> getReviews(
+    @Query('foodId') String? foodId,
+    @Query('restaurantId') String? restaurantId,
+    @Query('limit') int limit,
+    @Query('page') int page,
+  );
+
+  @POST(ApiConstant.reviewsUrl)
+  Future<HomeResultResponseModel<ReviewModel>> addReview(
+    @Body() ReviewCreateRequest request,
+  );
+
+  // Toggle restaurant favorite
+  @POST(ApiConstant.toggleFavoriteUrl)
+  Future<HomeResultResponseModel<RestaurantModel>> toggleRestaurantFavorite(
+    @Body() Map<String, dynamic> body,
+    @Query('lang') String lang,
+  );
+
+  // Cart endpoints
+  @POST(ApiConstant.cartAddItemUrl)
+  Future<HomeResultResponseModel<CartItemModel>> addItemToCart(
+    @Body() AddCartItemRequest request,
+    @Query('lang') String lang,
   );
 }

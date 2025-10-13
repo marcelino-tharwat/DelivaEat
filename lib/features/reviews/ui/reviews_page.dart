@@ -3,20 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:deliva_eat/core/widgets/app_text_field.dart';
 import 'package:deliva_eat/core/widgets/app_button.dart';
-
-class Review {
-  final String username;
-  final double rating;
-  final String comment;
-  final DateTime date;
-
-  Review({
-    required this.username,
-    required this.rating,
-    required this.comment,
-    required this.date,
-  });
-}
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:deliva_eat/features/reviews/cubit/reviews_cubit.dart';
+import 'package:deliva_eat/features/reviews/cubit/reviews_state.dart';
+import 'package:deliva_eat/features/reviews/data/models/review_model.dart';
 
 class RatingReviewsPage extends StatefulWidget {
   const RatingReviewsPage({super.key});
@@ -32,33 +22,9 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
   bool _showRatingError = false;
   String? _commentError;
 
-  List<Review> reviews = [
-    Review(
-      username: 'Ahmed12',
-      rating: 4,
-      comment:
-          'Amazing flavor! The Chicken was perfectly cooked. and it the spice level right.\nHighly recommended!',
-      date: DateTime.now().subtract(const Duration(days: 2)),
-    ),
-    Review(
-      username: 'Ahmed12',
-      rating: 4,
-      comment:
-          'Amazing flavor! The Chicken was perfectly cooked. and it the spice level right.\nHighly recommended!',
-      date: DateTime.now().subtract(const Duration(days: 3)),
-    ),
-    Review(
-      username: 'Ahmed12',
-      rating: 4,
-      comment:
-          'Amazing flavor! The Chicken was perfectly cooked. and it the spice level right.\nHighly recommended!',
-      date: DateTime.now().subtract(const Duration(days: 5)),
-    ),
-  ];
-
-  double get averageRating {
+  double _averageRating(List<ReviewModel> reviews) {
     if (reviews.isEmpty) return 0;
-    double sum = reviews.fold(0, (prev, review) => prev + review.rating);
+    final sum = reviews.fold<int>(0, (prev, r) => prev + (r.rating));
     return sum / reviews.length;
   }
 
@@ -73,34 +39,14 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
           : null;
     });
 
-    // لو في أي error، نوقف
     if (_showRatingError || _commentError != null) {
       return;
     }
 
-    // لو كل حاجة تمام، نضيف الـ review
-    setState(() {
-      reviews.insert(
-        0,
-        Review(
-          username: 'You',
-          rating: _userRating,
-          comment: _reviewController.text,
-          date: DateTime.now(),
-        ),
-      );
-      _reviewController.clear();
-      _userRating = 0;
-      _showRatingError = false;
-      _commentError = null;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.reviewSubmittedSuccessfully),
-        backgroundColor: colorScheme.primary,
-      ),
-    );
+    context.read<ReviewsCubit>().submitReview(
+          rating: _userRating.toInt(),
+          comment: _reviewController.text.trim(),
+        );
   }
 
   @override
@@ -175,35 +121,45 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                       SizedBox(height: 16.h),
 
                       // Average Rating
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            averageRating.toStringAsFixed(1),
-                            style: textTheme.displaySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 48.sp,
-                              color: colorScheme.onSurface,
-                            ),
-                          ),
-                          SizedBox(width: 12.w),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      BlocBuilder<ReviewsCubit, ReviewsState>(
+                        builder: (context, state) {
+                          if (state is ReviewsLoading || state is ReviewsInitial) {
+                            return Row(
+                              children: [
+                                SizedBox(
+                                  height: 48.sp,
+                                  width: 48.sp,
+                                  child: const CircularProgressIndicator(),
+                                ),
+                              ],
+                            );
+                          }
+                          final items = state is ReviewsLoaded ? state.items : <ReviewModel>[];
+                          final avg = _averageRating(items);
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              Text(
+                                avg.toStringAsFixed(1),
+                                style: textTheme.displaySmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 48.sp,
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
                               Row(
                                 children: List.generate(5, (index) {
                                   return Icon(
-                                    index < averageRating.floor()
-                                        ? Icons.star
-                                        : Icons.star_border,
+                                    index < avg.floor() ? Icons.star : Icons.star_border,
                                     color: colorScheme.primary,
                                     size: 28.sp,
                                   );
                                 }),
                               ),
                             ],
-                          ),
-                        ],
+                          );
+                        },
                       ),
                       SizedBox(height: 24.h),
 
@@ -281,25 +237,82 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                       SizedBox(height: 12.h),
 
                       // Submit Button
-                      AppButton(
-                        onPressed: _submitReview,
-                        text: l10n.submitReview,
+                      BlocConsumer<ReviewsCubit, ReviewsState>(
+                        listener: (context, state) {
+                          if (state is ReviewSubmitted) {
+                            _reviewController.clear();
+                            setState(() {
+                              _userRating = 0;
+                              _showRatingError = false;
+                              _commentError = null;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(l10n.reviewSubmittedSuccessfully),
+                                backgroundColor: colorScheme.primary,
+                              ),
+                            );
+                          } else if (state is ReviewsError) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(state.message)),
+                            );
+                          }
+                        },
+                        builder: (context, state) {
+                          final isSubmitting = state is ReviewSubmitting;
+                          return AppButton(
+                            onPressed: isSubmitting ? null : _submitReview,
+                            text: isSubmitting ? l10n.loading : l10n.submitReview,
+                          );
+                        },
                       ),
                       SizedBox(height: 24.h),
 
                       // User Reviews Header
-                      Text(
-                        l10n.userReviews(reviews.length.toString()),
-                        style: textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18.sp,
-                          color: colorScheme.onSurface,
-                        ),
+                      BlocBuilder<ReviewsCubit, ReviewsState>(
+                        builder: (context, state) {
+                          final count = state is ReviewsLoaded ? state.items.length : 0;
+                          return Text(
+                            l10n.userReviews(count.toString()),
+                            style: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18.sp,
+                              color: colorScheme.onSurface,
+                            ),
+                          );
+                        },
                       ),
                       SizedBox(height: 16.h),
 
                       // Reviews List
-                      ...reviews.map((review) => ReviewCard(review: review)),
+                      BlocBuilder<ReviewsCubit, ReviewsState>(
+                        builder: (context, state) {
+                          if (state is ReviewsLoading || state is ReviewsInitial) {
+                            return Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 24.h),
+                                child: const CircularProgressIndicator(),
+                              ),
+                            );
+                          }
+                          if (state is ReviewsError) {
+                            return Padding(
+                              padding: EdgeInsets.all(12.w),
+                              child: Text(state.message, style: textTheme.bodyMedium),
+                            );
+                          }
+                          final items = (state is ReviewsLoaded) ? state.items : <ReviewModel>[];
+                          if (items.isEmpty) {
+                            return Padding(
+                              padding: EdgeInsets.all(12.w),
+                              child: Text(l10n.noData),
+                            );
+                          }
+                          return Column(
+                            children: items.map((r) => ReviewCard(review: r)).toList(),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -319,7 +332,7 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
 }
 
 class ReviewCard extends StatelessWidget {
-  final Review review;
+  final ReviewModel review;
 
   const ReviewCard({Key? key, required this.review}) : super(key: key);
 
@@ -360,7 +373,7 @@ class ReviewCard extends StatelessWidget {
               ),
               SizedBox(width: 12.w),
               Text(
-                review.username,
+                review.userName,
                 style: textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: 15.sp,
@@ -373,7 +386,7 @@ class ReviewCard extends StatelessWidget {
           Row(
             children: List.generate(5, (index) {
               return Icon(
-                index < review.rating ? Icons.star : Icons.star_border,
+                index < (review.rating) ? Icons.star : Icons.star_border,
                 color: colorScheme.primary,
                 size: 20.sp,
               );

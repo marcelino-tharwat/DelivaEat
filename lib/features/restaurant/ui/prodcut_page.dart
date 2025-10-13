@@ -7,12 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
 import 'package:deliva_eat/features/home/cubit/home_state.dart';
 import 'package:deliva_eat/features/home/data/models/food_model.dart';
-import 'package:dio/dio.dart';
-import 'package:deliva_eat/core/network/dio_factory.dart';
 import 'package:deliva_eat/core/network/api_constant.dart';
 import 'package:go_router/go_router.dart';
 import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:deliva_eat/features/restaurant/cubit/product_cubit.dart';
+import 'package:deliva_eat/features/restaurant/cubit/product_state.dart';
+import 'package:deliva_eat/features/restaurant/data/models/cart_models.dart';
 
 class FoodOrderPage extends StatefulWidget {
   final String foodId;
@@ -39,7 +40,7 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
   late final ValueNotifier<bool> _extraChickenNotifier;
   late final ValueNotifier<bool> _colaNotifier;
   late final ValueNotifier<bool> _isFavoriteNotifier;
-  late final ValueNotifier<bool> _isAddingToCartNotifier;
+  // Removed direct Dio adding state; use Cubit state instead
 
   late final int basePrice;
   static const int extraChickenPrice = 10;
@@ -56,7 +57,6 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
     _extraChickenNotifier = ValueNotifier<bool>(false);
     _colaNotifier = ValueNotifier<bool>(false);
     _isFavoriteNotifier = ValueNotifier<bool>(widget.isFavorite);
-    _isAddingToCartNotifier = ValueNotifier<bool>(false);
 
     // Parse base price once
     basePrice = _parseBasePrice(widget.priceText);
@@ -74,7 +74,7 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
     _extraChickenNotifier.dispose();
     _colaNotifier.dispose();
     _isFavoriteNotifier.dispose();
-    _isAddingToCartNotifier.dispose();
+    // no-op
     super.dispose();
   }
 
@@ -95,62 +95,20 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
   }
 
   Future<void> _addToCart() async {
-    if (_isAddingToCartNotifier.value) return;
-
-    _isAddingToCartNotifier.value = true;
-
     final lang = Localizations.localeOf(context).languageCode;
-    final dio = DioFactory.getDio();
-
-    final options = <Map<String, dynamic>>[];
+    final options = <CartOption>[];
     if (_extraChickenNotifier.value) {
-      options.add({'code': 'extra_chicken', 'price': extraChickenPrice});
+      options.add(CartOption(code: 'extra_chicken', price: extraChickenPrice));
     }
     if (_colaNotifier.value) {
-      options.add({'code': 'cola', 'price': colaPrice});
+      options.add(CartOption(code: 'cola', price: colaPrice));
     }
-
-    final payload = {
-      'foodId': widget.foodId,
-      'quantity': 1,
-      'options': options,
-    };
-
-    try {
-      final res = await dio.post(
-        ApiConstant.cartAddItemUrl,
-        data: payload,
-        queryParameters: {'lang': lang},
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        ),
-      );
-
-      if (!mounted) return;
-
-      final ok = res.data is Map && (res.data['success'] == true);
-      if (ok) {
-        final msg = _isArabic ? 'تمت الإضافة إلى السلة' : 'Added to cart';
-        _showSnackBar(msg);
-      } else {
-        String err = 'failed add to cart';
-        if (res.data is Map && res.data['error'] is Map) {
-          err = (res.data['error']['message'] ?? err).toString();
-        }
-        throw Exception(err);
-      }
-    } catch (e) {
-      if (!mounted) return;
-      final msg = _isArabic ? 'فشل الإضافة إلى السلة' : 'Failed to add to cart';
-      _showSnackBar(msg);
-    } finally {
-      if (mounted) {
-        _isAddingToCartNotifier.value = false;
-      }
-    }
+    context.read<ProductCubit>().addToCart(
+          foodId: widget.foodId,
+          quantity: 1,
+          options: options,
+          lang: lang,
+        );
   }
 
   void _showSnackBar(String message) {
@@ -223,7 +181,17 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Scaffold(
+    return BlocListener<ProductCubit, ProductState>(
+      listener: (context, state) {
+        if (state is ProductAdded) {
+          final msg = _isArabic ? 'تمت الإضافة إلى السلة' : 'Added to cart';
+          _showSnackBar(msg);
+        } else if (state is ProductError) {
+          final msg = _isArabic ? 'فشل الإضافة إلى السلة' : 'Failed to add to cart';
+          _showSnackBar(msg);
+        }
+      },
+      child: Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
@@ -470,9 +438,9 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                 return ValueListenableBuilder<bool>(
                   valueListenable: _colaNotifier,
                   builder: (context, cola, child) {
-                    return ValueListenableBuilder<bool>(
-                      valueListenable: _isAddingToCartNotifier,
-                      builder: (context, isAdding, child) {
+                    return BlocBuilder<ProductCubit, ProductState>(
+                      builder: (context, state) {
+                        final isAdding = state is ProductAdding;
                         final totalPrice = _calculateTotalPrice();
                         return Container(
                           color: colorScheme.surface,
