@@ -9,11 +9,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:deliva_eat/features/home/cubit/home_cubit.dart';
 import 'package:deliva_eat/features/home/cubit/home_state.dart';
 import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
-import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:deliva_eat/core/network/dio_factory.dart';
 import 'package:go_router/go_router.dart';
 import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:deliva_eat/features/restaurant/ui/widgets/restaurant_skeleton_loader.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class RestaurantHomePage extends StatefulWidget {
   const RestaurantHomePage({
@@ -29,36 +29,78 @@ class RestaurantHomePage extends StatefulWidget {
   State<RestaurantHomePage> createState() => _RestaurantHomePageState();
 }
 
-class _RestaurantHomePageState extends State<RestaurantHomePage> {
+class _RestaurantHomePageState extends State<RestaurantHomePage>
+    with AutomaticKeepAliveClientMixin {
   bool _isFavorite = false;
   bool _loading = true;
   String? _error;
 
-  // API
   late final Dio _dio;
-  Map<String, dynamic>? _restaurant; // details
+  Map<String, dynamic>? _restaurant;
   List<String> _tabs = [];
   List<String> _badges = [];
 
-  // Items per active tab
   String selectedCategory = '';
   final Map<String, List<Map<String, dynamic>>> _itemsByTab = {};
+  final Map<String, bool> _loadingTabs = {};
   late final ScrollController _scrollController;
   List<GlobalKey> _categoryKeys = [];
 
+  @override
+  bool get wantKeepAlive => true;
+
   Future<void> _toggleFavorite() async {
-    // Optimistic UI update
     final newVal = !_isFavorite;
-    setState(() {
-      _isFavorite = newVal;
-    });
-    // Propagate to Home favorites state and backend
+    setState(() => _isFavorite = newVal);
+
     if (!mounted) return;
 
-    // Prepare payload and also update HomeCubit directly when available
     final lang = Localizations.localeOf(context).languageCode;
     final m = _restaurant ?? <String, dynamic>{};
-    final model = RestaurantModel(
+    final model = _createRestaurantModel(m, !newVal);
+
+    bool usedHomeCubit = false;
+    try {
+      final hc = context.read<HomeCubit>();
+      if (hc.state is HomeSuccess) {
+        usedHomeCubit = true;
+        await hc.toggleFavorite(
+          restaurantId: widget.restaurantId,
+          lang: lang,
+          baseOverride: model,
+        );
+      }
+    } catch (_) {}
+
+    if (!usedHomeCubit) {
+      try {
+        final res = await _dio.post(
+          ApiConstant.toggleFavoriteUrl,
+          data: {'restaurantId': widget.restaurantId},
+          queryParameters: {'lang': lang},
+        );
+        final map = res.data as Map<String, dynamic>?;
+        if (map?['success'] == true && map?['data'] is Map<String, dynamic>) {
+          final data = map!['data'] as Map<String, dynamic>;
+          final serverFav = data['isFavorite'] == true;
+          if (mounted) setState(() => _isFavorite = serverFav);
+        } else {
+          if (mounted) {
+            setState(() => _isFavorite = !newVal);
+            _showSnackBar('Failed to update favorite');
+          }
+        }
+      } catch (_) {
+        if (mounted) {
+          setState(() => _isFavorite = !newVal);
+          _showSnackBar('Connection error while updating favorite');
+        }
+      }
+    }
+  }
+
+  RestaurantModel _createRestaurantModel(Map<String, dynamic> m, bool isFav) {
+    return RestaurantModel(
       id: (m['_id']?.toString() ?? widget.restaurantId),
       name: (m['name'] ?? '') as String,
       nameAr: (m['nameAr'] ?? m['name'] ?? '') as String,
@@ -81,71 +123,17 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
           : null,
       isOpen: m['isOpen'] as bool?,
       isActive: m['isActive'] as bool?,
-      // Pass the PRE-TOGGLE state so HomeCubit toggles to newVal internally
-      isFavorite: !newVal,
+      isFavorite: isFav,
       isTopRated: m['isTopRated'] as bool?,
       address: m['address'] as String?,
       phone: m['phone'] as String?,
     );
+  }
 
-    // 1) Primary path: update HomeCubit immediately so Home favorites reflects the change
-    bool usedHomeCubit = false;
-    try {
-      final hc = context.read<HomeCubit>();
-      if (hc.state is HomeSuccess) {
-        usedHomeCubit = true;
-        await hc.toggleFavorite(
-          restaurantId: widget.restaurantId,
-          lang: lang,
-          baseOverride: model,
-        );
-      }
-    } catch (_) {
-      // ignore – we'll use backend fallback below if needed
-    }
-
-    // 2) Backend fallback: only if HomeCubit isn't available
-    if (!usedHomeCubit) {
-      try {
-        final res = await _dio.post(
-          ApiConstant.toggleFavoriteUrl,
-          data: {'restaurantId': widget.restaurantId},
-          queryParameters: {'lang': lang},
-        );
-        final map = res.data as Map<String, dynamic>?;
-        if (map?['success'] == true && map?['data'] is Map<String, dynamic>) {
-          final data = map!['data'] as Map<String, dynamic>;
-          final serverFav = data['isFavorite'] == true;
-          if (mounted) {
-            setState(() {
-              _isFavorite = serverFav; // reconcile with server
-            });
-          }
-        } else {
-          // rollback on unexpected response
-          if (mounted) {
-            setState(() {
-              _isFavorite = !newVal;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to update favorite')),
-            );
-          }
-        }
-      } catch (_) {
-        // rollback on error
-        if (mounted) {
-          setState(() {
-            _isFavorite = !newVal;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Connection error while updating favorite'),
-            ),
-          );
-        }
-      }
-    }
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
+    );
   }
 
   @override
@@ -153,6 +141,19 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
     super.initState();
     _scrollController = ScrollController();
     _dio = DioFactory.getDio();
+
+    // تحميل باقي التابات عندما يكون المستخدم Idle
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          for (final tab in _tabs) {
+            if (!_itemsByTab.containsKey(tab) && _loadingTabs[tab] != true) {
+              unawaited(_fetchItemsForTab(tab));
+            }
+          }
+        }
+      });
+    });
   }
 
   bool _didFetch = false;
@@ -171,84 +172,89 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
       _loading = true;
       _error = null;
     });
+
     try {
       final lang = Localizations.localeOf(context).languageCode;
       final res = await _dio.get(
         'home/restaurant/details',
         queryParameters: {'restaurantId': widget.restaurantId, 'lang': lang},
       );
+
       final data = (res.data?['data'] ?? {}) as Map<String, dynamic>;
       _restaurant = data['restaurant'] as Map<String, dynamic>?;
-      // Initialize favorite state from API if available
-      final favFromApi = (_restaurant?['isFavorite'] ?? false);
-      _isFavorite = favFromApi is bool ? favFromApi : false;
-      final List tabsRaw = (data['tabs'] ?? []) as List;
-      _tabs = tabsRaw.map((e) => e.toString()).toList();
+      _isFavorite = (_restaurant?['isFavorite'] ?? false) == true;
+
+      final l10n = AppLocalizations.of(context)!;
+      _tabs = _buildLocalizedTabs(data, l10n);
+
       final List badgesRaw = (data['badges'] ?? []) as List;
       _badges = badgesRaw.map((e) => e.toString().toLowerCase()).toList();
 
-      // Localize default two tabs
-      final l10n = AppLocalizations.of(context)!;
-      final localizedTrending = l10n.categoryTrending;
-      final localizedFree = l10n.categoryFree;
-      // Ensure Trending/Free first
-      _tabs.removeWhere(
-        (t) => t.toLowerCase() == 'trending' || t.toLowerCase() == 'free',
-      );
-      // Localize known Food tabs coming from API (Soup, Appetizers, Pasta, Drinks)
-      final localizedRest = _tabs.map((t) {
-        final tl = t.toLowerCase();
-        if (tl == 'soup') return l10n.categorySoup;
-        if (tl == 'appetizers') return l10n.categoryAppetizers;
-        if (tl == 'pasta') return l10n.categoryPasta;
-        if (tl == 'drinks') return l10n.categoryDrinks;
-        return t; // keep original for other types
-      }).toList();
-      _tabs = [localizedTrending, localizedFree, ...localizedRest];
-
-      // Guard: if API returned empty tabs, use sensible defaults
-      if (_tabs.isEmpty) {
-        _tabs = [
-          localizedTrending,
-          localizedFree,
-          l10n.categorySoup,
-          l10n.categoryAppetizers,
-          l10n.categoryPasta,
-          l10n.categoryDrinks,
-        ];
-      }
-
-      // Initialize keys for scrolling
       _categoryKeys = List.generate(_tabs.length, (_) => GlobalKey());
 
       if (_tabs.isNotEmpty) {
         selectedCategory = _tabs.first;
+
+        // حمّل التاب الأول
         await _fetchItemsForTab(selectedCategory);
+
+        // حمّل التاب الثاني في الخلفية
+        if (_tabs.length > 1) {
+          unawaited(_fetchItemsForTab(_tabs[1]));
+        }
       }
     } catch (e) {
-      // Fallback: show default tabs so UI works even if API failed (e.g., device cannot reach server)
       final l10n = AppLocalizations.of(context)!;
       _error = l10n.failedToLoadRestaurants;
-      _tabs = [
-        l10n.categoryTrending,
-        l10n.categoryFree,
-        l10n.categorySoup,
-        l10n.categoryAppetizers,
-        l10n.categoryPasta,
-        l10n.categoryDrinks,
-      ];
-
-      // Initialize keys for scrolling
+      _tabs = _getDefaultTabs(l10n);
       _categoryKeys = List.generate(_tabs.length, (_) => GlobalKey());
-
       selectedCategory = _tabs.first;
-      await _fetchItemsForTab(selectedCategory);
+      unawaited(_fetchItemsForTab(selectedCategory));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
+  List<String> _buildLocalizedTabs(
+    Map<String, dynamic> data,
+    AppLocalizations l10n,
+  ) {
+    final List tabsRaw = (data['tabs'] ?? []) as List;
+    var tabs = tabsRaw.map((e) => e.toString()).toList();
+
+    tabs.removeWhere(
+      (t) => t.toLowerCase() == 'trending' || t.toLowerCase() == 'free',
+    );
+
+    final localizedRest = tabs.map((t) {
+      final tl = t.toLowerCase();
+      if (tl == 'soup') return l10n.categorySoup;
+      if (tl == 'appetizers') return l10n.categoryAppetizers;
+      if (tl == 'pasta') return l10n.categoryPasta;
+      if (tl == 'drinks') return l10n.categoryDrinks;
+      return t;
+    }).toList();
+
+    final result = [l10n.categoryTrending, l10n.categoryFree, ...localizedRest];
+    return result.isEmpty ? _getDefaultTabs(l10n) : result;
+  }
+
+  List<String> _getDefaultTabs(AppLocalizations l10n) {
+    return [
+      l10n.categoryTrending,
+      l10n.categoryFree,
+      l10n.categorySoup,
+      l10n.categoryAppetizers,
+      l10n.categoryPasta,
+      l10n.categoryDrinks,
+    ];
+  }
+
   Future<void> _fetchItemsForTab(String tab) async {
+    if (_loadingTabs[tab] == true) return;
+
+    setState(() => _loadingTabs[tab] = true);
+
     final lang = Localizations.localeOf(context).languageCode;
     try {
       final apiTab = _mapDisplayTabToApi(tab);
@@ -266,19 +272,46 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
       if (mounted) setState(() {});
     } catch (_) {
       _itemsByTab[tab] = [];
+    } finally {
+      setState(() => _loadingTabs[tab] = false);
+    }
+  }
+
+  void _prefetchAdjacentTabs(String currentTab) {
+    final currentIndex = _tabs.indexOf(currentTab);
+    if (currentIndex == -1) return;
+
+    // حمّل التاب التالي
+    if (currentIndex + 1 < _tabs.length) {
+      final nextTab = _tabs[currentIndex + 1];
+      if (!_itemsByTab.containsKey(nextTab) && _loadingTabs[nextTab] != true) {
+        _fetchItemsForTab(nextTab);
+      }
+    }
+
+    // حمّل التاب السابق
+    if (currentIndex - 1 >= 0) {
+      final prevTab = _tabs[currentIndex - 1];
+      if (!_itemsByTab.containsKey(prevTab) && _loadingTabs[prevTab] != true) {
+        _fetchItemsForTab(prevTab);
+      }
     }
   }
 
   String _mapDisplayTabToApi(String tab) {
     final t = tab.toLowerCase();
     final l10n = AppLocalizations.of(context)!;
-    if (t == l10n.categoryTrending.toLowerCase()) return 'Trending';
-    if (t == l10n.categoryFree.toLowerCase()) return 'Free';
-    if (t == l10n.categorySoup.toLowerCase()) return 'Soup';
-    if (t == l10n.categoryAppetizers.toLowerCase()) return 'Appetizers';
-    if (t == l10n.categoryPasta.toLowerCase()) return 'Pasta';
-    if (t == l10n.categoryDrinks.toLowerCase()) return 'Drinks';
-    return tab; // fallback uses same label (Pharmacy/Grocery/Markets subcats)
+
+    final mapping = {
+      l10n.categoryTrending.toLowerCase(): 'Trending',
+      l10n.categoryFree.toLowerCase(): 'Free',
+      l10n.categorySoup.toLowerCase(): 'Soup',
+      l10n.categoryAppetizers.toLowerCase(): 'Appetizers',
+      l10n.categoryPasta.toLowerCase(): 'Pasta',
+      l10n.categoryDrinks.toLowerCase(): 'Drinks',
+    };
+
+    return mapping[t] ?? tab;
   }
 
   @override
@@ -288,12 +321,11 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
   }
 
   String _formatPrice(dynamic value) {
+    if (value == null) return '';
     try {
-      if (value == null) return '';
       final numVal = value is num
           ? value.toDouble()
           : double.tryParse(value.toString()) ?? 0.0;
-      // Adjust currency label if needed
       return 'EGP ${numVal.toStringAsFixed(numVal % 1 == 0 ? 0 : 2)}';
     } catch (_) {
       return '';
@@ -302,48 +334,26 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-    return WillPopScope(
-      onWillPop: () async {
-        final lang = Localizations.localeOf(context).languageCode;
-        final m = _restaurant ?? <String, dynamic>{};
-        final base = RestaurantModel(
-          id: (m['_id']?.toString() ?? widget.restaurantId),
-          name: (m['name'] ?? '') as String,
-          nameAr: (m['nameAr'] ?? m['name'] ?? '') as String,
-          description:
-              (m['description'] as String?) ?? (m['descriptionAr'] as String?),
-          descriptionAr:
-              (m['descriptionAr'] as String?) ?? (m['description'] as String?),
-          image: (m['image'] ?? '') as String,
-          coverImage: m['coverImage'] as String?,
-          rating: (m['rating'] is num) ? (m['rating'] as num).toDouble() : null,
-          reviewCount: m['reviewCount'] is int
-              ? m['reviewCount'] as int
-              : int.tryParse('${m['reviewCount'] ?? ''}'),
-          deliveryTime: m['deliveryTime']?.toString(),
-          deliveryFee: (m['deliveryFee'] is num)
-              ? (m['deliveryFee'] as num).toDouble()
-              : null,
-          minimumOrder: (m['minimumOrder'] is num)
-              ? (m['minimumOrder'] as num).toDouble()
-              : null,
-          isOpen: m['isOpen'] as bool?,
-          isActive: m['isActive'] as bool?,
-          isFavorite: _isFavorite,
-          isTopRated: m['isTopRated'] as bool?,
-          address: m['address'] as String?,
-          phone: m['phone'] as String?,
-        );
-        Navigator.of(context).pop({
-          'restaurantId': widget.restaurantId,
-          'lang': lang,
-          'isFavorite': _isFavorite,
-          'base': base.toJson(),
-        });
-        return false;
+
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          final lang = Localizations.localeOf(context).languageCode;
+          final m = _restaurant ?? <String, dynamic>{};
+          final base = _createRestaurantModel(m, _isFavorite);
+
+          Navigator.of(context).pop({
+            'restaurantId': widget.restaurantId,
+            'lang': lang,
+            'isFavorite': _isFavorite,
+            'base': base.toJson(),
+          });
+        }
       },
       child: Scaffold(
         backgroundColor: colorScheme.background,
@@ -351,366 +361,145 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [
-              // --- الجزء الأول: الهيدر (صورة + لوجو) ---
               if (_loading)
-                SliverToBoxAdapter(child: RestaurantSkeletonLoader())
+                const SliverToBoxAdapter(child: RestaurantSkeletonLoader())
               else
-                SliverToBoxAdapter(
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    alignment: Alignment.center,
-                    children: [
-                      // الخلفية: صورة الغلاف من المطعم
-                      Container(
-                        height: 280.h,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                              (_restaurant?['coverImage'] ??
-                                      _restaurant?['image'] ??
-                                      'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800')
-                                  as String,
-                            ),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      // Back button
-                      Positioned(
-                        top: 50.h,
-                        left: 16.w,
-                        child: InkWell(
-                          onTap: () {
-                            final lang = Localizations.localeOf(
-                              context,
-                            ).languageCode;
-                            final m = _restaurant ?? <String, dynamic>{};
-                            final base = RestaurantModel(
-                              id: (m['_id']?.toString() ?? widget.restaurantId),
-                              name: (m['name'] ?? '') as String,
-                              nameAr:
-                                  (m['nameAr'] ?? m['name'] ?? '') as String,
-                              description:
-                                  (m['description'] as String?) ??
-                                  (m['descriptionAr'] as String?),
-                              descriptionAr:
-                                  (m['descriptionAr'] as String?) ??
-                                  (m['description'] as String?),
-                              image: (m['image'] ?? '') as String,
-                              coverImage: m['coverImage'] as String?,
-                              rating: (m['rating'] is num)
-                                  ? (m['rating'] as num).toDouble()
-                                  : null,
-                              reviewCount: m['reviewCount'] is int
-                                  ? m['reviewCount'] as int
-                                  : int.tryParse('${m['reviewCount'] ?? ''}'),
-                              deliveryTime: m['deliveryTime']?.toString(),
-                              deliveryFee: (m['deliveryFee'] is num)
-                                  ? (m['deliveryFee'] as num).toDouble()
-                                  : null,
-                              minimumOrder: (m['minimumOrder'] is num)
-                                  ? (m['minimumOrder'] as num).toDouble()
-                                  : null,
-                              isOpen: m['isOpen'] as bool?,
-                              isActive: m['isActive'] as bool?,
-                              isFavorite: _isFavorite,
-                              isTopRated: m['isTopRated'] as bool?,
-                              address: m['address'] as String?,
-                              phone: m['phone'] as String?,
-                            );
-                            Navigator.of(context).pop({
-                              'restaurantId': widget.restaurantId,
-                              'lang': lang,
-                              'isFavorite': _isFavorite,
-                              'base': base.toJson(),
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(8.w),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: colorScheme.onSurface,
-                                width: 1.5.w,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.arrow_back_ios_new,
-                              size: 20.sp,
-                              color: colorScheme.onSurface,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Favorite button
-                      Positioned(
-                        top: 50.h,
-                        right: 16.w,
-                        child: Container(
-                          padding: EdgeInsets.all(6.w),
-                          decoration: BoxDecoration(
-                            color: _isFavorite
-                                ? const Color(0xFFFF6B6B)
-                                : Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 4.r,
-                              ),
-                            ],
-                          ),
-                          child: InkWell(
-                            onTap: _toggleFavorite,
-                            child: Icon(
-                              _isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              size: 26.sp,
-                              color: _isFavorite
-                                  ? Colors.white
-                                  : Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // اللوجو (بدل الشارة الحمراء)
-                      Positioned(
-                        top: 90.h,
-                        child: Container(
-                          width: 130.w,
-                          height: 100.h,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.r),
-                            child: Image.network(
-                              (_restaurant?['image'] ??
-                                      'https://placehold.co/160x160/png?text=Logo')
-                                  as String,
-                              fit: BoxFit.cover, // عشان تملى المساحة بشكل مظبوط
-                            ),
-                          ),
-                        ),
-                      ),
-                      // ✅ العروض (نص فوق الصورة ونص فوق الكونتينر)
-                      Positioned(
-                        top: 260.h, // يخلي الكونتينر يبدأ بعد الصورة
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: colorScheme.surface,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(24.r),
-                              topRight: Radius.circular(24.r),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Tabs + قائمة الأكل زي ما هي
-                              SizedBox(height: 60.h), // 👈 مساحة للعروض فوق
-                            ],
-                          ),
-                        ),
-                      ),
+                _buildHeaderWrapper(colorScheme, l10n),
 
-                      // ✅ العروض (فوق الصورة وجزء منها فوق الكونتينر)
-                      Positioned(
-                        top: 230.h, // بين الصورة والكونتينر الأبيض
-                        left: 0,
-                        right: 0,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.all(12.w),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xffFEF5F8),
-                                    borderRadius: BorderRadius.circular(12.r),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.local_offer,
-                                        color: Colors.pink,
-                                        size: 20.sp,
-                                      ),
-                                      SizedBox(width: 8.w),
-                                      Expanded(
-                                        child: Text(
-                                          l10n.offerDiscount15,
-                                          style: TextStyle(
-                                            color: Colors.pink,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.all(12.w),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryYellow,
-                                    borderRadius: BorderRadius.circular(12.r),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.local_offer,
-                                        color: Colors.pink,
-                                        size: 20.sp,
-                                      ),
-                                      SizedBox(width: 8.w),
-                                      Expanded(
-                                        child: Text(
-                                          l10n.offerFreeDelivery99,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              _buildCategoryTabs(colorScheme),
 
-              SliverToBoxAdapter(
-                child: Container(
-                  margin: EdgeInsets.only(top: 40.h),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    boxShadow: [],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // شريط التصنيفات (Category Tabs)
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w),
-                        child: Container(
-                          height: 50.h,
-                          decoration: BoxDecoration(
-                            color: colorScheme.surface,
-                            borderRadius: BorderRadius.circular(10.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorScheme.shadow.withOpacity(0.2),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            padding: EdgeInsets.symmetric(horizontal: 10.w),
-                            children: [
-                              Icon(Icons.menu, size: 24.sp),
-                              ..._tabs
-                                  .map(
-                                    (category) => _buildCategoryTab(category),
-                                  )
-                                  .toList(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // قائمة الطعام (Food Items) - Sections for each category
-              ..._tabs
-                  .asMap()
-                  .entries
-                  .map((tabEntry) {
-                    final index = tabEntry.key;
-                    final category = tabEntry.value;
-                    return [
-                      SliverPersistentHeader(
-                        key: _categoryKeys[index],
-                        pinned: false,
-                        delegate: _CategoryHeaderDelegate(category),
-                      ),
-                      SliverList(
-                        delegate: SliverChildListDelegate([
-                          ...(_itemsByTab[category] ?? []).asMap().entries.map((
-                            entry,
-                          ) {
-                            final idx = entry.key;
-                            final item = entry.value;
-                            final foodId = (item['_id'] ?? item['id'] ?? '')
-                                .toString();
-                            final isFav = (item['isFavorite'] == true);
-                            return Container(
-                              color: colorScheme.surface,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  bottom: 16.h,
-                                  left: 16.w,
-                                  right: 16.w,
-                                  top: idx == 0 ? 2.h : 0,
-                                ),
-                                child: _buildFoodItem(
-                                  (item['nameAr'] ?? item['name'] ?? '')
-                                      .toString(),
-                                  (item['descriptionAr'] ??
-                                          item['description'] ??
-                                          '')
-                                      .toString(),
-                                  _formatPrice(item['price']),
-                                  (item['image'] ?? '').toString(),
-                                  foodId,
-                                  colorScheme,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                          if ((_itemsByTab[category] ?? []).isEmpty)
-                            Container(
-                              color: colorScheme.surface,
-                              child: Padding(
-                                padding: EdgeInsets.all(16.w),
-                                child: Text(
-                                  _error == null
-                                      ? 'لا توجد بيانات'
-                                      : l10n.failedToLoadRestaurants,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(color: colorScheme.onSurface),
-                                ),
-                              ),
-                            ),
-                        ]),
-                      ),
-                    ];
-                  })
-                  .expand((element) => element)
-                  .toList(),
+              ..._buildFoodSections(colorScheme, l10n),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildHeaderWrapper(ColorScheme colorScheme, AppLocalizations l10n) {
+    return SliverToBoxAdapter(
+      child: _RestaurantHeader(
+        restaurant: _restaurant,
+        isFavorite: _isFavorite,
+        onBackPressed: () {
+          final lang = Localizations.localeOf(context).languageCode;
+          final m = _restaurant ?? <String, dynamic>{};
+          final base = _createRestaurantModel(m, _isFavorite);
+
+          Navigator.of(context).pop({
+            'restaurantId': widget.restaurantId,
+            'lang': lang,
+            'isFavorite': _isFavorite,
+            'base': base.toJson(),
+          });
+        },
+        onFavoriteToggle: _toggleFavorite,
+        l10n: l10n,
+        colorScheme: colorScheme,
+      ),
+    );
+  }
+
+  Widget _buildCategoryTabs(ColorScheme colorScheme) {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(top: 40.h),
+        decoration: BoxDecoration(color: colorScheme.surface),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Container(
+            height: 50.h,
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.circular(10.r),
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.shadow.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              itemCount: _tabs.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Icon(Icons.menu, size: 24.sp);
+                }
+                return _buildCategoryTab(_tabs[index - 1]);
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildFoodSections(
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
+    return _tabs.asMap().entries.expand((tabEntry) {
+      final index = tabEntry.key;
+      final category = tabEntry.value;
+
+      return [
+        SliverPersistentHeader(
+          key: _categoryKeys[index],
+          pinned: false,
+          delegate: _CategoryHeaderDelegate(category),
+        ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, idx) {
+              final items = _itemsByTab[category] ?? [];
+
+              if (items.isEmpty) {
+                return Container(
+                  color: colorScheme.surface,
+                  padding: EdgeInsets.all(16.w),
+                  child: Text(
+                    _error ?? 'لا توجد بيانات',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                );
+              }
+
+              final item = items[idx];
+              final foodId = (item['_id'] ?? item['id'] ?? '').toString();
+
+              return Container(
+                color: colorScheme.surface,
+                padding: EdgeInsets.only(
+                  bottom: 16.h,
+                  left: 16.w,
+                  right: 16.w,
+                  top: idx == 0 ? 2.h : 0,
+                ),
+                child: _FoodItemWidget(
+                  title: (item['nameAr'] ?? item['name'] ?? '').toString(),
+                  description:
+                      (item['descriptionAr'] ?? item['description'] ?? '')
+                          .toString(),
+                  price: _formatPrice(item['price']),
+                  imageUrl: (item['image'] ?? '').toString(),
+                  foodId: foodId,
+                  colorScheme: colorScheme,
+                ),
+              );
+            },
+            childCount: (_itemsByTab[category] ?? []).isEmpty
+                ? 1
+                : (_itemsByTab[category] ?? []).length,
+          ),
+        ),
+      ];
+    }).toList();
   }
 
   void _scrollToCategory(String category) {
@@ -724,18 +513,19 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
     }
   }
 
-  // Tabs builder
   Widget _buildCategoryTab(String title) {
     final isSelected = title == selectedCategory;
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedCategory = title;
-        });
+        setState(() => selectedCategory = title);
+
         if (!_itemsByTab.containsKey(title)) {
           _fetchItemsForTab(title);
         }
-        // Scroll to the category section
+
+        // تحميل التابات المجاورة في الخلفية
+        _prefetchAdjacentTabs(title);
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToCategory(title);
         });
@@ -766,15 +556,228 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
       ),
     );
   }
+}
 
-  Widget _buildFoodItem(
-    String title,
-    String description,
-    String price,
-    String imageUrl,
-    String foodId,
-    dynamic colorScheme,
-  ) {
+// ============ Extracted Header Widget ============
+class _RestaurantHeader extends StatelessWidget {
+  final Map<String, dynamic>? restaurant;
+  final bool isFavorite;
+  final VoidCallback onBackPressed;
+  final VoidCallback onFavoriteToggle;
+  final AppLocalizations l10n;
+  final ColorScheme colorScheme;
+
+  const _RestaurantHeader({
+    required this.restaurant,
+    required this.isFavorite,
+    required this.onBackPressed,
+    required this.onFavoriteToggle,
+    required this.l10n,
+    required this.colorScheme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        // Cover Image
+        Container(
+          height: 280.h,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: CachedNetworkImageProvider(
+                restaurant?['coverImage'] ??
+                    restaurant?['image'] ??
+                    'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800',
+              ),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+
+        // Back Button
+        Positioned(top: 50.h, left: 16.w, child: _buildBackButton()),
+
+        // Favorite Button
+        Positioned(top: 50.h, right: 16.w, child: _buildFavoriteButton()),
+
+        // Logo
+        Positioned(
+          top: 90.h,
+          child: Container(
+            width: 130.w,
+            height: 100.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12.r),
+              child: CachedNetworkImage(
+                imageUrl:
+                    restaurant?['image'] ??
+                    'https://placehold.co/160x160/png?text=Logo',
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: Colors.grey.shade200,
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.grey.shade300,
+                  child: const Icon(Icons.restaurant, size: 40),
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        // White Container
+        Positioned(
+          top: 260.h,
+          left: 0,
+          right: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24.r),
+                topRight: Radius.circular(24.r),
+              ),
+            ),
+            child: SizedBox(height: 60.h),
+          ),
+        ),
+
+        // Offers
+        Positioned(top: 230.h, left: 0, right: 0, child: _buildOffers()),
+      ],
+    );
+  }
+
+  Widget _buildBackButton() {
+    return InkWell(
+      onTap: onBackPressed,
+      child: Container(
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: colorScheme.onSurface, width: 1.5.w),
+        ),
+        child: Icon(
+          Icons.arrow_back_ios_new,
+          size: 20.sp,
+          color: colorScheme.onSurface,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFavoriteButton() {
+    return Container(
+      padding: EdgeInsets.all(6.w),
+      decoration: BoxDecoration(
+        color: isFavorite ? const Color(0xFFFF6B6B) : Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4.r),
+        ],
+      ),
+      child: InkWell(
+        onTap: onFavoriteToggle,
+        child: Icon(
+          isFavorite ? Icons.favorite : Icons.favorite_border,
+          size: 26.sp,
+          color: isFavorite ? Colors.white : colorScheme.primary,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOffers() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: const Color(0xffFEF5F8),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.local_offer, color: Colors.pink, size: 20.sp),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      l10n.offerDiscount15,
+                      style: TextStyle(
+                        color: Colors.pink,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: AppColors.primaryYellow,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.local_offer, color: Colors.pink, size: 20.sp),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      l10n.offerFreeDelivery99,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============ Food Item Widget ============
+class _FoodItemWidget extends StatelessWidget {
+  final String title;
+  final String description;
+  final String price;
+  final String imageUrl;
+  final String foodId;
+  final ColorScheme colorScheme;
+
+  const _FoodItemWidget({
+    required this.title,
+    required this.description,
+    required this.price,
+    required this.imageUrl,
+    required this.foodId,
+    required this.colorScheme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         context.push(
@@ -807,12 +810,22 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
-                child: Image.network(
-                  imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
                   width: 110.w,
                   height: 110.h,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
+                  memCacheWidth: 220,
+                  memCacheHeight: 220,
+                  placeholder: (context, url) => Container(
+                    width: 110.w,
+                    height: 110.h,
+                    color: Colors.grey.shade200,
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                  errorWidget: (context, error, stackTrace) {
                     return Container(
                       width: 110.w,
                       height: 110.h,
@@ -841,7 +854,6 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
                     ),
                     SizedBox(height: 12.h),
                     Row(
-                      // alignment: Alignment.centerRight,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Container(
@@ -879,6 +891,7 @@ class _RestaurantHomePageState extends State<RestaurantHomePage> {
   }
 }
 
+// ============ Category Header Delegate ============
 class _CategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
   final String category;
 
@@ -912,4 +925,9 @@ class _CategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
       false;
+}
+
+// ============ Helper Function ============
+void unawaited(Future<void> future) {
+  future.then((_) {}, onError: (_) {});
 }
