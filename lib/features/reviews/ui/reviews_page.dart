@@ -22,6 +22,14 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
   bool _showRatingError = false;
   String? _commentError;
 
+  @override
+  void initState() {
+    super.initState();
+    // Set context and fetch reviews
+    context.read<ReviewsCubit>().setContext(foodId: null, restaurantId: null);
+    context.read<ReviewsCubit>().fetchReviews();
+  }
+
   double _averageRating(List<ReviewModel> reviews) {
     if (reviews.isEmpty) return 0;
     final sum = reviews.fold<int>(0, (prev, r) => prev + (r.rating));
@@ -44,9 +52,9 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
     }
 
     context.read<ReviewsCubit>().submitReview(
-          rating: _userRating.toInt(),
-          comment: _reviewController.text.trim(),
-        );
+      rating: _userRating.toInt(),
+      comment: _reviewController.text.trim(),
+    );
   }
 
   @override
@@ -123,7 +131,8 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                       // Average Rating
                       BlocBuilder<ReviewsCubit, ReviewsState>(
                         builder: (context, state) {
-                          if (state is ReviewsLoading || state is ReviewsInitial) {
+                          if (state is ReviewsLoading ||
+                              state is ReviewsInitial) {
                             return Row(
                               children: [
                                 SizedBox(
@@ -134,7 +143,9 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                               ],
                             );
                           }
-                          final items = state is ReviewsLoaded ? state.items : <ReviewModel>[];
+                          final items = state is ReviewsLoaded
+                              ? state.items
+                              : <ReviewModel>[];
                           final avg = _averageRating(items);
                           return Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -151,7 +162,9 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                               Row(
                                 children: List.generate(5, (index) {
                                   return Icon(
-                                    index < avg.floor() ? Icons.star : Icons.star_border,
+                                    index < avg.floor()
+                                        ? Icons.star
+                                        : Icons.star_border,
                                     color: colorScheme.primary,
                                     size: 28.sp,
                                   );
@@ -262,7 +275,9 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                           final isSubmitting = state is ReviewSubmitting;
                           return AppButton(
                             onPressed: isSubmitting ? null : _submitReview,
-                            text: isSubmitting ? l10n.loading : l10n.submitReview,
+                            text: isSubmitting
+                                ? l10n.loading
+                                : l10n.submitReview,
                           );
                         },
                       ),
@@ -271,7 +286,9 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                       // User Reviews Header
                       BlocBuilder<ReviewsCubit, ReviewsState>(
                         builder: (context, state) {
-                          final count = state is ReviewsLoaded ? state.items.length : 0;
+                          final count = state is ReviewsLoaded
+                              ? state.items.length
+                              : 0;
                           return Text(
                             l10n.userReviews(count.toString()),
                             style: textTheme.titleMedium?.copyWith(
@@ -287,7 +304,8 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                       // Reviews List
                       BlocBuilder<ReviewsCubit, ReviewsState>(
                         builder: (context, state) {
-                          if (state is ReviewsLoading || state is ReviewsInitial) {
+                          if (state is ReviewsLoading ||
+                              state is ReviewsInitial) {
                             return Center(
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 24.h),
@@ -298,10 +316,15 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                           if (state is ReviewsError) {
                             return Padding(
                               padding: EdgeInsets.all(12.w),
-                              child: Text(state.message, style: textTheme.bodyMedium),
+                              child: Text(
+                                state.message,
+                                style: textTheme.bodyMedium,
+                              ),
                             );
                           }
-                          final items = (state is ReviewsLoaded) ? state.items : <ReviewModel>[];
+                          final items = (state is ReviewsLoaded)
+                              ? state.items
+                              : <ReviewModel>[];
                           if (items.isEmpty) {
                             return Padding(
                               padding: EdgeInsets.all(12.w),
@@ -309,7 +332,9 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                             );
                           }
                           return Column(
-                            children: items.map((r) => ReviewCard(review: r)).toList(),
+                            children: items
+                                .map((r) => ReviewCard(review: r))
+                                .toList(),
                           );
                         },
                       ),

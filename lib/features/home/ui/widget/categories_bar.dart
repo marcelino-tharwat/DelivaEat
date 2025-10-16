@@ -1,11 +1,12 @@
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
+import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoriesBar extends StatelessWidget {
-  final List<Map<String, dynamic>> categories;
+  final List<Map<String, String>> categories;
   final PageController pageController;
-  final Function(Map<String, dynamic>) onCategoryTap;
+  final Function(Map<String, String>) onCategoryTap;
 
   const CategoriesBar({
     super.key,

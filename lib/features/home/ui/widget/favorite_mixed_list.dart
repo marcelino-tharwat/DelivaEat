@@ -3,6 +3,22 @@ import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/data/models/food_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
+
+// --- IMPROVEMENT 1: Create a unified model/interface ---
+// This helps in creating a single list and simplifies the builder logic.
+abstract class FavoriteItem {
+  String get id;
+  String get name;
+  String get nameAr;
+  String? get image;
+  double get rating;
+  bool get isFavorite;
+}
+
+// Make your models implement this interface
+// Example: class RestaurantModel implements FavoriteItem { ... }
+// Example: class FoodModel implements FavoriteItem { ... }
 
 class FavoriteMixedList extends StatelessWidget {
   final List<RestaurantModel> restaurants;
@@ -24,55 +40,61 @@ class FavoriteMixedList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (restaurants.isEmpty && foods.isEmpty) {
+    // --- IMPROVEMENT 2: Combine lists for simpler logic ---
+    final List<dynamic> combinedList = [...restaurants, ...foods];
+
+    if (combinedList.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    final total = restaurants.length + foods.length;
-
     return SizedBox(
-      height: 180.h,
-      child: ListView.builder(
+      height: 200.h, // Increased height slightly for better spacing
+      child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: total,
+        // --- IMPROVEMENT 3: Add padding for better aesthetics ---
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        itemCount: combinedList.length,
         itemBuilder: (context, index) {
-          if (index < restaurants.length) {
-            final r = restaurants[index];
-            final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-            final displayName = (isArabic ? r.nameAr : r.name) ?? '';
-            final ratingStr = (r.rating ?? 0).toStringAsFixed(1);
+          final item = combinedList[index];
+          final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
+          if (item is RestaurantModel) {
+            final displayName = (isArabic ? item.nameAr : item.name) ?? '';
             return _RestaurantCard(
-              id: r.id ?? '',
+              id: item.id ?? '',
               name: displayName,
-              imageUrl: r.image,
-              ratingStr: ratingStr,
-              isFavorite: r.isFavorite ?? false,
-              onTap: () => onRestaurantTap(displayName, index),
+              imageUrl: item.image ?? '',
+              rating: item.rating ?? 0,
+              isFavorite: item.isFavorite ?? false,
+              onTap: () =>
+                  onRestaurantTap(displayName, restaurants.indexOf(item)),
               onToggleFavorite: onToggleRestaurantFavorite == null
                   ? null
-                  : () => onToggleRestaurantFavorite!(r.id ?? ''),
+                  : () => onToggleRestaurantFavorite!(item.id ?? ''),
             );
-          } else {
-            final foodIndex = index - restaurants.length;
-            final f = foods[foodIndex];
-            final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-            final displayName = (isArabic ? f.nameAr : f.name) ?? '';
-            final ratingStr = (f.rating ?? 0).toStringAsFixed(1);
+          } else if (item is FoodModel) {
+            final foodIndex = foods.indexOf(item);
+            final displayName = (isArabic ? item.nameAr : item.name) ?? '';
+            final priceLabel = isArabic
+                ? '${(item.price ?? 0).toStringAsFixed(0)} ريال'
+                : '${(item.price ?? 0).toStringAsFixed(0)} SAR';
             return _FoodCard(
-              id: f.id ?? '',
+              id: item.id ?? '',
               name: displayName,
-              imageUrl: f.image,
-              ratingStr: ratingStr,
-              isFavorite: f.isFavorite ?? false,
-              priceLabel: isArabic
-                  ? '${(f.price ?? 0).toStringAsFixed(0)} ريال'
-                  : '${(f.price ?? 0).toStringAsFixed(0)} SAR',
+              imageUrl: item.image ?? '',
+              rating: item.rating ?? 0,
+              priceLabel: priceLabel,
+              isFavorite: item.isFavorite ?? false,
               onTap: () => onFoodTap(displayName, foodIndex),
-              onToggleFavorite:
-                  onToggleFoodFavorite == null ? null : () => onToggleFoodFavorite!(f.id ?? ''),
+              onToggleFavorite: onToggleFoodFavorite == null
+                  ? null
+                  : () => onToggleFoodFavorite!(item.id ?? ''),
             );
           }
+          return const SizedBox.shrink();
         },
+        // --- IMPROVEMENT 4: Use separated for consistent spacing ---
+        separatorBuilder: (context, index) => SizedBox(width: 12.w),
       ),
     );
   }
@@ -85,7 +107,7 @@ class _BaseCard extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback? onToggleFavorite;
   final VoidCallback onTap;
-  final Widget bottomChip; // e.g. rating or price
+  final Widget bottomChip;
 
   const _BaseCard({
     required this.heroTag,
@@ -102,40 +124,56 @@ class _BaseCard extends StatelessWidget {
     final colors = context.colors;
     final textStyles = context.textStyles;
 
-    return GestureDetector(
-      onTap: onTap,
+    return SizedBox(
+      width: 190.w,
       child: Hero(
         tag: heroTag,
-        child: Container(
-          width: 150.w,
-          child: Card(
-            elevation: 6,
-            shadowColor: colors.shadow.withOpacity(0.2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.r),
-            ),
-            clipBehavior: Clip.antiAlias,
+        child: Card(
+          // --- IMPROVEMENT 5: Softer, more modern shadow ---
+          elevation: 4,
+          shadowColor: colors.shadow.withOpacity(0.1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          clipBehavior: Clip.antiAlias,
+          // --- IMPROVEMENT 6: Use InkWell for tap feedback (ripple effect) ---
+          child: InkWell(
+            onTap: onTap,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 5, // Adjusted flex for a larger image area
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
+                      // --- IMPROVEMENT 7: Shimmer loading effect for images ---
                       Image.network(
                         imageUrl,
                         fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Shimmer(
+                            color: Colors.grey[300]!,
+                            child: Container(color: Colors.white),
+                          );
+                        },
                         errorBuilder: (context, error, stackTrace) => Container(
                           color: colors.primary.withOpacity(0.08),
+                          child: Icon(
+                            Icons.image_not_supported,
+                            color: colors.primary.withOpacity(0.5),
+                          ),
                         ),
                       ),
+                      // --- IMPROVEMENT 8: Favorite Button with better UX ---
                       Positioned(
                         top: 8.h,
                         right: 8.w,
                         child: Container(
                           padding: EdgeInsets.all(4.w),
                           decoration: BoxDecoration(
-                            color: isFavorite ? const Color(0xFFFF6B6B) : Colors.white,
+                            color: Colors.white,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
@@ -147,36 +185,39 @@ class _BaseCard extends StatelessWidget {
                           child: InkWell(
                             onTap: onToggleFavorite,
                             child: Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
-                              size: 14.sp,
-                              color: isFavorite ? Colors.white : colors.primary,
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              size: 20.sp,
+                              color: isFavorite
+                                  ? const Color(0xFFFFD93D)
+                                  : colors.primary,
                             ),
                           ),
                         ),
                       ),
-                      Positioned(
-                        bottom: 8.h,
-                        right: 8.w,
-                        child: bottomChip,
-                      ),
+                      Positioned(bottom: 8.h, left: 8.w, child: bottomChip),
                     ],
                   ),
                 ),
                 Expanded(
-                  flex: 2,
+                  flex: 3, // Adjusted flex
                   child: Padding(
-                    padding: EdgeInsets.all(8.w),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
                         name,
                         style: textStyles.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: 12.sp,
+                          fontSize: 13.sp,
                           color: colors.onSurface,
                         ),
                         textAlign: TextAlign.center,
-                        maxLines: 1,
+                        maxLines: 2, // Allow two lines for longer names
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -195,7 +236,7 @@ class _RestaurantCard extends StatelessWidget {
   final String id;
   final String name;
   final String imageUrl;
-  final String ratingStr;
+  final double rating;
   final bool isFavorite;
   final VoidCallback? onToggleFavorite;
   final VoidCallback onTap;
@@ -204,7 +245,7 @@ class _RestaurantCard extends StatelessWidget {
     required this.id,
     required this.name,
     required this.imageUrl,
-    required this.ratingStr,
+    required this.rating,
     required this.isFavorite,
     required this.onTap,
     this.onToggleFavorite,
@@ -212,7 +253,6 @@ class _RestaurantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     return _BaseCard(
       heroTag: 'favorite_restaurant_$id',
       name: name,
@@ -220,33 +260,17 @@ class _RestaurantCard extends StatelessWidget {
       isFavorite: isFavorite,
       onTap: onTap,
       onToggleFavorite: onToggleFavorite,
-      bottomChip: Container(
-        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(10.r),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star, color: Colors.amber, size: 14),
-            SizedBox(width: 2.w),
-            Text(
-              ratingStr,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
+      bottomChip: _RatingChip(rating: rating),
     );
   }
 }
 
 class _FoodCard extends StatelessWidget {
+  // ... (properties are the same)
   final String id;
   final String name;
   final String imageUrl;
-  final String ratingStr;
+  final double rating;
   final String priceLabel;
   final bool isFavorite;
   final VoidCallback? onToggleFavorite;
@@ -256,7 +280,7 @@ class _FoodCard extends StatelessWidget {
     required this.id,
     required this.name,
     required this.imageUrl,
-    required this.ratingStr,
+    required this.rating,
     required this.priceLabel,
     required this.isFavorite,
     required this.onTap,
@@ -265,7 +289,6 @@ class _FoodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     return _BaseCard(
       heroTag: 'favorite_food_$id',
       name: name,
@@ -273,30 +296,86 @@ class _FoodCard extends StatelessWidget {
       isFavorite: isFavorite,
       onTap: onTap,
       onToggleFavorite: onToggleFavorite,
-      bottomChip: Container(
-        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(10.r),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star, color: Colors.amber, size: 14),
-            SizedBox(width: 2.w),
-            Text(
-              ratingStr,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+      // --- IMPROVEMENT 9: Extracted bottom chip to its own widget ---
+      bottomChip: _RatingAndPriceChip(rating: rating, priceLabel: priceLabel),
+    );
+  }
+}
+
+// --- IMPROVEMENT 10: Create dedicated widgets for chips for cleaner code ---
+class _RatingChip extends StatelessWidget {
+  final double rating;
+  const _RatingChip({required this.rating});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.star, color: Colors.amber, size: 14.sp),
+          SizedBox(width: 4.w),
+          Text(
+            rating.toStringAsFixed(1),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 12.sp,
             ),
-            SizedBox(width: 6.w),
-            Container(width: 1, height: 12.h, color: Colors.white.withOpacity(0.5)),
-            SizedBox(width: 6.w),
-            Text(
-              priceLabel,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RatingAndPriceChip extends StatelessWidget {
+  final double rating;
+  final String priceLabel;
+  const _RatingAndPriceChip({required this.rating, required this.priceLabel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.star, color: Colors.amber, size: 14.sp),
+          SizedBox(width: 4.w),
+          Text(
+            rating.toStringAsFixed(1),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 12.sp,
             ),
-          ],
-        ),
+          ),
+          SizedBox(width: 6.w),
+          Container(
+            width: 1.5,
+            height: 12.h,
+            color: Colors.white.withOpacity(0.5),
+          ),
+          SizedBox(width: 6.w),
+          Text(
+            priceLabel,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 12.sp,
+            ),
+          ),
+        ],
       ),
     );
   }

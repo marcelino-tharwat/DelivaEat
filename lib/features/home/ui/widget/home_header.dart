@@ -10,9 +10,9 @@ import 'offer_slider.dart';
 class HomeHeader extends StatelessWidget {
   final VoidCallback onNotificationTap;
   final Function(String) onSeeAllTap;
-  final List<Map<String, dynamic>> categories;
+  final List<Map<String, String>> categories;
   final PageController categoriesPageController;
-  final Function(Map<String, dynamic>) onCategoryTap;
+  final Function(Map<String, String>) onCategoryTap;
   final List<Map<String, dynamic>> offers;
   final PageController offersPageController;
   final int currentOfferSlide;
@@ -38,6 +38,7 @@ class HomeHeader extends StatelessWidget {
     final colors = context.colors;
     final textStyles = context.textStyles;
     final appLocalizations = AppLocalizations.of(context)!;
+    final isDark = context.watch<ThemeProvider>().isDarkMode;
 
     return Container(
       height: 0.53.sh, // 63% من ارتفاع الشاشة
@@ -62,7 +63,7 @@ class HomeHeader extends StatelessWidget {
                   ),
                   child: Icon(
                     Icons.location_on,
-                    color: Colors.white,
+                    color: isDark ? Colors.black : Colors.white,
                     size: 24.sp,
                   ),
                 ),
@@ -74,7 +75,9 @@ class HomeHeader extends StatelessWidget {
                       Text(
                         appLocalizations.deliveryTo,
                         style: textStyles.bodySmall?.copyWith(
-                          color: Colors.white.withOpacity(0.8),
+                          color: isDark
+                              ? Colors.black.withOpacity(0.8)
+                              : Colors.white.withOpacity(0.8),
                           fontSize: 12.sp,
                         ),
                       ),
@@ -83,7 +86,7 @@ class HomeHeader extends StatelessWidget {
                         appLocalizations.selected_address,
                         style: textStyles.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: isDark ? Colors.black : Colors.white,
                           fontSize: 14.sp,
                         ),
                         maxLines: 1,
@@ -104,7 +107,7 @@ class HomeHeader extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.notifications_none_rounded,
-                          color: Colors.white,
+                          color: isDark ? Colors.black : Colors.white,
                           size: 24.sp,
                         ),
                         Positioned(
@@ -137,7 +140,7 @@ class HomeHeader extends StatelessWidget {
                           themeProvider.isDarkMode
                               ? Icons.light_mode
                               : Icons.dark_mode,
-                          color: Colors.white,
+                          color: isDark ? Colors.black : Colors.white,
                           size: 24.sp,
                         ),
                         onPressed: () {
@@ -159,7 +162,7 @@ class HomeHeader extends StatelessWidget {
                 Text(
                   appLocalizations.categories,
                   style: textStyles.titleLarge?.copyWith(
-                    color: Colors.white,
+                    color: isDark ? Colors.black : Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 20.sp,
                   ),

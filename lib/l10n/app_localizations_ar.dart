@@ -454,6 +454,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get favorites => 'المفضلة';
 
   @override
+  String get favoritesTitle => 'المفضلة';
+
+  @override
   String get topRatedRestaurants => 'أفضل المطاعم تقييماً';
 
   @override
@@ -594,7 +597,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String deliveryFee(String fee) {
-    return 'رسوم التوصيل: $fee جنيه';
+    return 'رسوم التوصيل';
   }
 
   @override
@@ -739,7 +742,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchGroceriesHint => 'ابحث عن بقالة...';
 
   @override
-  String get marketsSectionTitle => 'Markets Section';
+  String get marketsSectionTitle => 'قسم الماركتس';
 
   @override
   String get searchMarketsHint => 'ابحث عن متاجر...';
@@ -842,5 +845,56 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reviewSubmittedSuccessfully => 'تم إرسال المراجعة بنجاح!';
 
   @override
+  String get loading => 'جاري التحميل...';
+
+  @override
+  String get noData => 'لا توجد بيانات متاحة';
+
+  @override
   String get you => 'أنت';
+
+  @override
+  String get noFavoriteItems => 'لا توجد عناصر مفضلة';
+
+  @override
+  String get addFavoriteItemsHint => 'أضف المطاعم والأطباق التي تحبها هنا';
+
+  @override
+  String get restaurant => 'مطعم';
+
+  @override
+  String get food => 'طعام';
+
+  @override
+  String get cartTitle => 'السلة';
+
+  @override
+  String get cartEmptyTitle => 'سلتك فارغة';
+
+  @override
+  String get cartEmptySubtitle => 'أضف عناصر من المطاعم لرؤيتها هنا.';
+
+  @override
+  String get startShopping => 'ابدأ التسوق';
+
+  @override
+  String get paymentSummary => 'ملخص الدفع';
+
+  @override
+  String get subtotal => 'المجموع الفرعي';
+
+  @override
+  String get serviceFee => 'رسوم الخدمة';
+
+  @override
+  String get totalAmount => 'المبلغ الإجمالي';
+
+  @override
+  String get checkout => 'الدفع';
+
+  @override
+  String get total => 'المجموع';
+
+  @override
+  String get ok => 'موافق';
 }

@@ -8,6 +8,7 @@ import 'package:deliva_eat/features/auth/otp/cubit/otp_cubit.dart';
 import 'package:deliva_eat/features/auth/otp/ui/otp_page.dart';
 import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
+import 'package:deliva_eat/features/cart/ui/add_to_cart.dart';
 import 'package:deliva_eat/features/category/ui/widget/food_category_page.dart';
 import 'package:deliva_eat/features/category/ui/widget/pharmacies_category_page.dart';
 import 'package:deliva_eat/features/category/ui/widget/grocery_category_page.dart';
@@ -17,7 +18,6 @@ import 'package:deliva_eat/features/home/data/models/restaurant_model.dart';
 import 'package:deliva_eat/features/home/ui/favorites_page.dart';
 import 'package:deliva_eat/features/home/ui/home_page_wrapper.dart';
 import 'package:deliva_eat/features/restaurant/ui/prodcut_page.dart';
-import 'package:deliva_eat/features/restaurant/ui/restaurant_menu_page.dart';
 import 'package:deliva_eat/features/restaurant/ui/restaurant_page.dart';
 import 'package:deliva_eat/features/reviews/ui/reviews_page.dart';
 import 'package:deliva_eat/features/reviews/cubit/reviews_cubit.dart';
@@ -37,7 +37,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const HomePageWrapper();
+        return const CartPage();
         //  BlocProvider(
         //   create: (context) => getIt<LoginCubit>(),
         //   child: LoginPage(),
@@ -147,24 +147,6 @@ final GoRouter router = GoRouter(
           },
         ),
         GoRoute(
-          // ✅ استخدام الاسم الفريد من AppRoutes
-          name: AppRoutes.restaurantMenuPage,
-
-          // ✅ تعريف المسار الكامل ]
-          path: '/restaurant-menu/:restaurantId',
-
-          builder: (BuildContext context, GoRouterState state) {
-            final String restaurantId =
-                state.pathParameters['restaurantId'] ?? '';
-            final String restaurantName = state.extra as String? ?? 'القائمة';
-
-            return RestaurantMenuPage(
-              restaurantId: restaurantId,
-              restaurantName: restaurantName,
-            );
-          },
-        ),
-        GoRoute(
           path: AppRoutes.favoritesPage,
           builder: (BuildContext context, GoRouterState state) {
             final data = state.extra as Map<String, dynamic>? ?? {};
@@ -223,10 +205,12 @@ final GoRouter router = GoRouter(
           path: AppRoutes.reviewsPage,
           builder: (BuildContext context, GoRouterState state) {
             final data = (state.extra as Map<String, dynamic>?) ?? {};
-            final String? foodId = (data['foodId']?.toString().isNotEmpty == true)
+            final String? foodId =
+                (data['foodId']?.toString().isNotEmpty == true)
                 ? data['foodId'].toString()
                 : null;
-            final String? restaurantId = (data['restaurantId']?.toString().isNotEmpty == true)
+            final String? restaurantId =
+                (data['restaurantId']?.toString().isNotEmpty == true)
                 ? data['restaurantId'].toString()
                 : null;
             return BlocProvider(
@@ -235,6 +219,12 @@ final GoRouter router = GoRouter(
                 ..fetchReviews(page: 1),
               child: const RatingReviewsPage(),
             );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.cartPage,
+          builder: (BuildContext context, GoRouterState state) {
+            return const CartPage();
           },
         ),
       ],

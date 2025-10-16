@@ -422,13 +422,18 @@ class _ApiService implements ApiService {
     String restaurantId,
     int limit,
     String lang,
+    String? tab,
+    String? type,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'restaurantId': restaurantId,
       r'limit': limit,
       r'lang': lang,
+      r'tab': tab,
+      r'type': type,
     };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<HomeResultResponseModel<List<FoodModel>>>(
@@ -454,6 +459,39 @@ class _ApiService implements ApiService {
                   .toList()
             : List.empty(),
       );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<RestaurantDetailsResponse> getRestaurantDetails(
+    String restaurantId,
+    String lang,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'restaurantId': restaurantId,
+      r'lang': lang,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<RestaurantDetailsResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'home/restaurant/details',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late RestaurantDetailsResponse _value;
+    try {
+      _value = RestaurantDetailsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -646,6 +684,74 @@ class _ApiService implements ApiService {
       _value = HomeResultResponseModel<ReviewModel>.fromJson(
         _result.data!,
         (json) => ReviewModel.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<HomeResultResponseModel<RestaurantModel>> toggleRestaurantFavorite(
+    Map<String, dynamic> body,
+    String lang,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'lang': lang};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options = _setStreamType<HomeResultResponseModel<RestaurantModel>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'home/restaurants/favorite',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late HomeResultResponseModel<RestaurantModel> _value;
+    try {
+      _value = HomeResultResponseModel<RestaurantModel>.fromJson(
+        _result.data!,
+        (json) => RestaurantModel.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<HomeResultResponseModel<CartItemModel>> addItemToCart(
+    AddCartItemRequest request,
+    String lang,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'lang': lang};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<HomeResultResponseModel<CartItemModel>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'cart/items',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late HomeResultResponseModel<CartItemModel> _value;
+    try {
+      _value = HomeResultResponseModel<CartItemModel>.fromJson(
+        _result.data!,
+        (json) => CartItemModel.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
