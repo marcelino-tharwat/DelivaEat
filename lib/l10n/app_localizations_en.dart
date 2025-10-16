@@ -454,6 +454,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get favorites => 'Favorites';
 
   @override
+  String get favoritesTitle => 'Favorites';
+
+  @override
   String get topRatedRestaurants => 'Top Rated Restaurants';
 
   @override
@@ -595,7 +598,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String deliveryFee(String fee) {
-    return 'Delivery Fee: $fee Riyal';
+    return 'Delivery fee';
   }
 
   @override
@@ -845,5 +848,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewSubmittedSuccessfully => 'Review submitted successfully!';
 
   @override
+  String get loading => 'Loading...';
+
+  @override
+  String get noData => 'No data available';
+
+  @override
   String get you => 'You';
+
+  @override
+  String get noFavoriteItems => 'No favorite items';
+
+  @override
+  String get addFavoriteItemsHint =>
+      'Add the restaurants and dishes you love here';
+
+  @override
+  String get restaurant => 'Restaurant';
+
+  @override
+  String get food => 'Food';
+
+  @override
+  String get cartTitle => 'Cart';
+
+  @override
+  String get cartEmptyTitle => 'Your Cart is Empty';
+
+  @override
+  String get cartEmptySubtitle =>
+      'Add items from restaurants to see them here.';
+
+  @override
+  String get startShopping => 'Start Shopping';
+
+  @override
+  String get paymentSummary => 'Payment summary';
+
+  @override
+  String get subtotal => 'Subtotal';
+
+  @override
+  String get serviceFee => 'Service fee';
+
+  @override
+  String get totalAmount => 'Total amount';
+
+  @override
+  String get checkout => 'Checkout';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get ok => 'OK';
 }

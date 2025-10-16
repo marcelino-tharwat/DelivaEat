@@ -22,7 +22,8 @@ class FavoriteRestaurantsList extends StatelessWidget {
     }
 
     return SizedBox(
-      height: 180.h, // give a bit more height to avoid overflow on small screens
+      height:
+          180.h, // give a bit more height to avoid overflow on small screens
 
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -65,7 +66,7 @@ class FavoriteRestaurantsList extends StatelessWidget {
       onTap: () => onRestaurantTap(name, index),
       child: Hero(
         tag: 'favorite_restaurant_$restaurantId',
-        child: Container(
+        child:  Container(
           width: 150.w,
           // height: 200.h,
           // margin: EdgeInsets.only(right: 16.w),
@@ -118,19 +119,31 @@ class FavoriteRestaurantsList extends StatelessWidget {
                         top: 8.h,
                         right: 8.w,
                         child: Container(
-                          padding: EdgeInsets.all(4.w),
+                          padding: EdgeInsets.all(6.r),
                           decoration: BoxDecoration(
-                            color: isFavorite
-                                ? const Color(0xFFFF6B6B)
-                                : Colors.white,
+                            color: Colors.white.withOpacity(0.9),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withOpacity(0.1),
                                 blurRadius: 4.r,
                               ),
                             ],
                           ),
+                          // Container(
+                          //   padding: EdgeInsets.all(4.w),
+                          //   decoration: BoxDecoration(
+                          //     color: isFavorite
+                          //         ? const Color(0xFFFF6B6B)
+                          //         : Colors.white,
+                          //     shape: BoxShape.circle,
+                          //     boxShadow: [
+                          //       BoxShadow(
+                          //         color: Colors.black.withOpacity(0.2),
+                          //         blurRadius: 4.r,
+                          //       ),
+                          //     ],
+                          //   ),
                           child: InkWell(
                             onTap: () => onToggleFavorite?.call(restaurantId),
                             child: Icon(

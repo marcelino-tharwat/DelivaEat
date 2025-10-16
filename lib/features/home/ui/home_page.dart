@@ -40,7 +40,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
   int _selectedNavIndex = 0;
 
   // سيتم ملء هذه القوائم من cubit والترجمات
-  final List<Map<String, dynamic>> _staticCategories = [];
+  List<Map<String, String>> _staticCategories = [];
 
   @override
   void initState() {
@@ -63,16 +63,41 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     // هذه الدالة تضمن أن البيانات الثابتة (مثل أيقونات الفئات) تُهيأ مرة واحدة فقط
     if (_staticCategories.isNotEmpty) return;
 
-    final appLocalizations = AppLocalizations.of(context)!;
     setState(() {
-      _staticCategories.addAll([
-        {'id': 'food', 'name': appLocalizations.categoryFood, 'image': "assets/images/food.png"},
-        {'id': 'grocery', 'name': appLocalizations.categoryGrocery, 'image': "assets/images/groceries.png"},
-        {'id': 'markets', 'name': appLocalizations.categoryMarkets, 'image': "assets/images/markets.png"},
-        {'id': 'pharmacies', 'name': appLocalizations.categoryPharmacies, 'image': "assets/images/pharma2.png"},
-        {'id': 'gifts', 'name': appLocalizations.categoryGifts, 'image': "assets/images/gifts.png"},
-        {'id': 'stores', 'name': appLocalizations.categoryStores, 'image': "assets/images/markets.png"},
-      ]);
+      _staticCategories.addAll(
+        [
+          {
+            'id': 'food',
+            'name': 'Food',
+            'image': "assets/images/food.png",
+          },
+          {
+            'id': 'grocery',
+            'name': 'Grocery',
+            'image': "assets/images/groceries.png",
+          },
+          {
+            'id': 'markets',
+            'name': 'Markets',
+            'image': "assets/images/markets.png",
+          },
+          {
+            'id': 'pharmacies',
+            'name': 'Pharmacies',
+            'image': "assets/images/pharma2.png",
+          },
+          {
+            'id': 'gifts',
+            'name': 'Gifts & Donate',
+            'image': "assets/images/gifts.png",
+          },
+          {
+            'id': 'stores',
+            'name': 'Stores',
+            'image': "assets/images/markets.png",
+          },
+        ].map((e) => Map<String, String>.from(e)),
+      );
     });
   }
 
@@ -96,7 +121,8 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
   void _startCategoriesAutoSlide() {
     _categoriesTimer?.cancel();
     _categoriesTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (_categoriesPageController.hasClients && _staticCategories.length > 3) {
+      if (_categoriesPageController.hasClients &&
+          _staticCategories.length > 3) {
         _currentCategoryPage++;
         if (_currentCategoryPage >= _staticCategories.length - 2) {
           _currentCategoryPage = 0;
@@ -135,15 +161,21 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
           }
 
           if (state is HomeSuccess) {
-            final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-            final offers = state.offers.map((offer) => {
-                  'title': isArabic ? offer.titleAr : offer.title,
-                  'subtitle': isArabic ? offer.subtitleAr : offer.subtitle,
-                  'color': _parseHexColor(offer.color) ?? const Color(0xFFFF6B35),
-                  'icon': offer.icon.isNotEmpty ? offer.icon : '🍔',
-                  'image': offer.image,
-                  'discount': offer.discount,
-                }).toList();
+            final isArabic =
+                Localizations.localeOf(context).languageCode == 'ar';
+            final offers = state.offers
+                .map(
+                  (offer) => {
+                    'title': isArabic ? offer.titleAr : offer.title,
+                    'subtitle': isArabic ? offer.subtitleAr : offer.subtitle,
+                    'color':
+                        _parseHexColor(offer.color) ?? const Color(0xFFFF6B35),
+                    'icon': offer.icon.isNotEmpty ? offer.icon : '🍔',
+                    'image': offer.image,
+                    'discount': offer.discount,
+                  },
+                )
+                .toList();
 
             return SingleChildScrollView(
               child: Column(
@@ -158,7 +190,8 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                     offers: offers,
                     offersPageController: pageController,
                     currentOfferSlide: _currentSlide,
-                    onOfferPageChanged: (index) => setState(() => _currentSlide = index),
+                    onOfferPageChanged: (index) =>
+                        setState(() => _currentSlide = index),
                     onOfferTap: _handleOfferTap,
                   ),
                   Transform.translate(
@@ -190,7 +223,9 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
                           ),
                           SizedBox(height: 8.h),
                           SectionHeader(
-                            title: AppLocalizations.of(context)!.topRatedRestaurants,
+                            title: AppLocalizations.of(
+                              context,
+                            )!.topRatedRestaurants,
                             onSeeAllTap: _handleSeeAll,
                           ),
                           TopRatedRestaurantsList(
@@ -245,12 +280,21 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
           children: [
             Icon(Icons.wifi_off, size: 48.sp, color: context.colors.primary),
             SizedBox(height: 12.h),
-            Text(state.message, textAlign: TextAlign.center, style: context.textStyles.titleMedium),
+            Text(
+              state.message,
+              textAlign: TextAlign.center,
+              style: context.textStyles.titleMedium,
+            ),
             SizedBox(height: 12.h),
             ElevatedButton.icon(
-              onPressed: () => context.read<HomeCubit>().getHomeData(lang: isArabic ? 'ar' : 'en'),
+              onPressed: () => context.read<HomeCubit>().getHomeData(
+                lang: isArabic ? 'ar' : 'en',
+              ),
               icon: Icon(Icons.refresh, size: 20.sp),
-              label: Text(AppLocalizations.of(context)!.resend, style: TextStyle(fontSize: 14.sp)),
+              label: Text(
+                AppLocalizations.of(context)!.resend,
+                style: TextStyle(fontSize: 14.sp),
+              ),
             ),
           ],
         ),
@@ -259,16 +303,36 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
   }
 
   // --- Handlers ---
-  
+
   void _handleFoodCardTap(String name, int index) {
     HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم اختيار: $name')));
+    final state = context.read<HomeCubit>().state;
+    if (state is HomeSuccess && index < state.favoriteFoods.length) {
+      final food = state.favoriteFoods[index];
+      final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+      final displayName = (isArabic ? food.nameAr : food.name) ?? 'طعام';
+      final priceStr = food.price?.toStringAsFixed(0) ?? '0';
+      context.push(
+        AppRoutes.productDetailsPage,
+        extra: {
+          'foodId': food.id.toString(),
+          'title': displayName,
+          'image': food.image,
+          'price': priceStr,
+          'isFavorite': food.isFavorite ?? false,
+        },
+      );
+    }
   }
 
   void _handleOfferTap(Map<String, dynamic> offer) {
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.offerTappedSnackbar(offer['title']))),
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context)!.offerTappedSnackbar(offer['title']),
+        ),
+      ),
     );
   }
 
@@ -281,25 +345,38 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
         context.push(AppRoutes.categoryPage, extra: {'categoryType': 'food'});
         break;
       case 'pharmacies':
-        context.push(AppRoutes.pharmaciesPage, extra: {'id': categoryId, 'categoryType': 'pharmacies'});
+        context.push(
+          AppRoutes.pharmaciesPage,
+          extra: {'id': categoryId, 'categoryType': 'pharmacies'},
+        );
         break;
       case 'grocery':
-        context.push(AppRoutes.groceryPage, extra: {'id': categoryId, 'categoryType': 'grocery'});
+        context.push(
+          AppRoutes.groceryPage,
+          extra: {'id': categoryId, 'categoryType': 'grocery'},
+        );
         break;
       case 'markets':
-        context.push(AppRoutes.marketsCategoryPage, extra: {'categoryId': categoryId, 'categoryType': 'markets'});
+        context.push(
+          AppRoutes.marketsCategoryPage,
+          extra: {'categoryId': categoryId, 'categoryType': 'markets'},
+        );
         break;
       case 'gifts':
       case 'stores':
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('قسم "${category['name']}" سيتم إضافته قريباً!')),
+          SnackBar(
+            content: Text('قسم "${category['name']}" سيتم إضافته قريباً!'),
+          ),
         );
         break;
       default:
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('فئة غير معروفة')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('فئة غير معروفة')));
     }
   }
-  
+
   Future<void> _handleRestaurantTap(String name, int index) async {
     HapticFeedback.lightImpact();
     final state = context.read<HomeCubit>().state;
@@ -307,24 +384,33 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       if (index >= 0 && index < state.favoriteRestaurants.length) {
         final r = state.favoriteRestaurants[index];
         final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-        final displayName = isArabic ? (r.nameAr ?? r.name) : (r.name ?? r.nameAr);
+        final displayName = isArabic
+            ? (r.nameAr ?? r.name)
+            : (r.name ?? r.nameAr);
         // Navigate to RestaurantHomePage
         final result = await context.push(
           AppRoutes.restaurantPage,
           extra: {
             'restaurantId': r.id?.toString() ?? '',
-            'restaurantName': (displayName ?? '').isEmpty ? 'المطعم' : displayName,
+            'restaurantName': (displayName ?? '').isEmpty
+                ? 'المطعم'
+                : displayName,
           },
         );
         if (result is Map) {
           final restaurantId = (result['restaurantId'] ?? '').toString();
           final lang = (result['lang'] ?? (isArabic ? 'ar' : 'en')).toString();
           final baseJson = (result['base'] as Map?)?.cast<String, dynamic>();
-          final base = baseJson != null ? RestaurantModel.fromJson(baseJson) : null;
+          final base = baseJson != null
+              ? RestaurantModel.fromJson(baseJson)
+              : null;
           if (restaurantId.isNotEmpty) {
             final curr = context.read<HomeCubit>().state;
             if (curr is HomeSuccess) {
-              final merged = [...curr.favoriteRestaurants, ...curr.topRatedRestaurants];
+              final merged = [
+                ...curr.favoriteRestaurants,
+                ...curr.topRatedRestaurants,
+              ];
               final currentItem = merged.firstWhere(
                 (rr) => rr.id == restaurantId,
                 orElse: () => base ?? r,
@@ -353,6 +439,7 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       lang: isArabic ? 'ar' : 'en',
     );
   }
+
   // ADDED: Handler for toggling food favorite status
   void _handleToggleFoodFavorite(String foodId) {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
@@ -362,12 +449,17 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     );
   }
 
-  Future<void> _handleRestaurantDetailTap(Map<String, dynamic> restaurant, int index) async {
+  Future<void> _handleRestaurantDetailTap(
+    Map<String, dynamic> restaurant,
+    int index,
+  ) async {
     // Open RestaurantHomePage instead of menu page
     final id = (restaurant['id'] ?? '').toString();
     final name = (restaurant['name'] ?? '').toString();
     if (id.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('معرف المطعم غير متوفر')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('معرف المطعم غير متوفر')));
       return;
     }
     final result = await context.push(
@@ -385,7 +477,10 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       if (restaurantId.isNotEmpty && base != null) {
         final curr = context.read<HomeCubit>().state;
         if (curr is HomeSuccess) {
-          final merged = [...curr.favoriteRestaurants, ...curr.topRatedRestaurants];
+          final merged = [
+            ...curr.favoriteRestaurants,
+            ...curr.topRatedRestaurants,
+          ];
           final currentItem = merged.firstWhere(
             (r) => r.id == restaurantId,
             orElse: () => base,
@@ -409,7 +504,9 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
     final id = (restaurant['id'] ?? '').toString();
     final name = (restaurant['name'] ?? '').toString();
     if (id.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('معرف المطعم غير متوفر')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('معرف المطعم غير متوفر')));
       return;
     }
     final result = await context.push(
@@ -427,7 +524,10 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       if (restaurantId.isNotEmpty) {
         final curr = context.read<HomeCubit>().state;
         if (curr is HomeSuccess && base != null) {
-          final merged = [...curr.favoriteRestaurants, ...curr.topRatedRestaurants];
+          final merged = [
+            ...curr.favoriteRestaurants,
+            ...curr.topRatedRestaurants,
+          ];
           final currentItem = merged.firstWhere(
             (r) => r.id == restaurantId,
             orElse: () => base,
@@ -453,21 +553,33 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
       final homeState = context.read<HomeCubit>().state;
       if (homeState is HomeSuccess) {
         final favoriteFoods = homeState.favoriteFoods;
-        context.push(AppRoutes.favoritesPage, extra: {
-          'favoriteRestaurants': homeState.favoriteRestaurants,
-          'favoriteFoods': favoriteFoods,
-        });
+        context.push(
+          AppRoutes.favoritesPage,
+          extra: {
+            'favoriteRestaurants': homeState.favoriteRestaurants,
+            'favoriteFoods': favoriteFoods,
+          },
+        );
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('عرض المزيد من: $section')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('عرض المزيد من: $section')));
     }
   }
 
   void _handleNavigation(int index) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
-    final pages = [appLocalizations.homePageTitle, appLocalizations.ordersTitle, appLocalizations.offersTitle, appLocalizations.accountTitle];
+    final pages = [
+      appLocalizations.homePageTitle,
+      appLocalizations.ordersTitle,
+      appLocalizations.offersTitle,
+      appLocalizations.accountTitle,
+    ];
     if (index != _selectedNavIndex) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('انتقال إلى: ${pages[index]}')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('انتقال إلى: ${pages[index]}')));
     }
   }
 
@@ -489,10 +601,12 @@ extension _HomePageHelpers on FoodDeliveryHomePageState {
     final name = (restaurant['name'] ?? '')?.toString() ?? '';
 
     if (id.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('معرف المطعم غير متوفر')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('معرف المطعم غير متوفر')));
       return;
     }
-    
+
     context.pushNamed(
       AppRoutes.restaurantMenuPage,
       pathParameters: {'restaurantId': id},

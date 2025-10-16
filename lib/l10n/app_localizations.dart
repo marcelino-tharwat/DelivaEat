@@ -956,6 +956,12 @@ abstract class AppLocalizations {
   /// **'Favorites'**
   String get favorites;
 
+  /// No description provided for @favoritesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favoritesTitle;
+
   /// No description provided for @topRatedRestaurants.
   ///
   /// In en, this message translates to:
@@ -1229,7 +1235,7 @@ abstract class AppLocalizations {
   /// Delivery fee text with amount
   ///
   /// In en, this message translates to:
-  /// **'Delivery Fee: {fee} Riyal'**
+  /// **'Delivery fee'**
   String deliveryFee(String fee);
 
   /// No description provided for @foodSectionTitle.
@@ -1694,11 +1700,113 @@ abstract class AppLocalizations {
   /// **'Review submitted successfully!'**
   String get reviewSubmittedSuccessfully;
 
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// No description provided for @noData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get noData;
+
   /// No description provided for @you.
   ///
   /// In en, this message translates to:
   /// **'You'**
   String get you;
+
+  /// No description provided for @noFavoriteItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite items'**
+  String get noFavoriteItems;
+
+  /// No description provided for @addFavoriteItemsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the restaurants and dishes you love here'**
+  String get addFavoriteItemsHint;
+
+  /// No description provided for @restaurant.
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurant'**
+  String get restaurant;
+
+  /// No description provided for @food.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get food;
+
+  /// No description provided for @cartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart'**
+  String get cartTitle;
+
+  /// No description provided for @cartEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Cart is Empty'**
+  String get cartEmptyTitle;
+
+  /// No description provided for @cartEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add items from restaurants to see them here.'**
+  String get cartEmptySubtitle;
+
+  /// No description provided for @startShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Shopping'**
+  String get startShopping;
+
+  /// No description provided for @paymentSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment summary'**
+  String get paymentSummary;
+
+  /// No description provided for @subtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get subtotal;
+
+  /// No description provided for @serviceFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Service fee'**
+  String get serviceFee;
+
+  /// No description provided for @totalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total amount'**
+  String get totalAmount;
+
+  /// No description provided for @checkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout'**
+  String get checkout;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
 }
 
 class _AppLocalizationsDelegate

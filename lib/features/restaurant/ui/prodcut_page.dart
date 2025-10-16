@@ -104,11 +104,11 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
       options.add(CartOption(code: 'cola', price: colaPrice));
     }
     context.read<ProductCubit>().addToCart(
-          foodId: widget.foodId,
-          quantity: 1,
-          options: options,
-          lang: lang,
-        );
+      foodId: widget.foodId,
+      quantity: 1,
+      options: options,
+      lang: lang,
+    );
   }
 
   void _showSnackBar(String message) {
@@ -187,335 +187,345 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
           final msg = _isArabic ? 'تمت الإضافة إلى السلة' : 'Added to cart';
           _showSnackBar(msg);
         } else if (state is ProductError) {
-          final msg = _isArabic ? 'فشل الإضافة إلى السلة' : 'Failed to add to cart';
+          final msg = _isArabic
+              ? 'فشل الإضافة إلى السلة'
+              : 'Failed to add to cart';
           _showSnackBar(msg);
         }
       },
       child: Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Stack(
-        children: [
-          // الصورة في الخلفية
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: CachedNetworkImage(
-              imageUrl: widget.image.isNotEmpty
-                  ? widget.image
-                  : 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800',
-              width: double.infinity,
-              height: 280.h,
-              fit: BoxFit.cover,
-              memCacheWidth: 800, // Correct: controls memory cache size
-              // maxWidthDiskCache: 800, // Incorrect: This parameter does not exist. Remove it.
-              placeholder: (context, url) => Container(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: Stack(
+          children: [
+            // الصورة في الخلفية
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: CachedNetworkImage(
+                imageUrl: widget.image.isNotEmpty
+                    ? widget.image
+                    : 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800',
                 width: double.infinity,
                 height: 280.h,
-                color: colorScheme.surfaceVariant,
-                // Using a simpler placeholder can feel faster than a spinner
-                // child: const Center(child: CircularProgressIndicator()),
-              ),
-
-              // Corrected parameter name from errorBuilder to errorWidget
-              errorWidget: (context, url, error) {
-                // You can log the error here if you want
-                // print(error);
-                return Container(
+                fit: BoxFit.cover,
+                memCacheWidth: 800, // Correct: controls memory cache size
+                // maxWidthDiskCache: 800, // Incorrect: This parameter does not exist. Remove it.
+                placeholder: (context, url) => Container(
                   width: double.infinity,
                   height: 280.h,
                   color: colorScheme.surfaceVariant,
-                  child: const Center(child: Icon(Icons.broken_image)),
-                );
-              },
-            ),
-          ),
+                  // Using a simpler placeholder can feel faster than a spinner
+                  // child: const Center(child: CircularProgressIndicator()),
+                ),
 
-          // المحتوى القابل للسحب
-          Positioned.fill(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  SizedBox(height: 260.h), // مساحة فارغة للتداخل
-                  Container(
+                // Corrected parameter name from errorBuilder to errorWidget
+                errorWidget: (context, url, error) {
+                  // You can log the error here if you want
+                  // print(error);
+                  return Container(
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24.r),
-                        topRight: Radius.circular(24.r),
+                    height: 280.h,
+                    color: colorScheme.surfaceVariant,
+                    child: const Center(child: Icon(Icons.broken_image)),
+                  );
+                },
+              ),
+            ),
+
+            // المحتوى القابل للسحب
+            Positioned.fill(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    SizedBox(height: 260.h), // مساحة فارغة للتداخل
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(24.r),
+                          topRight: Radius.circular(24.r),
+                        ),
+                        border: Border(
+                          top: BorderSide(
+                            color: colorScheme.outline,
+                            width: 1.5.w,
+                          ),
+                        ),
                       ),
-                      border: Border(
-                        top: BorderSide(
-                          color: colorScheme.outline,
-                          width: 1.5.w,
+                      child: Padding(
+                        padding: EdgeInsets.all(16.r),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // العنوان والسعر (reactive with ValueNotifier)
+                            ValueListenableBuilder<bool>(
+                              valueListenable: _extraChickenNotifier,
+                              builder: (context, extraChicken, child) {
+                                return ValueListenableBuilder<bool>(
+                                  valueListenable: _colaNotifier,
+                                  builder: (context, cola, child) {
+                                    final totalPrice = _calculateTotalPrice();
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          width: 250.w,
+                                          child: Text(
+                                            (widget.title.isNotEmpty
+                                                ? widget.title
+                                                : AppLocalizations.of(
+                                                    context,
+                                                  )!.foodChickenSchezwanFriedRice),
+                                            style: theme.textTheme.headlineSmall
+                                                ?.copyWith(
+                                                  height: 1.3,
+                                                  color: colorScheme.onSurface,
+                                                ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12.w,
+                                            vertical: 6.h,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary
+                                                .withOpacity(0.9),
+                                            borderRadius: BorderRadius.circular(
+                                              20.r,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'EGP $totalPrice',
+                                            style: TextStyle(
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.bold,
+                                              color: colorScheme.onSurface,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 12.h),
+                            Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.foodChickenSchezwanFriedRiceDesc,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                height: 1.4,
+                              ),
+                            ),
+                            SizedBox(height: 16.h),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: theme.primaryColor,
+                                  size: 20.sp,
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  '4.9',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  '(1,205)',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                                const Spacer(),
+                                TextButton(
+                                  onPressed: () {
+                                    context.push(
+                                      AppRoutes.reviewsPage,
+                                      extra: {
+                                        'foodId': widget.foodId,
+                                        'title': widget.title,
+                                      },
+                                    );
+                                  },
+                                  child: Text(
+                                    AppLocalizations.of(context)!.seeAllReviews,
+                                    style: TextStyle(
+                                      color: colorScheme.onSurface,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 24.h),
+                            Text(
+                              AppLocalizations.of(context)!.extras,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 12.h),
+                            ValueListenableBuilder<bool>(
+                              valueListenable: _extraChickenNotifier,
+                              builder: (context, isSelected, child) {
+                                return _buildOptionCard(
+                                  context: context,
+                                  image:
+                                      'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400',
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.addExtraChicken('10'),
+                                  isSelected: isSelected,
+                                  onChanged: (bool? value) {
+                                    _extraChickenNotifier.value =
+                                        value ?? false;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 24.h),
+                            Text(
+                              AppLocalizations.of(context)!.addons,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 16.h),
+                            ValueListenableBuilder<bool>(
+                              valueListenable: _colaNotifier,
+                              builder: (context, isSelected, child) {
+                                return _buildOptionCard(
+                                  context: context,
+                                  image:
+                                      'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400',
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.addCocaCola('15'),
+                                  isSelected: isSelected,
+                                  onChanged: (bool? value) {
+                                    _colaNotifier.value = value ?? false;
+                                  },
+                                );
+                              },
+                            ),
+                            SizedBox(height: 100.h), // مساحة إضافية للزر العائم
+                          ],
                         ),
                       ),
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.all(16.r),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // العنوان والسعر (reactive with ValueNotifier)
-                          ValueListenableBuilder<bool>(
-                            valueListenable: _extraChickenNotifier,
-                            builder: (context, extraChicken, child) {
-                              return ValueListenableBuilder<bool>(
-                                valueListenable: _colaNotifier,
-                                builder: (context, cola, child) {
-                                  final totalPrice = _calculateTotalPrice();
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      SizedBox(
-                                        width: 250.w,
-                                        child: Text(
-                                          (widget.title.isNotEmpty
-                                              ? widget.title
-                                              : AppLocalizations.of(
-                                                  context,
-                                                )!.foodChickenSchezwanFriedRice),
-                                          style: theme.textTheme.headlineSmall
-                                              ?.copyWith(
-                                                height: 1.3,
-                                                color: colorScheme.onSurface,
-                                              ),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 12.w,
-                                          vertical: 6.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primary.withOpacity(
-                                            0.9,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            20.r,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'EGP $totalPrice',
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold,
-                                            color: colorScheme.onSurface,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                          SizedBox(height: 12.h),
-                          Text(
-                            AppLocalizations.of(
-                              context,
-                            )!.foodChickenSchezwanFriedRiceDesc,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                              height: 1.4,
-                            ),
-                          ),
-                          SizedBox(height: 16.h),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: theme.primaryColor,
-                                size: 20.sp,
-                              ),
-                              SizedBox(width: 4.w),
-                              Text(
-                                '4.9',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: colorScheme.onSurface,
-                                ),
-                              ),
-                              SizedBox(width: 4.w),
-                              Text(
-                                '(1,205)',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                              const Spacer(),
-                              TextButton(
-                                onPressed: () {
-                                  context.push(
-                                    AppRoutes.reviewsPage,
-                                    extra: {
-                                      'foodId': widget.foodId,
-                                      'title': widget.title,
-                                    },
-                                  );
-                                },
-                                child: Text(
-                                  AppLocalizations.of(context)!.seeAllReviews,
-                                  style: TextStyle(
-                                    color: colorScheme.onSurface,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 24.h),
-                          Text(
-                            AppLocalizations.of(context)!.extras,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 12.h),
-                          ValueListenableBuilder<bool>(
-                            valueListenable: _extraChickenNotifier,
-                            builder: (context, isSelected, child) {
-                              return _buildOptionCard(
-                                context: context,
-                                image:
-                                    'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400',
-                                title: AppLocalizations.of(
-                                  context,
-                                )!.addExtraChicken('10'),
-                                isSelected: isSelected,
-                                onChanged: (bool? value) {
-                                  _extraChickenNotifier.value = value ?? false;
-                                },
-                              );
-                            },
-                          ),
-                          SizedBox(height: 24.h),
-                          Text(
-                            AppLocalizations.of(context)!.addons,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 16.h),
-                          ValueListenableBuilder<bool>(
-                            valueListenable: _colaNotifier,
-                            builder: (context, isSelected, child) {
-                              return _buildOptionCard(
-                                context: context,
-                                image:
-                                    'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400',
-                                title: AppLocalizations.of(
-                                  context,
-                                )!.addCocaCola('15'),
-                                isSelected: isSelected,
-                                onChanged: (bool? value) {
-                                  _colaNotifier.value = value ?? false;
-                                },
-                              );
-                            },
-                          ),
-                          SizedBox(height: 100.h), // مساحة إضافية للزر العائم
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // زر Add to cart في الأسفل (reactive)
-          Positioned(
-            bottom: 10.h,
-            left: 0,
-            right: 0,
-            child: ValueListenableBuilder<bool>(
-              valueListenable: _extraChickenNotifier,
-              builder: (context, extraChicken, child) {
-                return ValueListenableBuilder<bool>(
-                  valueListenable: _colaNotifier,
-                  builder: (context, cola, child) {
-                    return BlocBuilder<ProductCubit, ProductState>(
-                      builder: (context, state) {
-                        final isAdding = state is ProductAdding;
-                        final totalPrice = _calculateTotalPrice();
-                        return Container(
-                          color: colorScheme.surface,
-                          padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 20.h),
-                          child: AppButton(
-                            onPressed: isAdding ? null : _addToCart,
-                            text: AppLocalizations.of(
-                              context,
-                            )!.addToCart(totalPrice.toString()),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-
-          // أزرار الرجوع والمفضلة في الأعلى (فوق كل شيء)
-          Positioned(
-            top: 50.h,
-            left: 16.w,
-            child: InkWell(
-              onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: colorScheme.onSurface,
-                    width: 1.5.w,
-                  ),
-                ),
-                child: Icon(
-                  Icons.arrow_back_ios_new,
-                  size: 20.sp,
-                  color: colorScheme.onSurface,
+                  ],
                 ),
               ),
             ),
-          ),
-          Positioned(
-            top: 50.h,
-            right: 16.w,
-            child: ValueListenableBuilder<bool>(
-              valueListenable: _isFavoriteNotifier,
-              builder: (context, isFavorite, child) {
-                return Container(
-                  padding: EdgeInsets.all(6.w),
+
+            // زر Add to cart في الأسفل (reactive)
+            Positioned(
+              bottom: 10.h,
+              left: 0,
+              right: 0,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: _extraChickenNotifier,
+                builder: (context, extraChicken, child) {
+                  return ValueListenableBuilder<bool>(
+                    valueListenable: _colaNotifier,
+                    builder: (context, cola, child) {
+                      return BlocBuilder<ProductCubit, ProductState>(
+                        builder: (context, state) {
+                          final isAdding = state is ProductAdding;
+                          final totalPrice = _calculateTotalPrice();
+                          return Container(
+                            color: colorScheme.surface,
+                            padding: EdgeInsets.fromLTRB(
+                              16.w,
+                              10.h,
+                              16.w,
+                              20.h,
+                            ),
+                            child: AppButton(
+                              onPressed: isAdding ? null : _addToCart,
+                              text: AppLocalizations.of(
+                                context,
+                              )!.addToCart(totalPrice.toString()),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+
+            // أزرار الرجوع والمفضلة في الأعلى (فوق كل شيء)
+            Positioned(
+              top: 50.h,
+              left: 16.w,
+              child: InkWell(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
-                    color: isFavorite ? const Color(0xFFFF6B6B) : Colors.white,
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 4.r,
-                      ),
-                    ],
-                  ),
-                  child: InkWell(
-                    onTap: _toggleFavorite,
-                    child: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                      size: 26.sp,
-                      color: isFavorite
-                          ? Colors.white
-                          : Theme.of(context).colorScheme.primary,
+                    border: Border.all(
+                      color: colorScheme.onSurface,
+                      width: 1.5.w,
                     ),
                   ),
-                );
-              },
+                  child: Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 20.sp,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+            Positioned(
+              top: 50.h,
+              right: 16.w,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: _isFavoriteNotifier,
+                builder: (context, isFavorite, child) {
+                  return Container(
+                    padding: EdgeInsets.all(6.w),
+                    decoration: BoxDecoration(
+                      color: isFavorite
+                          ? const Color(0xFFFF6B6B)
+                          : Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 4.r,
+                        ),
+                      ],
+                    ),
+                    child: InkWell(
+                      onTap: _toggleFavorite,
+                      child: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        size: 26.sp,
+                        color: isFavorite
+                            ? Colors.white
+                            : Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

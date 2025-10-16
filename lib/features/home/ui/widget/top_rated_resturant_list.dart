@@ -170,7 +170,9 @@ class TopRatedRestaurantsList extends StatelessWidget {
                         top: 12.h,
                         right: 12.w,
                         child: InkWell(
-                          onTap: () => onToggleFavorite?.call((restaurant['id'] ?? '').toString()),
+                          onTap: () => onToggleFavorite?.call(
+                            (restaurant['id'] ?? '').toString(),
+                          ),
                           child: Container(
                             padding: EdgeInsets.all(6.r),
                             decoration: BoxDecoration(
@@ -189,7 +191,7 @@ class TopRatedRestaurantsList extends StatelessWidget {
                                   : Icons.favorite_border,
                               size: 18.sp,
                               color: (restaurant['isFavorite'] == true)
-                                  ? Colors.red
+                                  ? AppColors.primaryYellow
                                   : colors.primary,
                             ),
                           ),
