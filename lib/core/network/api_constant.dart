@@ -1,5 +1,5 @@
 class ApiConstant {
-  static const String baseUrl = 'http://192.168.1.6:5000/api/';
+  static const String baseUrl = 'http://192.168.1.3:5000/api/';
   static const String loginUrl = 'auth/login';
   static const String signupUserUrl = 'auth/register';
   static const String signupRiderUrl = 'rider/register';
@@ -21,6 +21,9 @@ class ApiConstant {
   static const String toggleFavoriteUrl = 'home/restaurants/favorite';
   static const String toggleFoodFavoriteUrl = 'home/foods/favorite';
   static const String cartAddItemUrl = 'cart/items';
+  static const String cartUrl = 'cart';
+  static const String cartUpdateItemUrl = 'cart/items'; // use with '/{id}'
+  static const String cartDeleteItemUrl = 'cart/items'; // use with '/{id}'
   
   // Search endpoints
   static const String searchUrl = 'search';

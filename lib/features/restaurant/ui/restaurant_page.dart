@@ -489,6 +489,12 @@ class _RestaurantHomePageState extends State<RestaurantHomePage>
                   price: _formatPrice(item['price']),
                   imageUrl: (item['image'] ?? '').toString(),
                   foodId: foodId,
+                  rating: (item['rating'] is num)
+                      ? (item['rating'] as num).toDouble()
+                      : double.tryParse('${item['rating'] ?? ''}'),
+                  reviewCount: (item['reviewCount'] is int)
+                      ? item['reviewCount'] as int
+                      : int.tryParse('${item['reviewCount'] ?? ''}'),
                   colorScheme: colorScheme,
                 ),
               );
@@ -765,6 +771,8 @@ class _FoodItemWidget extends StatelessWidget {
   final String price;
   final String imageUrl;
   final String foodId;
+  final double? rating;
+  final int? reviewCount;
   final ColorScheme colorScheme;
 
   const _FoodItemWidget({
@@ -773,6 +781,8 @@ class _FoodItemWidget extends StatelessWidget {
     required this.price,
     required this.imageUrl,
     required this.foodId,
+    this.rating,
+    this.reviewCount,
     required this.colorScheme,
   });
 
@@ -787,6 +797,8 @@ class _FoodItemWidget extends StatelessWidget {
             'title': title,
             'image': imageUrl,
             'price': price,
+            'rating': rating,
+            'reviewCount': reviewCount,
           },
         );
       },

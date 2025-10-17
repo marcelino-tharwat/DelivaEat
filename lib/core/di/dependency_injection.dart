@@ -14,6 +14,8 @@ import 'package:deliva_eat/features/reviews/cubit/reviews_cubit.dart';
 import 'package:deliva_eat/features/restaurant/data/repos/restaurant_repo.dart';
 import 'package:deliva_eat/features/restaurant/data/repos/product_repo.dart';
 import 'package:deliva_eat/features/restaurant/cubit/product_cubit.dart';
+import 'package:deliva_eat/features/cart/data/repos/cart_repo.dart';
+import 'package:deliva_eat/features/cart/cubit/cart_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:deliva_eat/core/network/dio_factory.dart';
@@ -74,4 +76,8 @@ void setupGetIt() {
   // PRODUCT
   getIt.registerLazySingleton<ProductRepo>(() => ProductRepo(apiService: getIt()));
   getIt.registerFactory<ProductCubit>(() => ProductCubit(repo: getIt()));
+
+  // CART
+  getIt.registerLazySingleton<CartRepo>(() => CartRepo(apiService: getIt()));
+  getIt.registerFactory<CartCubit>(() => CartCubit(repo: getIt()));
 }

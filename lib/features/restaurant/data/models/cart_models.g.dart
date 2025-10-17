@@ -24,6 +24,24 @@ Map<String, dynamic> _$AddCartItemRequestToJson(AddCartItemRequest instance) =>
       'options': instance.options,
     };
 
+CartFoodBrief _$CartFoodBriefFromJson(Map<String, dynamic> json) =>
+    CartFoodBrief(
+      id: json['id'] as String?,
+      name: json['name'] as String?,
+      nameAr: json['nameAr'] as String?,
+      image: json['image'] as String?,
+      price: json['price'] as num?,
+    );
+
+Map<String, dynamic> _$CartFoodBriefToJson(CartFoodBrief instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'nameAr': instance.nameAr,
+      'image': instance.image,
+      'price': instance.price,
+    };
+
 CartOption _$CartOptionFromJson(Map<String, dynamic> json) => CartOption(
   code: json['code'] as String,
   price: (json['price'] as num?)?.toInt() ?? 0,
@@ -43,6 +61,9 @@ CartItemModel _$CartItemModelFromJson(Map<String, dynamic> json) =>
               .toList() ??
           [],
       addedAt: json['addedAt'] as String?,
+      food: json['food'] == null
+          ? null
+          : CartFoodBrief.fromJson(json['food'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$CartItemModelToJson(CartItemModel instance) =>
@@ -52,4 +73,5 @@ Map<String, dynamic> _$CartItemModelToJson(CartItemModel instance) =>
       'quantity': instance.quantity,
       'options': instance.options,
       'addedAt': instance.addedAt,
+      'food': instance.food,
     };

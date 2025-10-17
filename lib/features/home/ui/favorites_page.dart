@@ -298,6 +298,8 @@ class FavoritesPage extends StatelessWidget {
             'image': food.image,
             'price': priceStr,
             'isFavorite': food.isFavorite ?? false,
+            'rating': food.rating,
+            'reviewCount': food.reviewCount,
           },
         );
       },

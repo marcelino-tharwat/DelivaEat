@@ -689,20 +689,71 @@ const seedFoods = async () => {
 
 const seedReviews = async () => {
   try {
-    const count = await Review.countDocuments();
-    if (count > 0) return; // don't spam if already seeded
-    const foods = await Food.find().limit(3).select('_id restaurant name').lean();
-    const restaurants = await Restaurant.find().limit(3).select('_id name').lean();
+    const foods = await Food.find().select('_id restaurant name').lean();
+    const restaurants = await Restaurant.find().select('_id name').lean();
+
+    const users = ['Ali', 'Sara', 'Hassan', 'Mona', 'Omar', 'Laila', 'Yousef', 'Noura'];
+    const comments = [
+      'Amazing taste! Totally recommended.',
+      'Very good, will order again.',
+      'It was okay, could be better.',
+      'Not what I expected.',
+      'Delicious and fresh!',
+      'Great value for money.',
+      'Fast delivery and hot food.',
+      'Quality is inconsistent.',
+      'الطعم خرافي! أنصح به بشدة.',
+      'جيد جداً وسأطلب مرة أخرى.',
+      'عادي، ممكن يكون أفضل.',
+      'مش زي ما توقعت.',
+      'لذيذ وطازج!',
+      'قيمة ممتازة مقابل السعر.',
+      'توصيل سريع والأكل ساخن.',
+      'الجودة غير ثابتة.',
+    ];
+
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const randomRating = () => 1 + Math.floor(Math.random() * 5); // 1..5
+    const randomPastDate = () => new Date(Date.now() - Math.floor(Math.random() * 14) * 24 * 60 * 60 * 1000); // within 2 weeks
+
     const docs = [];
+
     for (const f of foods) {
-      docs.push({ foodId: f._id, rating: 5, comment: `Amazing ${f.name}!`, userName: 'Ali' });
-      docs.push({ foodId: f._id, rating: 4, comment: 'Very good taste', userName: 'Sara' });
+      const hasFoodReviews = await Review.exists({ foodId: f._id });
+      if (hasFoodReviews) continue;
+      const n = 3 + Math.floor(Math.random() * 3); // 3..5
+      for (let i = 0; i < n; i++) {
+        const useArabic = Math.random() > 0.5;
+        docs.push({
+          foodId: f._id,
+          rating: randomRating(),
+          comment: useArabic ? pick(comments.slice(8)) : pick(comments.slice(0, 8)),
+          userName: pick(users),
+          createdAt: randomPastDate(),
+          updatedAt: new Date()
+        });
+      }
     }
+
     for (const r of restaurants) {
-      docs.push({ restaurantId: r._id, rating: 5, comment: `Great place: ${r.name}`, userName: 'Hassan' });
+      const hasRestReviews = await Review.exists({ restaurantId: r._id });
+      if (hasRestReviews) continue;
+      const n = 2 + Math.floor(Math.random() * 2); // 2..3
+      for (let i = 0; i < n; i++) {
+        const useArabic = Math.random() > 0.5;
+        docs.push({
+          restaurantId: r._id,
+          rating: randomRating(),
+          comment: useArabic ? pick(comments.slice(8)) : pick(comments.slice(0, 8)),
+          userName: pick(users),
+          createdAt: randomPastDate(),
+          updatedAt: new Date()
+        });
+      }
     }
+
     if (docs.length) await Review.insertMany(docs);
-    console.log('Reviews seeded successfully');
+    console.log(`Reviews seeded successfully (inserted: ${docs.length})`);
   } catch (e) {
     console.error('Error seeding reviews:', e);
   }

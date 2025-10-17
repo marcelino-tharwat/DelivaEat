@@ -11,8 +11,7 @@ const CartItemSchema = new mongoose.Schema(
       },
     ],
     addedAt: { type: Date, default: Date.now },
-  },
-  { _id: false }
+  }
 );
 
 const CartSchema = new mongoose.Schema(

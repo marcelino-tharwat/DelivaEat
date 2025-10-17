@@ -21,6 +21,20 @@ class AddCartItemRequest {
 }
 
 @JsonSerializable()
+class CartFoodBrief {
+  final String? id;
+  final String? name;
+  final String? nameAr;
+  final String? image;
+  final num? price;
+
+  CartFoodBrief({this.id, this.name, this.nameAr, this.image, this.price});
+
+  factory CartFoodBrief.fromJson(Map<String, dynamic> json) => _$CartFoodBriefFromJson(json);
+  Map<String, dynamic> toJson() => _$CartFoodBriefToJson(this);
+}
+
+@JsonSerializable()
 class CartOption {
   final String code;
   @JsonKey(defaultValue: 0)
@@ -42,6 +56,7 @@ class CartItemModel {
   @JsonKey(defaultValue: [])
   final List<CartOption> options;
   final String? addedAt;
+  final CartFoodBrief? food;
 
   CartItemModel({
     this.id,
@@ -49,6 +64,7 @@ class CartItemModel {
     required this.quantity,
     required this.options,
     this.addedAt,
+    this.food,
   });
 
   factory CartItemModel.fromJson(Map<String, dynamic> json) => _$CartItemModelFromJson(json);

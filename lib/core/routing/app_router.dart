@@ -30,6 +30,8 @@ import 'package:deliva_eat/features/restaurant/cubit/restaurant_cubit.dart';
 import 'package:deliva_eat/features/restaurant/cubit/restaurant_state.dart';
 import 'package:deliva_eat/features/restaurant/data/repos/restaurant_repo.dart';
 import 'package:deliva_eat/features/restaurant/cubit/product_cubit.dart';
+import 'package:deliva_eat/features/cart/cubit/cart_cubit.dart';
+import 'package:deliva_eat/features/cart/ui/add_to_cart.dart';
 import 'package:deliva_eat/core/di/dependency_injection.dart';
 
 final GoRouter router = GoRouter(
@@ -197,6 +199,10 @@ final GoRouter router = GoRouter(
                 image: (data['image'] ?? '').toString(),
                 priceText: (data['price'] ?? '').toString(),
                 isFavorite: data['isFavorite'] == true,
+                rating: (data['rating'] is num) ? (data['rating'] as num).toDouble() : null,
+                reviewCount: (data['reviewCount'] is int)
+                    ? data['reviewCount'] as int
+                    : int.tryParse('${data['reviewCount'] ?? ''}'),
               ),
             );
           },
@@ -213,18 +219,24 @@ final GoRouter router = GoRouter(
                 (data['restaurantId']?.toString().isNotEmpty == true)
                 ? data['restaurantId'].toString()
                 : null;
+            final String? title = (data['title']?.toString().isNotEmpty == true)
+                ? data['title'].toString()
+                : null;
             return BlocProvider(
               create: (_) => getIt<ReviewsCubit>()
                 ..setContext(foodId: foodId, restaurantId: restaurantId)
                 ..fetchReviews(page: 1),
-              child: const RatingReviewsPage(),
+              child: RatingReviewsPage(title: title),
             );
           },
         ),
         GoRoute(
           path: AppRoutes.cartPage,
           builder: (BuildContext context, GoRouterState state) {
-            return const CartPage();
+            return BlocProvider<CartCubit>(
+              create: (_) => getIt<CartCubit>()..loadCart(lang: Localizations.localeOf(context).languageCode),
+              child: const CartPage(),
+            );
           },
         ),
       ],

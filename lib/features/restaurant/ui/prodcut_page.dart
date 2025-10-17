@@ -12,6 +12,8 @@ import 'package:go_router/go_router.dart';
 import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:deliva_eat/features/restaurant/cubit/product_cubit.dart';
+import 'package:deliva_eat/core/di/dependency_injection.dart';
+import 'package:deliva_eat/features/reviews/data/repos/reviews_repo.dart';
 import 'package:deliva_eat/features/restaurant/cubit/product_state.dart';
 import 'package:deliva_eat/features/restaurant/data/models/cart_models.dart';
 
@@ -21,6 +23,8 @@ class FoodOrderPage extends StatefulWidget {
   final String image;
   final String priceText;
   final bool isFavorite;
+  final double? rating;
+  final int? reviewCount;
 
   const FoodOrderPage({
     super.key,
@@ -29,6 +33,8 @@ class FoodOrderPage extends StatefulWidget {
     this.image = '',
     this.priceText = '',
     this.isFavorite = false,
+    this.rating,
+    this.reviewCount,
   });
 
   @override
@@ -49,6 +55,9 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
   // Cache localization
   late bool _isArabic;
 
+  double? _rating;
+  int? _reviewsCount;
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +69,30 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
 
     // Parse base price once
     basePrice = _parseBasePrice(widget.priceText);
+
+    _rating = widget.rating;
+    _reviewsCount = widget.reviewCount;
+
+    // If reviews count not provided, fetch total reviews for this food
+    if (widget.foodId.isNotEmpty && (_reviewsCount == null || _rating == null)) {
+      Future.microtask(() async {
+        try {
+          final repo = getIt<ReviewsRepo>();
+          // Fetch up to 100 latest reviews to compute an approximate average
+          final res = await repo.getReviews(foodId: widget.foodId, limit: 100, page: 1);
+          res.fold((_) {}, (data) {
+            if (!mounted) return;
+            if (_reviewsCount == null) _reviewsCount = data.total;
+            if (_rating == null && data.items.isNotEmpty) {
+              final sum = data.items.fold<int>(0, (acc, e) => acc + (e.rating));
+              final avg = sum / data.items.length;
+              _rating = avg.toDouble();
+            }
+            setState(() {});
+          });
+        } catch (_) {}
+      });
+    }
   }
 
   @override
@@ -92,6 +125,12 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
     if (_extraChickenNotifier.value) total += extraChickenPrice;
     if (_colaNotifier.value) total += colaPrice;
     return total;
+  }
+
+  String _formatCount(int value) {
+    final s = value.toString();
+    final regex = RegExp(r'\B(?=(\d{3})+(?!\d))');
+    return s.replaceAllMapped(regex, (m) => ',');
   }
 
   Future<void> _addToCart() async {
@@ -334,7 +373,9 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                                 ),
                                 SizedBox(width: 4.w),
                                 Text(
-                                  '4.9',
+                                  _rating != null
+                                      ? _rating!.toStringAsFixed(_rating! % 1 == 0 ? 0 : 1)
+                                      : 'N/A',
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: colorScheme.onSurface,
@@ -342,7 +383,7 @@ class _FoodOrderPageState extends State<FoodOrderPage> {
                                 ),
                                 SizedBox(width: 4.w),
                                 Text(
-                                  '(1,205)',
+                                  _reviewsCount != null ? '(${_formatCount(_reviewsCount!)})' : '(—)',
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: colorScheme.onSurfaceVariant,
                                   ),

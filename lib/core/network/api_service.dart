@@ -153,4 +153,23 @@ Future<dynamic> resetPassword(
     @Body() AddCartItemRequest request,
     @Query('lang') String lang,
   );
+
+  @GET('cart')
+  @DioResponseType(ResponseType.json)
+  Future<dynamic> getCart(
+    @Query('lang') String lang,
+  );
+
+  @PATCH('cart/items/{id}')
+  @DioResponseType(ResponseType.json)
+  Future<dynamic> updateCartItemQuantity(
+    @Path('id') String id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  @DELETE('cart/items/{id}')
+  @DioResponseType(ResponseType.json)
+  Future<dynamic> removeCartItem(
+    @Path('id') String id,
+  );
 }

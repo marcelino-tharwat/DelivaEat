@@ -9,7 +9,8 @@ import 'package:deliva_eat/features/reviews/cubit/reviews_state.dart';
 import 'package:deliva_eat/features/reviews/data/models/review_model.dart';
 
 class RatingReviewsPage extends StatefulWidget {
-  const RatingReviewsPage({super.key});
+  final String? title;
+  const RatingReviewsPage({super.key, this.title});
 
   @override
   State<RatingReviewsPage> createState() => _RatingReviewsPageState();
@@ -25,9 +26,7 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
   @override
   void initState() {
     super.initState();
-    // Set context and fetch reviews
-    context.read<ReviewsCubit>().setContext(foodId: null, restaurantId: null);
-    context.read<ReviewsCubit>().fetchReviews();
+    
   }
 
   double _averageRating(List<ReviewModel> reviews) {
@@ -119,7 +118,7 @@ class _RatingReviewsPageState extends State<RatingReviewsPage> {
                     children: [
                       // Dish Name
                       Text(
-                        'Chicken Fried Rice',
+                        widget.title ?? '',
                         style: textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                           fontSize: 20.sp,

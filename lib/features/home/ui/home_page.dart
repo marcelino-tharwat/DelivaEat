@@ -320,6 +320,8 @@ class FoodDeliveryHomePageState extends State<FoodDeliveryHomePage>
           'image': food.image,
           'price': priceStr,
           'isFavorite': food.isFavorite ?? false,
+          'rating': food.rating,
+          'reviewCount': food.reviewCount,
         },
       );
     }

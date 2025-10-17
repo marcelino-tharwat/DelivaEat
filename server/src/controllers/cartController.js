@@ -1,5 +1,6 @@
 // Minimal Cart Controller with Mongo persistence
 const Cart = require('../models/Cart');
+const Food = require('../models/Food');
 
 const addItemToCart = async (req, res) => {
   try {
@@ -39,8 +40,36 @@ const addItemToCart = async (req, res) => {
 const getCart = async (req, res) => {
   try {
     const ownerKey = (req.user && req.user.id) || 'global';
-    const cart = await Cart.findOne({ ownerKey });
-    return res.json({ success: true, data: cart || { ownerKey, items: [] } });
+    const cart = await Cart.findOne({ ownerKey }).lean();
+    const base = cart || { ownerKey, items: [] };
+
+    // Enrich items with food details: name, image, price
+    const foodIds = (base.items || []).map((it) => it.foodId).filter(Boolean);
+    let foodMap = new Map();
+    if (foodIds.length) {
+      const foods = await Food.find({ _id: { $in: foodIds } })
+        .select('_id name nameAr image price')
+        .lean();
+      for (const f of foods) foodMap.set(String(f._id), f);
+    }
+
+    const enrichedItems = (base.items || []).map((it) => {
+      const f = foodMap.get(String(it.foodId));
+      return {
+        ...it,
+        food: f
+          ? {
+              id: String(f._id),
+              name: f.name,
+              nameAr: f.nameAr,
+              image: f.image,
+              price: f.price,
+            }
+          : null,
+      };
+    });
+
+    return res.json({ success: true, data: { ownerKey: base.ownerKey, items: enrichedItems } });
   } catch (e) {
     return res.status(500).json({ success: false, error: { message: e.message || 'Server error' } });
   }

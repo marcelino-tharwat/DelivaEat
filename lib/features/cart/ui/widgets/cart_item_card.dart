@@ -48,6 +48,7 @@ class CartItemCard extends StatelessWidget {
   final VoidCallback? onIncrement;
   final VoidCallback? onDecrement;
   final Function(AddonItem)? onRemoveAddon;
+  final VoidCallback? onRemoveItem;
 
   const CartItemCard({
     super.key,
@@ -57,6 +58,7 @@ class CartItemCard extends StatelessWidget {
     this.onIncrement,
     this.onDecrement,
     this.onRemoveAddon,
+    this.onRemoveItem,
   });
 
   @override
@@ -150,37 +152,57 @@ class CartItemCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          _buildQuantityControlButton(
-                            context,
-                            icon: Icons.remove,
-                            onTap: isRemoving ? null : onDecrement,
+                    Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4.0,
+                          child: Row(
+                            children: [
+                              _buildQuantityControlButton(
+                                context,
+                                icon: Icons.remove,
+                                onTap: isRemoving ? null : onDecrement,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4.0,
+                                ),
+                                child: Text(
+                                  '${item.quantity}',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.normal),
+                                ),
+                              ),
+                              _buildQuantityControlButton(
+                                context,
+                                icon: Icons.add,
+                                onTap: isRemoving ? null : onIncrement,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Tooltip(
+                          message: 'Remove',
+                          child: InkWell(
+                            onTap: isRemoving ? null : onRemoveItem,
+                            borderRadius: BorderRadius.circular(20),
+                            child: Padding(
+                              padding: const EdgeInsets.all(6.0),
+                              child: Icon(
+                                Icons.delete_outline,
+                                size: 20,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
                             ),
-                            child: Text(
-                              '${item.quantity}',
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(fontWeight: FontWeight.normal),
-                            ),
                           ),
-                          _buildQuantityControlButton(
-                            context,
-                            icon: Icons.add,
-                            onTap: isRemoving ? null : onIncrement,
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
