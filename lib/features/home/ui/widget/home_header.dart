@@ -1,8 +1,10 @@
+import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:deliva_eat/core/theme/light_dark_mode.dart';
 import 'package:deliva_eat/core/theme/provider.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'categories_bar.dart';
 import 'offer_slider.dart';
@@ -128,28 +130,31 @@ class HomeHeader extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 12.w),
-                Consumer<ThemeProvider>(
-                  builder: (context, themeProvider, child) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: IconButton(
-                        icon: Icon(
-                          themeProvider.isDarkMode
-                              ? Icons.light_mode
-                              : Icons.dark_mode,
-                          color: isDark ? Colors.black : Colors.white,
-                          size: 24.sp,
-                        ),
-                        onPressed: () {
-                          context.read<ThemeProvider>().toggleTheme();
-                        },
-                      ),
-                    );
-                  },
+                // Consumer<ThemeProvider>(
+                // builder: (context, themeProvider, child) {
+                // return
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      // themeProvider.isDarkMode
+                      // ? Icons.light_mode
+                      // :
+                      Icons.shopping_cart_outlined,
+                      color: isDark ? Colors.black : Colors.white,
+                      size: 24.sp,
+                    ),
+                    onPressed: () {
+                      // context.read<ThemeProvider>().toggleTheme();
+                      context.push(AppRoutes.cartPage);
+                    },
+                  ),
                 ),
+                // },
+                // ),
               ],
             ),
           ),
