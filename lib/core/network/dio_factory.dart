@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:deliva_eat/core/auth/token_storage.dart';
+import 'package:deliva_eat/core/auth/cart_key_storage.dart';
 import 'package:deliva_eat/core/network/api_constant.dart';
 
 class DioFactory {
@@ -33,8 +34,12 @@ static Dio getDio() {
             final token = await TokenStorage.getToken();
             if (token != null && token.isNotEmpty) {
               options.headers['Authorization'] = 'Bearer ' + token;
+              options.headers.remove('x-cart-key');
             } else {
               options.headers.remove('Authorization');
+              // provide per-device cart key for anonymous users
+              final cartKey = await CartKeyStorage.getOrCreate();
+              options.headers['x-cart-key'] = cartKey;
             }
             options.headers.putIfAbsent('Accept', () => 'application/json');
             options.headers.putIfAbsent('Content-Type', () => 'application/json');

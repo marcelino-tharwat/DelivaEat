@@ -7,6 +7,9 @@ import 'package:deliva_eat/features/cart/cubit/cart_cubit.dart';
 import 'package:deliva_eat/features/cart/cubit/cart_state.dart';
 import 'package:deliva_eat/features/cart/data/models/cart_response.dart';
 import 'package:deliva_eat/features/restaurant/data/models/cart_models.dart' as models;
+import 'package:deliva_eat/core/auth/token_storage.dart';
+import 'package:go_router/go_router.dart';
+import 'package:deliva_eat/core/routing/routes.dart';
 import 'widgets/cart_item_card.dart';
 import 'widgets/payment_summary.dart';
 
@@ -136,29 +139,55 @@ class _CartPageState extends State<CartPage> {
                   totalAmount: totalAmount,
                   onCheckout: uiItems.isEmpty
                       ? null
-                      : () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(l10n.checkout),
-                              content: Text(
-                                '${l10n.total}: EGP ${totalAmount.toStringAsFixed(2)}',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(l10n.ok),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                      : () => _handleCheckout(context, l10n, totalAmount),
                 )]),
               ),
             ],
           ),
         );
       },
+    );
+  }
+
+  Future<void> _handleCheckout(BuildContext context, AppLocalizations l10n, double totalAmount) async {
+    final token = await TokenStorage.getToken();
+    if (!context.mounted) return;
+    if (token == null || token.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.checkout),
+          content: Text(l10n.loginToContinue),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                context.push(AppRoutes.signupPage);
+              },
+              child: Text(l10n.login),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.checkout),
+        content: Text('${l10n.total}: EGP ${totalAmount.toStringAsFixed(2)}'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.ok),
+          ),
+        ],
+      ),
     );
   }
 

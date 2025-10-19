@@ -2,6 +2,13 @@
 const Cart = require('../models/Cart');
 const Food = require('../models/Food');
 
+const resolveOwnerKey = (req) => {
+  const userId = req.user && req.user.id;
+  const headerKey = req.headers && (req.headers['x-cart-key'] || req.headers['X-Cart-Key']);
+  const cookieKey = req.cookies && req.cookies.cartKey;
+  return String(userId || headerKey || cookieKey || req.ip || 'anon');
+};
+
 const addItemToCart = async (req, res) => {
   try {
     const { foodId, quantity = 1, options = [] } = req.body || {};
@@ -13,7 +20,7 @@ const addItemToCart = async (req, res) => {
         .json({ success: false, error: { message: 'foodId is required' } });
     }
 
-    const ownerKey = (req.user && req.user.id) || 'global';
+    const ownerKey = resolveOwnerKey(req);
     const item = {
       foodId: String(foodId),
       quantity: Number(quantity) || 1,
@@ -39,7 +46,7 @@ const addItemToCart = async (req, res) => {
 
 const getCart = async (req, res) => {
   try {
-    const ownerKey = (req.user && req.user.id) || 'global';
+    const ownerKey = resolveOwnerKey(req);
     const cart = await Cart.findOne({ ownerKey }).lean();
     const base = cart || { ownerKey, items: [] };
 
@@ -77,7 +84,7 @@ const getCart = async (req, res) => {
 
 const updateItemQuantity = async (req, res) => {
   try {
-    const ownerKey = (req.user && req.user.id) || 'global';
+    const ownerKey = resolveOwnerKey(req);
     const { id } = req.params; // item id (generated client/server)
     const { quantity } = req.body || {};
     if (!id || !quantity || Number(quantity) < 1) {
@@ -97,7 +104,7 @@ const updateItemQuantity = async (req, res) => {
 
 const removeItem = async (req, res) => {
   try {
-    const ownerKey = (req.user && req.user.id) || 'global';
+    const ownerKey = resolveOwnerKey(req);
     const { id } = req.params;
     const cart = await Cart.findOne({ ownerKey });
     if (!cart) return res.status(404).json({ success: false, error: { message: 'Cart not found' } });
