@@ -157,7 +157,7 @@ class _CartPageState extends State<CartPage> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text(l10n.checkout),
-          content: Text(l10n.loginToContinue),
+          content: Text(l10n.login_to_continue),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
