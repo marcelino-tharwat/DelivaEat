@@ -2,6 +2,8 @@ import 'package:deliva_eat/core/di/dependency_injection.dart';
 import 'package:deliva_eat/core/routing/routes.dart';
 import 'package:deliva_eat/features/auth/forget_password/cubit/forgot_password_cubit.dart';
 import 'package:deliva_eat/features/auth/forget_password/ui/forget_password_page.dart';
+import 'package:deliva_eat/features/auth/login/cubit/login_cubit.dart';
+import 'package:deliva_eat/features/auth/login/ui/login_page.dart';
 import 'package:deliva_eat/features/auth/new_password/cubit/new_password_cubit.dart';
 import 'package:deliva_eat/features/auth/new_password/ui/new_password_page.dart';
 import 'package:deliva_eat/features/auth/otp/cubit/otp_cubit.dart';
@@ -9,6 +11,7 @@ import 'package:deliva_eat/features/auth/otp/ui/otp_page.dart';
 import 'package:deliva_eat/features/auth/signup/ui/signup_page.dart';
 import 'package:deliva_eat/features/auth/signup/cubit/signup_cubit.dart';
 import 'package:deliva_eat/features/cart/ui/add_to_cart.dart';
+import 'package:deliva_eat/features/cart/ui/checkout_page.dart';
 import 'package:deliva_eat/features/category/ui/widget/food_category_page.dart';
 import 'package:deliva_eat/features/category/ui/widget/pharmacies_category_page.dart';
 import 'package:deliva_eat/features/category/ui/widget/grocery_category_page.dart';
@@ -236,6 +239,24 @@ final GoRouter router = GoRouter(
             return BlocProvider<CartCubit>(
               create: (_) => getIt<CartCubit>()..loadCart(lang: Localizations.localeOf(context).languageCode),
               child: const CartPage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.checkoutPage,
+          builder: (BuildContext context, GoRouterState state) {
+            return BlocProvider<CartCubit>(
+              create: (_) => getIt<CartCubit>(),
+              child: const CheckoutPage(),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.loginPage,
+          builder: (BuildContext context, GoRouterState state) {
+            return BlocProvider(
+              create: (_) => getIt<LoginCubit>(),
+              child: const LoginPage(),
             );
           },
         ),

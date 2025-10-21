@@ -27,7 +27,13 @@ class CustomBottomNavigationBar extends StatelessWidget {
           topLeft: Radius.circular(30.r),
           topRight: Radius.circular(30.r),
         ),
-
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -44,12 +50,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
             1,
             context,
           ),
-          _buildNavItem(
-            appLocalizations.offersTitle,
-            Icons.local_offer_rounded,
-            2,
-            context,
-          ),
+
           _buildNavItem(
             appLocalizations.accountTitle,
             Icons.person_rounded,
@@ -124,7 +125,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
                         isSelected,
                       ), // مهم للـ AnimatedSwitcher
                       color: isSelected
-                          ? colors.primary 
+                          ? colors.primary
                           : colors.onSurface.withOpacity(0.6),
                       size: 24
                           .sp, // الحجم ثابت هنا، الحركة تأتي من AnimatedSwitcher
