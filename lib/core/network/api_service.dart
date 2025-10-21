@@ -154,7 +154,7 @@ Future<dynamic> resetPassword(
     @Query('lang') String lang,
   );
 
-  @GET('cart')
+  @GET(ApiConstant.cartUrl)
   @DioResponseType(ResponseType.json)
   Future<dynamic> getCart(
     @Query('lang') String lang,
