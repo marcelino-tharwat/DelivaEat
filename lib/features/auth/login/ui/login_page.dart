@@ -4,11 +4,13 @@ import 'package:deliva_eat/features/auth/login/ui/widgets/login_header.dart';
 import 'package:deliva_eat/features/auth/login/ui/widgets/or_divider.dart';
 import 'package:deliva_eat/features/auth/login/ui/widgets/social_login.dart';
 import 'package:deliva_eat/core/auth/token_storage.dart';
+import 'package:deliva_eat/core/auth/auth_manager.dart';
 import 'package:deliva_eat/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:deliva_eat/features/auth/login/cubit/login_cubit.dart';
+import 'package:deliva_eat/features/cart/cubit/cart_cubit.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -50,6 +52,14 @@ class LoginPage extends StatelessWidget {
               if (token != null && token.isNotEmpty) {
                 // persist token for authenticated requests
                 TokenStorage.setToken(token);
+                // Set user as logged in
+                AuthManager.setLoggedIn(
+                  userId: state.authResponse.data?.user?.id ?? '',
+                  name: state.authResponse.data?.user?.name ?? '',
+                  email: state.authResponse.data?.user?.email ?? '',
+                );
+                // Sync local cart to backend
+                context.read<CartCubit>().syncLocalCartToBackend();
               }
               // Navigate here if you want:
               // Navigator.pushReplacementNamed(context, "/home");

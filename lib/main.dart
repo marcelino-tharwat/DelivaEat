@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:deliva_eat/core/di/dependency_injection.dart';
 import 'package:deliva_eat/core/network/dio_factory.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   setupGetIt();
